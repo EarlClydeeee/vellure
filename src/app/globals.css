@@ -21,6 +21,11 @@
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
 
+  --color-vellure-black: hsl(var(--vellure-black));
+  --color-footer-bg: hsl(var(--footer-bg));
+  --color-badge-red: hsl(var(--badge-red));
+  --color-star-yellow: hsl(var(--star-yellow));
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -50,6 +55,12 @@
   --input: 214.3 31.8% 91.4%;
   --ring: 222.2 84% 4.9%;
   --radius: 0.5rem;
+
+  /* Vellure brand tokens */
+  --vellure-black: 0 0% 7%;
+  --footer-bg: 0 0% 10%;
+  --badge-red: 0 84% 60%;
+  --star-yellow: 43 96% 56%;
 }
 
 .dark {

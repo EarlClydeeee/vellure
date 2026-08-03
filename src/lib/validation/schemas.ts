@@ -25,7 +25,17 @@ export const productSchema = z.object({
   description: z.string().optional(),
   price: z.number().positive('Price must be a positive number'),
   stockQuantity: z.number().int().min(0, 'Stock must be zero or positive'),
-  imageUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
+  imageUrl: z
+    .string()
+    .refine(
+      (val) =>
+        val === '' ||
+        val.startsWith('/') ||
+        z.string().url().safeParse(val).success,
+      'Must be a valid URL or path starting with /'
+    )
+    .optional()
+    .or(z.literal('')),
   categoryId: z.string().uuid().optional().or(z.literal('')),
   status: z.enum(['Active', 'Inactive', 'Out of Stock']),
 });

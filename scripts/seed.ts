@@ -5,15 +5,33 @@ const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
+/** Local mockup assets in /public/iphone/iphone17 */
+const IPHONE_IMAGES = {
+  iphone17: '/iphone/iphone17/iphone_17__fb1277oq3eaa_large.jpg',
+  iphone17Pro: '/iphone/iphone17/iphone_17pro__t1j902iw6kya_large.jpg',
+  iphone17e: '/iphone/iphone17/iphone_17e__cq5ygzct314y_large.jpg',
+  iphoneAir: '/iphone/iphone17/iphone_air__b5qmgl05ojyq_large.jpg',
+} as const;
+
 const categories = [
-  { name: 'Electronics' },
-  { name: 'Clothing' },
-  { name: 'Home & Garden' },
-  { name: 'Sports' },
-  { name: 'Books' },
+  { name: 'For Home' },
+  { name: 'For Music' },
+  { name: 'For Phone' },
+  { name: 'For Storage' },
 ];
 
 async function seed() {
+  console.log('Clearing existing products...');
+  const { error: deleteError } = await supabase
+    .from('products')
+    .delete()
+    .neq('id', '00000000-0000-0000-0000-000000000000');
+
+  if (deleteError) {
+    console.error('Error clearing products:', deleteError);
+    process.exit(1);
+  }
+
   console.log('Seeding categories...');
   const { data: insertedCategories, error: catError } = await supabase
     .from('categories')
@@ -25,7 +43,7 @@ async function seed() {
     process.exit(1);
   }
 
-  console.log(`Inserted ${insertedCategories.length} categories`);
+  console.log(`Upserted ${insertedCategories.length} categories`);
 
   const categoryMap: Record<string, string> = {};
   for (const cat of insertedCategories) {
@@ -34,139 +52,93 @@ async function seed() {
 
   const products = [
     {
-      name: 'Wireless Bluetooth Headphones',
-      description: 'Premium over-ear headphones with active noise cancellation and 30-hour battery life.',
-      price: 149.99,
-      stock_quantity: 25,
-      image_url: 'https://placehold.co/400x400?text=Headphones',
-      category_id: categoryMap['Electronics'],
+      name: 'iPhone 17',
+      description:
+        'The latest iPhone with advanced camera system, all-day battery, and stunning display.',
+      price: 799.0,
+      stock_quantity: 32,
+      image_url: IPHONE_IMAGES.iphone17,
+      category_id: categoryMap['For Phone'],
       status: 'Active',
     },
     {
-      name: 'Smart Watch Pro',
-      description: 'Feature-rich smartwatch with heart rate monitor, GPS, and water resistance.',
-      price: 299.99,
-      stock_quantity: 15,
-      image_url: 'https://placehold.co/400x400?text=SmartWatch',
-      category_id: categoryMap['Electronics'],
+      name: 'iPhone 17 Pro',
+      description:
+        'Pro-grade performance with titanium design, pro camera, and the fastest chip.',
+      price: 999.0,
+      stock_quantity: 24,
+      image_url: IPHONE_IMAGES.iphone17Pro,
+      category_id: categoryMap['For Phone'],
       status: 'Active',
     },
     {
-      name: 'USB-C Charging Cable 3-Pack',
-      description: 'Durable braided USB-C cables, 6ft length, fast charging compatible.',
-      price: 19.99,
-      stock_quantity: 100,
-      image_url: 'https://placehold.co/400x400?text=USB-C+Cable',
-      category_id: categoryMap['Electronics'],
-      status: 'Active',
-    },
-    {
-      name: 'Classic Denim Jacket',
-      description: 'Timeless denim jacket with a modern fit. Available in multiple sizes.',
-      price: 89.99,
+      name: 'iPhone 17e',
+      description:
+        'Essential iPhone features at an incredible value. Powerful, durable, and easy to love.',
+      price: 599.0,
       stock_quantity: 40,
-      image_url: 'https://placehold.co/400x400?text=Denim+Jacket',
-      category_id: categoryMap['Clothing'],
+      image_url: IPHONE_IMAGES.iphone17e,
+      category_id: categoryMap['For Phone'],
       status: 'Active',
     },
     {
-      name: 'Cotton Crew Neck T-Shirt',
-      description: '100% organic cotton t-shirt, soft and breathable for everyday wear.',
-      price: 24.99,
-      stock_quantity: 200,
-      image_url: 'https://placehold.co/400x400?text=T-Shirt',
-      category_id: categoryMap['Clothing'],
+      name: 'iPhone Air',
+      description:
+        'Ultra-thin design meets pro capability. Light in hand, heavy on innovation.',
+      price: 899.0,
+      stock_quantity: 18,
+      image_url: IPHONE_IMAGES.iphoneAir,
+      category_id: categoryMap['For Phone'],
       status: 'Active',
     },
     {
-      name: 'Winter Puffer Jacket',
-      description: 'Insulated puffer jacket for cold weather. Lightweight yet extremely warm.',
-      price: 179.99,
-      stock_quantity: 0,
-      image_url: 'https://placehold.co/400x400?text=Puffer+Jacket',
-      category_id: categoryMap['Clothing'],
-      status: 'Out of Stock',
-    },
-    {
-      name: 'Indoor Plant Pot Set',
-      description: 'Set of 3 ceramic plant pots in minimalist design. Includes drainage trays.',
-      price: 39.99,
-      stock_quantity: 60,
-      image_url: 'https://placehold.co/400x400?text=Plant+Pots',
-      category_id: categoryMap['Home & Garden'],
-      status: 'Active',
-    },
-    {
-      name: 'LED Desk Lamp',
-      description: 'Adjustable LED desk lamp with 5 brightness levels and USB charging port.',
-      price: 54.99,
-      stock_quantity: 35,
-      image_url: 'https://placehold.co/400x400?text=Desk+Lamp',
-      category_id: categoryMap['Home & Garden'],
-      status: 'Active',
-    },
-    {
-      name: 'Garden Tool Set',
-      description: 'Complete 5-piece garden tool set with ergonomic handles and carrying bag.',
-      price: 44.99,
-      stock_quantity: 20,
-      image_url: 'https://placehold.co/400x400?text=Garden+Tools',
-      category_id: categoryMap['Home & Garden'],
-      status: 'Inactive',
-    },
-    {
-      name: 'Yoga Mat Premium',
-      description: 'Non-slip yoga mat with alignment marks. 6mm thick for extra cushioning.',
-      price: 49.99,
-      stock_quantity: 80,
-      image_url: 'https://placehold.co/400x400?text=Yoga+Mat',
-      category_id: categoryMap['Sports'],
-      status: 'Active',
-    },
-    {
-      name: 'Adjustable Dumbbells Set',
-      description: 'Space-saving adjustable dumbbells from 5 to 52.5 lbs each.',
-      price: 399.99,
-      stock_quantity: 10,
-      image_url: 'https://placehold.co/400x400?text=Dumbbells',
-      category_id: categoryMap['Sports'],
-      status: 'Active',
-    },
-    {
-      name: 'Running Shoes Ultra',
-      description: 'Lightweight running shoes with responsive cushioning and breathable mesh upper.',
-      price: 129.99,
+      name: 'Headsound Pro',
+      description:
+        'Premium wireless headphones with spatial audio and active noise cancellation.',
+      price: 249.0,
       stock_quantity: 45,
-      image_url: 'https://placehold.co/400x400?text=Running+Shoes',
-      category_id: categoryMap['Sports'],
+      image_url: IPHONE_IMAGES.iphone17,
+      category_id: categoryMap['For Music'],
       status: 'Active',
     },
     {
-      name: 'The Art of Programming',
-      description: 'Comprehensive guide to software engineering principles and best practices.',
-      price: 49.99,
-      stock_quantity: 150,
-      image_url: 'https://placehold.co/400x400?text=Programming+Book',
-      category_id: categoryMap['Books'],
+      name: 'Smart Home Hub',
+      description:
+        'Control your entire home from one elegant hub. Works with all major smart devices.',
+      price: 129.0,
+      stock_quantity: 30,
+      image_url: IPHONE_IMAGES.iphone17Pro,
+      category_id: categoryMap['For Home'],
       status: 'Active',
     },
     {
-      name: 'Modern Design Patterns',
-      description: 'Essential reference for scalable and maintainable software architecture.',
-      price: 39.99,
-      stock_quantity: 75,
-      image_url: 'https://placehold.co/400x400?text=Design+Patterns',
-      category_id: categoryMap['Books'],
-      status: 'Active',
-    },
-    {
-      name: 'Portable Bluetooth Speaker',
-      description: 'Waterproof portable speaker with 360-degree sound and 12-hour playtime.',
-      price: 79.99,
+      name: 'CloudVault 2TB',
+      description:
+        'Fast external storage with hardware encryption. Backup and access files anywhere.',
+      price: 89.0,
       stock_quantity: 55,
-      image_url: 'https://placehold.co/400x400?text=Speaker',
-      category_id: categoryMap['Electronics'],
-      status: 'Inactive',
+      image_url: IPHONE_IMAGES.iphone17e,
+      category_id: categoryMap['For Storage'],
+      status: 'Active',
+    },
+    {
+      name: 'Phone Holder Sakti',
+      description:
+        'Magnetic phone mount for desk and car. Adjustable angle, secure grip.',
+      price: 29.9,
+      stock_quantity: 100,
+      image_url: IPHONE_IMAGES.iphoneAir,
+      category_id: categoryMap['For Phone'],
+      status: 'Active',
+    },
+    {
+      name: 'iPhone 17 — Midnight',
+      description: 'iPhone 17 in Midnight finish. Same great phone, bold new color.',
+      price: 799.0,
+      stock_quantity: 15,
+      image_url: IPHONE_IMAGES.iphone17,
+      category_id: categoryMap['For Phone'],
+      status: 'Active',
     },
   ];
 

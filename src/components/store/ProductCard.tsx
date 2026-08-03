@@ -3,85 +3,114 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ShoppingCart } from 'lucide-react';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { useRouter } from 'next/navigation';
+import { Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Product } from '@/lib/types';
 import { addToCartAction } from '@/app/(store)/actions';
+import { cn } from '@/lib/utils';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const [loading, setLoading] = useState(false);
-  const isOutOfStock = product.stockQuantity === 0 || product.status === 'Out of Stock';
+  const router = useRouter();
+  const [loading, setLoading] = useState<'cart' | 'buy' | null>(null);
+  const isOutOfStock =
+    product.stockQuantity === 0 || product.status === 'Out of Stock';
   const isInactive = product.status === 'Inactive';
+  const disabled = isOutOfStock || isInactive;
 
   async function handleAddToCart() {
-    setLoading(true);
+    setLoading('cart');
     try {
       await addToCartAction(product.id, 1);
     } catch {
-      // Silently handle — user may not be logged in
+      // user may not be logged in
     } finally {
-      setLoading(false);
+      setLoading(null);
+    }
+  }
+
+  async function handleBuyNow() {
+    setLoading('buy');
+    try {
+      await addToCartAction(product.id, 1);
+      router.push('/checkout');
+    } catch {
+      router.push(`/products/${product.id}`);
+    } finally {
+      setLoading(null);
     }
   }
 
   return (
-    <Card className="flex flex-col overflow-hidden transition-shadow hover:shadow-md">
-      <Link href={`/products/${product.id}`} className="relative aspect-square bg-muted">
+    <article className="group flex flex-col overflow-hidden rounded-lg border border-[#e5e7eb] bg-white transition-shadow hover:shadow-md">
+      <Link
+        href={`/products/${product.id}`}
+        className="relative aspect-square bg-muted"
+      >
         {product.imageUrl ? (
           <Image
             src={product.imageUrl}
             alt={product.name}
             fill
-            className="object-cover"
-            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            className="object-cover transition-transform group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-muted-foreground">
             <span className="text-sm">No Image</span>
           </div>
         )}
-        <div className="absolute top-2 right-2 flex flex-col gap-1">
-          {isOutOfStock && (
-            <Badge variant="destructive">Out of Stock</Badge>
-          )}
-          {isInactive && (
-            <Badge variant="secondary">Inactive</Badge>
-          )}
-        </div>
-      </Link>
-      <CardContent className="flex flex-1 flex-col gap-2 p-4">
-        <Link href={`/products/${product.id}`} className="hover:underline">
-          <h3 className="font-semibold line-clamp-2">{product.name}</h3>
-        </Link>
         {product.category && (
-          <Badge variant="outline" className="w-fit text-xs">
+          <span className="absolute right-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-foreground shadow-sm">
             {product.category.name}
-          </Badge>
+          </span>
         )}
-        <p className="mt-auto text-lg font-bold">${product.price.toFixed(2)}</p>
-      </CardContent>
-      <CardFooter className="flex gap-2 p-4 pt-0">
-        <Link href={`/products/${product.id}`} className="flex-1">
-          <Button variant="outline" size="sm" className="w-full">
-            View Details
-          </Button>
+        {disabled && (
+          <span className="absolute left-3 top-3 rounded-full bg-red-500 px-2.5 py-1 text-xs font-medium text-white">
+            {isOutOfStock ? 'Out of Stock' : 'Unavailable'}
+          </span>
+        )}
+      </Link>
+
+      <div className="flex flex-1 flex-col gap-2 p-4">
+        <Link href={`/products/${product.id}`} className="hover:underline">
+          <h3 className="line-clamp-2 text-sm font-semibold">{product.name}</h3>
         </Link>
-        <Button
-          size="sm"
-          disabled={isOutOfStock || isInactive || loading}
-          onClick={handleAddToCart}
-          className="flex-1"
-        >
-          <ShoppingCart className="h-4 w-4" />
-          {loading ? 'Adding...' : 'Add to Cart'}
-        </Button>
-      </CardFooter>
-    </Card>
+
+        <div className="flex items-center gap-1.5 text-sm">
+          <Star className="h-4 w-4 fill-[#fbbf24] text-[#fbbf24]" />
+          <span className="font-medium">5.0</span>
+          <span className="text-muted-foreground">(128)</span>
+        </div>
+
+        <p className="mt-auto text-lg font-bold">${product.price.toFixed(2)}</p>
+
+        <div className="flex gap-2 pt-1">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={disabled || loading !== null}
+            onClick={handleAddToCart}
+            className="flex-1 rounded-full border-[#111111] text-xs"
+          >
+            {loading === 'cart' ? 'Adding...' : 'Add to Cart'}
+          </Button>
+          <Button
+            size="sm"
+            disabled={disabled || loading !== null}
+            onClick={handleBuyNow}
+            className={cn(
+              'flex-1 rounded-full bg-[#111111] text-xs hover:bg-[#111111]/90'
+            )}
+          >
+            {loading === 'buy' ? 'Processing...' : 'Buy Now'}
+          </Button>
+        </div>
+      </div>
+    </article>
   );
 }

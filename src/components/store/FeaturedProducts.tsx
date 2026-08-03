@@ -1,5 +1,6 @@
 import { Product } from '@/lib/types';
-import { ProductCard } from '@/components/store/ProductCard';
+import { ProductGrid } from '@/components/store/ProductGrid';
+import { NavLink } from '@/components/store/NavLink';
 
 interface FeaturedProductsProps {
   products: Product[];
@@ -11,14 +12,18 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
   return (
     <section className="px-4 py-12">
       <div className="container mx-auto">
-        <h2 className="mb-8 text-2xl font-bold tracking-tight sm:text-3xl">
-          Featured Products
-        </h2>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+        <div className="mb-8 flex items-center justify-between">
+          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+            Featured Products
+          </h2>
+          <NavLink
+            href="/products"
+            className="text-sm font-medium text-muted-foreground hover:text-foreground"
+          >
+            View all
+          </NavLink>
         </div>
+        <ProductGrid products={products} columns={4} />
       </div>
     </section>
   );

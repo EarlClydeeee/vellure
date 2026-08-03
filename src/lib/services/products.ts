@@ -7,8 +7,45 @@ export interface ProductFilters {
   search?: string;
   categoryId?: string;
   status?: ProductStatus;
-  sortBy?: 'price_asc' | 'price_desc';
+  sortBy?: 'price_asc' | 'price_desc' | 'newest';
   activeOnly?: boolean;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface PaginatedProducts {
+  products: Product[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function applyProductFilters(query: any, filters?: ProductFilters) {
+  let q = query;
+
+  if (filters?.search) {
+    q = q.ilike('name', `%${filters.search}%`);
+  }
+  if (filters?.categoryId) {
+    q = q.eq('category_id', filters.categoryId);
+  }
+  if (filters?.status) {
+    q = q.eq('status', filters.status);
+  }
+  if (filters?.activeOnly) {
+    q = q.eq('status', 'Active');
+  }
+  if (filters?.sortBy === 'price_asc') {
+    q = q.order('price', { ascending: true });
+  } else if (filters?.sortBy === 'price_desc') {
+    q = q.order('price', { ascending: false });
+  } else {
+    q = q.order('created_at', { ascending: false });
+  }
+
+  return q;
 }
 
 export interface CreateProductInput {
@@ -56,26 +93,7 @@ export async function getProducts(
   const supabase = await createServerSupabaseClient();
 
   let query = supabase.from('products').select('*, categories(*)');
-
-  if (filters?.search) {
-    query = query.ilike('name', `%${filters.search}%`);
-  }
-  if (filters?.categoryId) {
-    query = query.eq('category_id', filters.categoryId);
-  }
-  if (filters?.status) {
-    query = query.eq('status', filters.status);
-  }
-  if (filters?.activeOnly) {
-    query = query.eq('status', 'Active');
-  }
-  if (filters?.sortBy === 'price_asc') {
-    query = query.order('price', { ascending: true });
-  } else if (filters?.sortBy === 'price_desc') {
-    query = query.order('price', { ascending: false });
-  } else {
-    query = query.order('created_at', { ascending: false });
-  }
+  query = applyProductFilters(query, filters);
 
   const { data, error } = await query;
 
@@ -84,6 +102,41 @@ export async function getProducts(
   }
 
   return { success: true, data: (data ?? []).map(mapProduct) };
+}
+
+export async function getProductsPaginated(
+  filters?: ProductFilters
+): Promise<ServiceResult<PaginatedProducts>> {
+  const supabase = await createServerSupabaseClient();
+  const page = Math.max(1, filters?.page ?? 1);
+  const pageSize = filters?.pageSize ?? 9;
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  let query = supabase
+    .from('products')
+    .select('*, categories(*)', { count: 'exact' });
+  query = applyProductFilters(query, filters);
+
+  const { data, error, count } = await query.range(from, to);
+
+  if (error) {
+    return { success: false, error: error.message, code: 'QUERY_ERROR' };
+  }
+
+  const totalCount = count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+
+  return {
+    success: true,
+    data: {
+      products: (data ?? []).map(mapProduct),
+      totalCount,
+      page,
+      pageSize,
+      totalPages,
+    },
+  };
 }
 
 export async function getProductById(

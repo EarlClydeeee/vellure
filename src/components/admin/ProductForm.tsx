@@ -157,12 +157,12 @@ export function ProductForm({ categories, product }: ProductFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="imageUrl">Image URL</Label>
+        <Label htmlFor="imageUrl">Image URL or path</Label>
         <Input
           id="imageUrl"
           value={imageUrl}
           onChange={(e) => setImageUrl(e.target.value)}
-          placeholder="https://example.com/image.jpg"
+          placeholder="/iphone/iphone17/iphone_17__fb1277oq3eaa_large.jpg"
           disabled={loading}
         />
         {errors.imageUrl && (

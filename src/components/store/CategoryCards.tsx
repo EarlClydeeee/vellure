@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
-import { Category } from '@/lib/types';
+import { CategoryWithCount } from '@/lib/services/categories';
 
 interface CategoryCardsProps {
-  categories: Category[];
+  categories: CategoryWithCount[];
 }
 
 export function CategoryCards({ categories }: CategoryCardsProps) {
@@ -18,10 +18,13 @@ export function CategoryCards({ categories }: CategoryCardsProps) {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {categories.map((category) => (
             <Link key={category.id} href={`/products?category=${category.id}`}>
-              <Card className="group cursor-pointer transition-shadow hover:shadow-md">
-                <CardContent className="flex items-center justify-center p-8">
-                  <span className="text-lg font-medium text-center group-hover:text-primary transition-colors">
+              <Card className="group cursor-pointer border-[#e5e7eb] transition-shadow hover:shadow-md">
+                <CardContent className="flex items-center justify-between p-6">
+                  <span className="text-lg font-medium transition-colors group-hover:text-[#111111]">
                     {category.name}
+                  </span>
+                  <span className="rounded-full bg-red-500 px-2 py-0.5 text-xs font-medium text-white">
+                    {category.productCount}
                   </span>
                 </CardContent>
               </Card>
