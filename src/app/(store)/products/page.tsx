@@ -10,6 +10,7 @@ import { ShopSidebar } from '@/components/store/ShopSidebar';
 import { ProductGrid } from '@/components/store/ProductGrid';
 import { Pagination } from '@/components/store/Pagination';
 import { RecommendationsCarousel } from '@/components/store/RecommendationsCarousel';
+import { StoreSetupAlert } from '@/components/store/StoreSetupAlert';
 import { ShopSidebarSkeleton } from '@/components/store/skeletons/ShopSidebarSkeleton';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -56,6 +57,13 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       getProducts({ activeOnly: true }),
     ]);
 
+  const dbError =
+    !paginatedResult.success
+      ? paginatedResult.error
+      : !categoriesResult.success
+        ? categoriesResult.error
+        : undefined;
+
   const paginated = paginatedResult.success
     ? paginatedResult.data
     : { products: [], totalCount: 0, page: 1, pageSize: PAGE_SIZE, totalPages: 1 };
@@ -63,6 +71,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const recommendations = recommendationsResult.success
     ? recommendationsResult.data.slice(0, 8)
     : [];
+
+  const showEmptySetup =
+    !dbError &&
+    paginated.products.length === 0 &&
+    !params.search &&
+    !params.category;
 
   return (
     <div>
@@ -79,16 +93,22 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           </Suspense>
 
           <div className="min-w-0 flex-1 space-y-8">
-            <ProductGrid products={paginated.products} columns={3} />
+            <StoreSetupAlert error={dbError} empty={showEmptySetup} />
 
-            <Suspense fallback={<Skeleton className="mx-auto h-9 w-64" />}>
-              <Pagination
-                currentPage={paginated.page}
-                totalPages={paginated.totalPages}
-              />
-            </Suspense>
+            {!dbError && (
+              <>
+                <ProductGrid products={paginated.products} columns={3} />
 
-            <RecommendationsCarousel products={recommendations} />
+                <Suspense fallback={<Skeleton className="mx-auto h-9 w-64" />}>
+                  <Pagination
+                    currentPage={paginated.page}
+                    totalPages={paginated.totalPages}
+                  />
+                </Suspense>
+
+                <RecommendationsCarousel products={recommendations} />
+              </>
+            )}
           </div>
         </div>
       </div>

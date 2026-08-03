@@ -1,11 +1,45 @@
+/**
+ * Seed script using the anon/publishable key (works with current RLS policies).
+ * Run: npm run seed
+ */
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+function loadEnv() {
+  try {
+    const envPath = resolve(process.cwd(), '.env.local');
+    const content = readFileSync(envPath, 'utf8');
+    for (const line of content.split('\n')) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const eq = trimmed.indexOf('=');
+      if (eq === -1) continue;
+      const key = trimmed.slice(0, eq).trim();
+      const value = trimmed.slice(eq + 1).trim();
+      if (!process.env[key]) process.env[key] = value;
+    }
+  } catch {
+    // .env.local optional if vars already set
+  }
+}
 
-const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
+loadEnv();
 
-/** Local mockup assets in /public/iphone/iphone17 */
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error(
+    'Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local'
+  );
+  process.exit(1);
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey);
+
 const IPHONE_IMAGES = {
   iphone17: '/iphone/iphone17/iphone_17__fb1277oq3eaa_large.jpg',
   iphone17Pro: '/iphone/iphone17/iphone_17pro__t1j902iw6kya_large.jpg',
@@ -21,6 +55,16 @@ const categories = [
 ];
 
 async function seed() {
+  // Verify connection and schema
+  const { error: pingError } = await supabase.from('categories').select('id').limit(1);
+  if (pingError) {
+    console.error(
+      'Database not ready. Run supabase/migrations/001_initial_schema.sql in Supabase SQL Editor first.\n',
+      pingError.message
+    );
+    process.exit(1);
+  }
+
   console.log('Clearing existing products...');
   const { error: deleteError } = await supabase
     .from('products')
@@ -28,7 +72,7 @@ async function seed() {
     .neq('id', '00000000-0000-0000-0000-000000000000');
 
   if (deleteError) {
-    console.error('Error clearing products:', deleteError);
+    console.error('Error clearing products:', deleteError.message);
     process.exit(1);
   }
 
@@ -39,14 +83,12 @@ async function seed() {
     .select();
 
   if (catError) {
-    console.error('Error seeding categories:', catError);
+    console.error('Error seeding categories:', catError.message);
     process.exit(1);
   }
 
-  console.log(`Upserted ${insertedCategories.length} categories`);
-
   const categoryMap: Record<string, string> = {};
-  for (const cat of insertedCategories) {
+  for (const cat of insertedCategories ?? []) {
     categoryMap[cat.name] = cat.id;
   }
 
@@ -149,12 +191,12 @@ async function seed() {
     .select();
 
   if (prodError) {
-    console.error('Error seeding products:', prodError);
+    console.error('Error seeding products:', prodError.message);
     process.exit(1);
   }
 
-  console.log(`Inserted ${insertedProducts.length} products`);
-  console.log('Seed completed successfully!');
+  console.log(`Done! Inserted ${insertedProducts?.length ?? 0} products.`);
+  console.log('Refresh http://localhost:3000/products to see them.');
 }
 
 seed().catch((err) => {
