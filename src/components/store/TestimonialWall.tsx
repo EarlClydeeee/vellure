@@ -8,7 +8,6 @@ import {
   VellureTestimonial,
 } from '@/lib/data/vellure-testimonials';
 import { testimonialAggregate } from '@/lib/data/marketing-content';
-import { useReducedMotion } from '@/hooks/useReducedMotion';
 
 interface TestimonialWallProps {
   testimonials?: VellureTestimonial[];
@@ -18,7 +17,7 @@ interface TestimonialWallProps {
 
 function TestimonialCard({ testimonial }: { testimonial: VellureTestimonial }) {
   return (
-    <div className="w-[320px] min-w-[320px] shrink-0 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-colors duration-200 hover:shadow-md">
+    <div className="min-w-[320px] w-[320px] shrink-0 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
       <div className="mb-4 flex items-center gap-3">
         <Image
           src={testimonial.avatar}
@@ -42,23 +41,11 @@ function TestimonialCard({ testimonial }: { testimonial: VellureTestimonial }) {
 function MarqueeRow({
   items,
   direction,
-  animate,
 }: {
   items: VellureTestimonial[];
   direction: 'left' | 'right';
-  animate: boolean;
 }) {
   const doubled = [...items, ...items];
-
-  if (!animate) {
-    return (
-      <div className="flex flex-wrap justify-center gap-4 px-4 py-6">
-        {items.map((t) => (
-          <TestimonialCard key={t.handle} testimonial={t} />
-        ))}
-      </div>
-    );
-  }
 
   return (
     <div className="group relative overflow-hidden py-6">
@@ -82,7 +69,6 @@ export function TestimonialWall({
   title = 'What customers say about Vellure',
   className,
 }: TestimonialWallProps) {
-  const reduced = useReducedMotion();
   const row1 = testimonials.slice(0, Math.ceil(testimonials.length / 2));
   const row2 = testimonials.slice(Math.ceil(testimonials.length / 2));
 
@@ -102,12 +88,6 @@ export function TestimonialWall({
         }
         .animate-marquee-right {
           animation: marquee-right linear infinite;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .animate-marquee-left,
-          .animate-marquee-right {
-            animation: none !important;
-          }
         }
         .group:hover .animate-marquee-left,
         .group:hover .animate-marquee-right {
@@ -136,16 +116,8 @@ export function TestimonialWall({
           {title}
         </h2>
       </div>
-      <MarqueeRow
-        items={row1.length ? row1 : testimonials}
-        direction="left"
-        animate={!reduced}
-      />
-      <MarqueeRow
-        items={row2.length ? row2 : testimonials}
-        direction="right"
-        animate={!reduced}
-      />
+      <MarqueeRow items={row1.length ? row1 : testimonials} direction="left" />
+      <MarqueeRow items={row2.length ? row2 : testimonials} direction="right" />
     </section>
   );
 }

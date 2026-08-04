@@ -8,7 +8,6 @@ import {
   PUBLIC_GALLERY_IMAGES,
   distributeImagesToColumns,
 } from '@/lib/assets/public-gallery';
-import { useReducedMotion } from '@/hooks/useReducedMotion';
 
 interface MasonryWrapperLandingProps {
   images?: GalleryImage[];
@@ -23,37 +22,27 @@ function MasonryColumn({
   images,
   duration,
   direction,
-  animate,
 }: {
   images: GalleryImage[];
   duration: number;
   direction: 'normal' | 'reverse';
-  animate: boolean;
 }) {
   return (
     <div
       className="relative min-w-0 overflow-hidden"
-      style={
-        animate
-          ? {
-              maskImage:
-                'linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)',
-              WebkitMaskImage:
-                'linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)',
-            }
-          : undefined
-      }
+      style={{
+        maskImage:
+          'linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)',
+        WebkitMaskImage:
+          'linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)',
+      }}
     >
       <div
         className="flex flex-col gap-2"
-        style={
-          animate
-            ? {
-                animation: `masonryScroll ${duration}s linear infinite`,
-                animationDirection: direction,
-              }
-            : undefined
-        }
+        style={{
+          animation: `masonryScroll ${duration}s linear infinite`,
+          animationDirection: direction,
+        }}
       >
         {images.map((image, i) => (
           <MasonryTile key={`${image.src}-${i}`} image={image} />
@@ -106,12 +95,7 @@ export function MasonryWrapperLanding({
   columnCount = 4,
   className,
 }: MasonryWrapperLandingProps) {
-  const reduced = useReducedMotion();
-  const animate = !reduced;
   const columns = distributeImagesToColumns(images, columnCount);
-  const staticColumns = animate
-    ? columns
-    : columns.map((col) => col.slice(0, Math.ceil(col.length / 2)));
 
   return (
     <section className={cn('px-4 py-12', className)}>
@@ -124,32 +108,23 @@ export function MasonryWrapperLanding({
             transform: translateY(-50%);
           }
         }
-        @media (prefers-reduced-motion: reduce) {
-          [style*='masonryScroll'] {
-            animation: none !important;
-          }
-        }
       `}</style>
       <div className="container mx-auto">
         <h2 className="mb-8 text-2xl font-bold tracking-tight text-vellure-text sm:text-3xl">
           {title}
         </h2>
         <div
-          className={cn(
-            'grid gap-2 overflow-hidden',
-            animate ? 'h-[600px] sm:h-[800px] md:h-[1000px]' : 'h-auto'
-          )}
+          className="grid h-[600px] gap-2 overflow-hidden sm:h-[800px] md:h-[1000px]"
           style={{
             gridTemplateColumns: `repeat(${Math.min(columnCount, 4)}, 1fr)`,
           }}
         >
-          {staticColumns.map((col, i) => (
+          {columns.map((col, i) => (
             <MasonryColumn
               key={i}
               images={col}
               duration={COLUMN_DURATIONS[i % COLUMN_DURATIONS.length]}
               direction={i % 2 === 0 ? 'normal' : 'reverse'}
-              animate={animate}
             />
           ))}
         </div>
