@@ -31,6 +31,14 @@ function getTimeLeft(target: number): TimeLeft | null {
   };
 }
 
+function Separator() {
+  return (
+    <span className="mt-8 text-3xl font-bold text-vellure-cta sm:text-4xl" aria-hidden>
+      :
+    </span>
+  );
+}
+
 function Unit({ value, label }: { value: string; label: string }) {
   return (
     <div className="flex flex-col items-center gap-2">
@@ -70,10 +78,13 @@ export function CountdownTimer({
   }
 
   return (
-    <div className={cn('flex items-start gap-3 sm:gap-4', className)}>
+    <div className={cn('flex items-start gap-1 sm:gap-2', className)}>
       <Unit value={pad(timeLeft.days)} label="Days" />
+      <Separator />
       <Unit value={pad(timeLeft.hours)} label="Hours" />
+      <Separator />
       <Unit value={pad(timeLeft.minutes)} label="Minutes" />
+      <Separator />
       <Unit value={pad(timeLeft.seconds)} label="Seconds" />
     </div>
   );

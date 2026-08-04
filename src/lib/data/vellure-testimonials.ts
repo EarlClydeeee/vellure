@@ -10,7 +10,7 @@ export const VELLURE_TESTIMONIALS: VellureTestimonial[] = [
     name: 'Maria Santos',
     handle: '@mariasantos',
     avatar: 'https://i.pravatar.cc/150?u=mariasantos',
-    text: 'Ordered my iPhone 17 from Vellure — arrived in 2 days. Packaging was perfect and checkout was smooth.',
+    text: 'Ordered my iPhone 17 from Vellure — arrived in 2 days within Metro Manila. Packaging was perfect and checkout was smooth.',
   },
   {
     name: 'James Chen',
@@ -34,13 +34,13 @@ export const VELLURE_TESTIMONIALS: VellureTestimonial[] = [
     name: 'Sarah Kim',
     handle: '@sarahkim',
     avatar: 'https://i.pravatar.cc/150?u=sarahkim',
-    text: 'The iPhone gallery on the homepage made it easy to compare models. Bought the Pro and love it.',
+    text: 'The iPhone gallery on the homepage made it easy to compare models. Bought the Pro with official warranty included.',
   },
   {
     name: 'Marcus Rodriguez',
     handle: '@marcus_rodriguez',
     avatar: 'https://i.pravatar.cc/150?u=marcus',
-    text: 'Installment options and free delivery badges gave me confidence to checkout. Great experience overall.',
+    text: 'Paid via GCash at checkout — super convenient. COD was also available but I went digital. Great experience overall.',
   },
   {
     name: 'Emily Park',
@@ -52,6 +52,6 @@ export const VELLURE_TESTIMONIALS: VellureTestimonial[] = [
     name: 'Ryan O\'Connor',
     handle: '@ryanoconnor',
     avatar: 'https://i.pravatar.cc/150?u=ryanoconnor',
-    text: 'Found Phone Holder Sakti at a price lower than other stores. Cart and checkout took under a minute.',
+    text: 'Hit the free shipping threshold at ₱5,000 and saved on delivery. Cart and checkout took under a minute.',
   },
 ];

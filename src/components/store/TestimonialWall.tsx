@@ -1,11 +1,14 @@
 'use client';
 
 import Image from 'next/image';
+import { Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   VELLURE_TESTIMONIALS,
   VellureTestimonial,
 } from '@/lib/data/vellure-testimonials';
+import { testimonialAggregate } from '@/lib/data/marketing-content';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
 
 interface TestimonialWallProps {
   testimonials?: VellureTestimonial[];
@@ -15,7 +18,7 @@ interface TestimonialWallProps {
 
 function TestimonialCard({ testimonial }: { testimonial: VellureTestimonial }) {
   return (
-    <div className="min-w-[320px] w-[320px] shrink-0 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+    <div className="w-[320px] min-w-[320px] shrink-0 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-colors duration-200 hover:shadow-md">
       <div className="mb-4 flex items-center gap-3">
         <Image
           src={testimonial.avatar}
@@ -25,11 +28,11 @@ function TestimonialCard({ testimonial }: { testimonial: VellureTestimonial }) {
           className="rounded-full"
         />
         <div>
-          <p className="font-semibold text-[#111111]">{testimonial.name}</p>
+          <p className="font-semibold text-vellure-text">{testimonial.name}</p>
           <p className="text-sm text-gray-500">{testimonial.handle}</p>
         </div>
       </div>
-      <p className="text-left text-sm leading-relaxed text-gray-700">
+      <p className="text-left text-sm leading-relaxed text-slate-600">
         {testimonial.text}
       </p>
     </div>
@@ -39,11 +42,23 @@ function TestimonialCard({ testimonial }: { testimonial: VellureTestimonial }) {
 function MarqueeRow({
   items,
   direction,
+  animate,
 }: {
   items: VellureTestimonial[];
   direction: 'left' | 'right';
+  animate: boolean;
 }) {
   const doubled = [...items, ...items];
+
+  if (!animate) {
+    return (
+      <div className="flex flex-wrap justify-center gap-4 px-4 py-6">
+        {items.map((t) => (
+          <TestimonialCard key={t.handle} testimonial={t} />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="group relative overflow-hidden py-6">
@@ -67,6 +82,7 @@ export function TestimonialWall({
   title = 'What customers say about Vellure',
   className,
 }: TestimonialWallProps) {
+  const reduced = useReducedMotion();
   const row1 = testimonials.slice(0, Math.ceil(testimonials.length / 2));
   const row2 = testimonials.slice(Math.ceil(testimonials.length / 2));
 
@@ -87,16 +103,49 @@ export function TestimonialWall({
         .animate-marquee-right {
           animation: marquee-right linear infinite;
         }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-marquee-left,
+          .animate-marquee-right {
+            animation: none !important;
+          }
+        }
         .group:hover .animate-marquee-left,
         .group:hover .animate-marquee-right {
           animation-play-state: paused;
         }
       `}</style>
-      <div className="container mx-auto mb-8 px-4">
-        <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">{title}</h2>
+      <div className="container mx-auto mb-8 px-4 text-center">
+        <div className="mb-2 flex items-center justify-center gap-2">
+          <div className="flex">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                className="h-5 w-5 fill-[#fbbf24] text-[#fbbf24]"
+                aria-hidden
+              />
+            ))}
+          </div>
+          <span className="text-lg font-bold text-vellure-text">
+            {testimonialAggregate.rating}/5
+          </span>
+        </div>
+        <p className="text-sm text-slate-600">
+          from {testimonialAggregate.count.toLocaleString()}+ shoppers
+        </p>
+        <h2 className="mt-4 text-2xl font-bold tracking-tight text-vellure-text sm:text-3xl">
+          {title}
+        </h2>
       </div>
-      <MarqueeRow items={row1.length ? row1 : testimonials} direction="left" />
-      <MarqueeRow items={row2.length ? row2 : testimonials} direction="right" />
+      <MarqueeRow
+        items={row1.length ? row1 : testimonials}
+        direction="left"
+        animate={!reduced}
+      />
+      <MarqueeRow
+        items={row2.length ? row2 : testimonials}
+        direction="right"
+        animate={!reduced}
+      />
     </section>
   );
 }

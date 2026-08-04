@@ -37,10 +37,10 @@ export function CategoryCards({
           <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide md:justify-center md:gap-8">
             <Link
               href="/products"
-              className="flex shrink-0 flex-col items-center gap-2 text-center"
+              className="flex shrink-0 cursor-pointer flex-col items-center gap-2 text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-vellure-primary focus-visible:ring-offset-2 rounded-full"
             >
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#0057B8]/10 transition-colors hover:bg-[#0057B8]/20 md:h-20 md:w-20">
-                <LayoutGrid className="h-7 w-7 text-[#0057B8]" />
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-vellure-primary/10 transition-colors duration-200 hover:bg-vellure-primary/20 md:h-20 md:w-20">
+                <LayoutGrid className="h-7 w-7 text-vellure-primary" />
               </div>
               <span className="text-xs font-medium text-gray-700 md:text-sm">
                 Best Deals
@@ -52,10 +52,10 @@ export function CategoryCards({
                 <Link
                   key={category.id}
                   href={`/products?category=${category.id}`}
-                  className="flex shrink-0 flex-col items-center gap-2 text-center"
+                  className="flex shrink-0 cursor-pointer flex-col items-center gap-2 text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-vellure-primary focus-visible:ring-offset-2 rounded-full"
                 >
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 transition-colors hover:bg-[#0057B8]/10 md:h-20 md:w-20">
-                    <Icon className="h-7 w-7 text-[#0057B8]" />
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 transition-colors duration-200 hover:bg-vellure-primary/10 md:h-20 md:w-20">
+                    <Icon className="h-7 w-7 text-vellure-primary" />
                   </div>
                   <span className="max-w-[80px] text-xs font-medium text-gray-700 md:text-sm">
                     {category.name}

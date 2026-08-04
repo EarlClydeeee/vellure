@@ -1,6 +1,6 @@
-import Link from 'next/link';
 import { Mail } from 'lucide-react';
 import { NavLink } from '@/components/store/NavLink';
+import { NewsletterCapture } from '@/components/store/marketing/NewsletterCapture';
 
 export function Footer() {
   return (
@@ -13,19 +13,7 @@ export function Footer() {
               Subscribe for updates and exclusive offers.
             </p>
           </div>
-          <form className="flex w-full max-w-md gap-2 sm:w-auto">
-            <input
-              type="email"
-              placeholder="Your email"
-              className="h-11 flex-1 rounded-full border-0 bg-white/10 px-4 text-sm text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30"
-            />
-            <button
-              type="submit"
-              className="h-11 shrink-0 rounded-full bg-white px-6 text-sm font-medium text-[#1a1a1a] transition-colors hover:bg-white/90"
-            >
-              Send
-            </button>
-          </form>
+          <NewsletterCapture variant="footer" className="w-full max-w-md sm:w-auto" />
         </div>
       </div>
 
@@ -67,13 +55,23 @@ export function Footer() {
             <h4 className="text-sm font-semibold">Support</h4>
             <nav className="flex flex-col gap-2">
               <NavLink
-                href="/blog"
+                href="/#faq"
                 className="text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
                 FAQ
               </NavLink>
-              <span className="text-sm text-muted-foreground">Shipping</span>
-              <span className="text-sm text-muted-foreground">Return</span>
+              <NavLink
+                href="/#faq-shipping"
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Shipping
+              </NavLink>
+              <NavLink
+                href="/#faq-returns"
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Return
+              </NavLink>
             </nav>
           </div>
 
@@ -84,7 +82,7 @@ export function Footer() {
                 <a
                   key={label}
                   href="#"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border text-xs font-medium text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"
                   aria-label={label}
                 >
                   {label[0]}

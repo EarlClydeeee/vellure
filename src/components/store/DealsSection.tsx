@@ -17,7 +17,7 @@ export function DealsSection({
   if (products.length === 0) return null;
 
   return (
-    <section className="relative overflow-hidden bg-[#0057B8] py-10 md:py-14">
+    <section className="relative overflow-hidden bg-vellure-primary py-10 md:py-14">
       <div
         className="pointer-events-none absolute inset-0 opacity-20"
         style={{
@@ -42,7 +42,7 @@ export function DealsSection({
         <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
           {products.map((product) => (
             <div key={product.id} className="w-64 shrink-0">
-              <ProductCard product={product} />
+              <ProductCard product={product} variant="deal" />
             </div>
           ))}
         </div>
@@ -50,7 +50,7 @@ export function DealsSection({
         <div className="mt-6 text-center">
           <NavLink
             href="/products"
-            className="inline-flex items-center rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-[#0057B8] transition-colors hover:bg-white/90"
+            className="inline-flex cursor-pointer items-center rounded-full bg-vellure-cta px-6 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-vellure-cta/90"
           >
             See More
           </NavLink>

@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Product } from '@/lib/types';
 import { addToCartAction } from '@/app/(store)/actions';
@@ -12,15 +11,17 @@ import { cn } from '@/lib/utils';
 
 interface ProductCardProps {
   product: Product;
+  variant?: 'default' | 'deal';
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, variant = 'default' }: ProductCardProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<'cart' | 'buy' | null>(null);
   const isOutOfStock =
     product.stockQuantity === 0 || product.status === 'Out of Stock';
   const isInactive = product.status === 'Inactive';
   const disabled = isOutOfStock || isInactive;
+  const isDeal = variant === 'deal';
 
   async function handleAddToCart() {
     setLoading('cart');
@@ -49,7 +50,7 @@ export function ProductCard({ product }: ProductCardProps) {
     <article className="group flex flex-col overflow-hidden rounded-lg border border-[#e5e7eb] bg-white transition-shadow hover:shadow-md">
       <Link
         href={`/products/${product.id}`}
-        className="relative aspect-square bg-muted"
+        className="relative aspect-square cursor-pointer bg-muted"
       >
         {product.imageUrl ? (
           <Image
@@ -64,7 +65,12 @@ export function ProductCard({ product }: ProductCardProps) {
             <span className="text-sm">No Image</span>
           </div>
         )}
-        {product.category && (
+        {isDeal && !disabled && (
+          <span className="absolute left-3 top-3 rounded-full bg-red-500 px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-white">
+            Sale
+          </span>
+        )}
+        {product.category && !isDeal && (
           <span className="absolute right-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-foreground shadow-sm">
             {product.category.name}
           </span>
@@ -77,39 +83,38 @@ export function ProductCard({ product }: ProductCardProps) {
       </Link>
 
       <div className="flex flex-1 flex-col gap-2 p-4">
-        <Link href={`/products/${product.id}`} className="hover:underline">
+        <Link
+          href={`/products/${product.id}`}
+          className="cursor-pointer hover:underline"
+        >
           <h3 className="line-clamp-2 text-sm font-semibold">{product.name}</h3>
         </Link>
 
-        <div className="flex items-center gap-1.5 text-sm">
-          <Star className="h-4 w-4 fill-[#fbbf24] text-[#fbbf24]" />
-          <span className="font-medium">5.0</span>
-          <span className="text-muted-foreground">(128)</span>
-        </div>
-
         <p className="mt-auto text-lg font-bold">${product.price.toFixed(2)}</p>
 
-        <div className="flex gap-2 pt-1">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={disabled || loading !== null}
-            onClick={handleAddToCart}
-            className="flex-1 rounded-full border-[#111111] text-xs"
-          >
-            {loading === 'cart' ? 'Adding...' : 'Add to Cart'}
-          </Button>
-          <Button
-            size="sm"
-            disabled={disabled || loading !== null}
-            onClick={handleBuyNow}
-            className={cn(
-              'flex-1 rounded-full bg-[#111111] text-xs hover:bg-[#111111]/90'
-            )}
-          >
-            {loading === 'buy' ? 'Processing...' : 'Buy Now'}
-          </Button>
-        </div>
+        {!isDeal && (
+          <div className="flex gap-2 pt-1">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={disabled || loading !== null}
+              onClick={handleAddToCart}
+              className="flex-1 rounded-full border-[#111111] text-xs"
+            >
+              {loading === 'cart' ? 'Adding...' : 'Add to Cart'}
+            </Button>
+            <Button
+              size="sm"
+              disabled={disabled || loading !== null}
+              onClick={handleBuyNow}
+              className={cn(
+                'flex-1 rounded-full bg-[#111111] text-xs hover:bg-[#111111]/90'
+              )}
+            >
+              {loading === 'buy' ? 'Processing...' : 'Buy Now'}
+            </Button>
+          </div>
+        )}
       </div>
     </article>
   );
