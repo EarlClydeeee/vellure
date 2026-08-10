@@ -1,35 +1,19 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
-import { getSupabaseEnv } from '@/lib/supabase/config';
+import { createMiddlewareSupabaseClient } from '@/lib/supabase/middleware';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  let supabaseResponse = NextResponse.next({ request });
+  const { supabase, supabaseResponse } = createMiddlewareSupabaseClient(request);
 
-  const env = getSupabaseEnv();
-  if (!env) {
+  if (!supabase) {
     return supabaseResponse;
   }
 
-  const supabase = createServerClient(env.url, env.anonKey, {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-          supabaseResponse = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          );
-        },
-      },
-    }
-  );
-
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const storeProtectedPaths = ['/checkout', '/account'];
   const needsAuth =
@@ -69,9 +53,10 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/checkout/:path*',
-    '/account/:path*',
-    '/orders/:path*',
-    '/admin/:path*',
+    /*
+     * Refresh Supabase sessions on all routes except static assets.
+     * Auth redirects below only apply to matched store/admin paths.
+     */
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
