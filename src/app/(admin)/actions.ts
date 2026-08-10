@@ -5,9 +5,14 @@ import { revalidatePath } from 'next/cache';
 import { isAdminAuthenticated } from '@/lib/auth/admin';
 import { createProduct, updateProduct, deleteProduct } from '@/lib/services/products';
 import { createCategory, updateCategory, deleteCategory } from '@/lib/services/categories';
-import { updateOrderStatus } from '@/lib/services/orders';
+import {
+  updateOrderStatus,
+  confirmOrderPayment,
+  updateOrderTracking,
+} from '@/lib/services/orders';
+import { updateReturnStatus } from '@/lib/services/returns';
 import { ProductFormData } from '@/lib/validation/schemas';
-import { OrderStatus } from '@/lib/types';
+import { OrderStatus, ReturnStatus } from '@/lib/types';
 
 async function requireAdmin() {
   const authenticated = await isAdminAuthenticated();
@@ -23,8 +28,11 @@ export async function createProductAction(formData: ProductFormData) {
     name: formData.name,
     description: formData.description || undefined,
     price: formData.price,
+    compareAtPrice: formData.compareAtPrice ?? null,
+    specs: formData.specs,
     stockQuantity: formData.stockQuantity,
     imageUrl: formData.imageUrl || undefined,
+    imageUrls: formData.imageUrls,
     categoryId: formData.categoryId || undefined,
     status: formData.status,
   });
@@ -46,8 +54,11 @@ export async function updateProductAction(id: string, formData: ProductFormData)
     name: formData.name,
     description: formData.description || undefined,
     price: formData.price,
+    compareAtPrice: formData.compareAtPrice ?? null,
+    specs: formData.specs,
     stockQuantity: formData.stockQuantity,
     imageUrl: formData.imageUrl || undefined,
+    imageUrls: formData.imageUrls,
     categoryId: formData.categoryId || undefined,
     status: formData.status,
   });
@@ -132,8 +143,41 @@ export async function updateOrderStatusAction(id: string, status: OrderStatus) {
     revalidatePath('/admin/orders');
     revalidatePath(`/admin/orders/${id}`);
     revalidatePath('/admin/dashboard');
-    revalidatePath('/orders');
+    revalidatePath('/account/orders');
   }
 
+  return result;
+}
+
+export async function confirmPaymentAction(orderId: string) {
+  await requireAdmin();
+  const result = await confirmOrderPayment(orderId);
+  if (result.success) {
+    revalidatePath('/admin/orders');
+    revalidatePath(`/admin/orders/${orderId}`);
+  }
+  return result;
+}
+
+export async function shipOrderAction(orderId: string, trackingNumber: string) {
+  await requireAdmin();
+  const result = await updateOrderTracking(orderId, trackingNumber, 'Shipped');
+  if (result.success) {
+    revalidatePath('/admin/orders');
+    revalidatePath(`/admin/orders/${orderId}`);
+  }
+  return result;
+}
+
+export async function updateReturnStatusAction(
+  id: string,
+  status: ReturnStatus,
+  adminNotes?: string
+) {
+  await requireAdmin();
+  const result = await updateReturnStatus(id, status, adminNotes);
+  if (result.success) {
+    revalidatePath('/admin/returns');
+  }
   return result;
 }

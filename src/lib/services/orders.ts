@@ -1,7 +1,22 @@
 import { revalidatePath } from 'next/cache';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
-import { Order, OrderItem, OrderStatus, PaymentMethod } from '@/lib/types';
+import {
+  Order,
+  OrderItem,
+  OrderStatus,
+  PaymentMethod,
+  PaymentStatus,
+  ShippingZoneId,
+} from '@/lib/types';
 import { ServiceResult } from '@/lib/types/service';
+import { calculateShipping, getShippingZonesFromDb } from '@/lib/services/shipping';
+import { validatePromo } from '@/lib/services/promotions';
+import {
+  generatePaymentReference,
+  getInitialPaymentStatus,
+  requiresMockPaymentPage,
+} from '@/lib/services/mock-payments';
+import { sendOrderStatusEmail } from '@/lib/services/notifications';
 
 export interface CreateOrderInput {
   customerId: string;
@@ -9,7 +24,9 @@ export interface CreateOrderInput {
   email: string;
   contactNumber: string;
   deliveryAddress: string;
+  shippingZone: ShippingZoneId;
   paymentMethod: PaymentMethod;
+  promoCode?: string;
   notes?: string;
 }
 
@@ -36,6 +53,13 @@ function mapOrder(row: Record<string, unknown>): Order {
     contactNumber: row.contact_number as string,
     deliveryAddress: row.delivery_address as string,
     paymentMethod: row.payment_method as PaymentMethod,
+    paymentStatus: (row.payment_status as PaymentStatus) ?? 'pending',
+    paymentReference: (row.payment_reference as string) ?? null,
+    shippingZone: (row.shipping_zone as ShippingZoneId) ?? null,
+    shippingFee: Number(row.shipping_fee ?? 0),
+    discount: Number(row.discount ?? 0),
+    promoCode: (row.promo_code as string) ?? null,
+    trackingNumber: (row.tracking_number as string) ?? null,
     status: row.status as OrderStatus,
     notes: (row.notes as string) ?? null,
     subtotal: Number(row.subtotal),
@@ -48,10 +72,9 @@ function mapOrder(row: Record<string, unknown>): Order {
 
 export async function createOrder(
   input: CreateOrderInput
-): Promise<ServiceResult<Order>> {
+): Promise<ServiceResult<Order & { redirectToPayment?: boolean }>> {
   const supabase = await createServerSupabaseClient();
 
-  // 1. Get cart items with product details
   const { data: cartItems, error: cartError } = await supabase
     .from('cart_items')
     .select('*, products(*)')
@@ -65,14 +88,27 @@ export async function createOrder(
     return { success: false, error: 'Cart is empty', code: 'EMPTY_CART' };
   }
 
-  // 2. Calculate subtotal and total
   const subtotal = cartItems.reduce((sum, item) => {
     const product = item.products as Record<string, unknown>;
     return sum + Number(product.price) * (item.quantity as number);
   }, 0);
-  const total = subtotal;
 
-  // 3. Insert order
+  const promoResult = await validatePromo(input.promoCode, subtotal);
+  const promo = promoResult.success ? promoResult.data : null;
+  const discount = promo?.valid ? promo.discountAmount : 0;
+  const freeShipping = promo?.valid ? promo.freeShipping : false;
+
+  const zones = await getShippingZonesFromDb();
+  const shipping = calculateShipping(subtotal, input.shippingZone, zones, freeShipping);
+  const shippingFee = shipping.fee;
+  const total = Math.max(0, subtotal + shippingFee - discount);
+
+  const paymentStatus = getInitialPaymentStatus(input.paymentMethod);
+  const paymentReference =
+    requiresMockPaymentPage(input.paymentMethod) || input.paymentMethod === 'Bank Transfer'
+      ? generatePaymentReference()
+      : null;
+
   const { data: order, error: orderError } = await supabase
     .from('orders')
     .insert({
@@ -82,6 +118,12 @@ export async function createOrder(
       contact_number: input.contactNumber,
       delivery_address: input.deliveryAddress,
       payment_method: input.paymentMethod,
+      payment_status: paymentStatus,
+      payment_reference: paymentReference,
+      shipping_zone: input.shippingZone,
+      shipping_fee: shippingFee,
+      discount,
+      promo_code: promo?.valid ? promo.code : null,
       notes: input.notes ?? null,
       status: 'Pending',
       subtotal,
@@ -94,7 +136,6 @@ export async function createOrder(
     return { success: false, error: orderError.message, code: 'ORDER_ERROR' };
   }
 
-  // 4. Insert order items
   const orderItems = cartItems.map((item) => {
     const product = item.products as Record<string, unknown>;
     return {
@@ -107,38 +148,131 @@ export async function createOrder(
     };
   });
 
-  const { error: itemsError } = await supabase
-    .from('order_items')
-    .insert(orderItems);
+  const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
 
   if (itemsError) {
-    return {
-      success: false,
-      error: itemsError.message,
-      code: 'ORDER_ITEMS_ERROR',
-    };
+    return { success: false, error: itemsError.message, code: 'ORDER_ITEMS_ERROR' };
   }
 
-  // 5. Clear the cart
-  const { error: clearError } = await supabase
-    .from('cart_items')
-    .delete()
-    .eq('customer_id', input.customerId);
-
-  if (clearError) {
-    return {
-      success: false,
-      error: clearError.message,
-      code: 'CLEAR_CART_ERROR',
-    };
+  for (const item of cartItems) {
+    const product = item.products as Record<string, unknown>;
+    const qty = item.quantity as number;
+    await supabase
+      .from('products')
+      .update({
+        sales_count: ((product.sales_count as number) ?? 0) + qty,
+        stock_quantity: Math.max(0, (product.stock_quantity as number) - qty),
+      })
+      .eq('id', item.product_id as string);
   }
+
+  await supabase.from('cart_items').delete().eq('customer_id', input.customerId);
+
+  await sendOrderStatusEmail({
+    orderId: order.id as string,
+    customerId: input.customerId,
+    email: input.email,
+    eventType: 'order_placed',
+    orderNumber: order.order_number as number,
+    status: 'Pending',
+  });
 
   revalidatePath('/cart');
   revalidatePath('/orders');
+  revalidatePath('/account/orders');
   revalidatePath('/admin/orders');
   revalidatePath('/admin/dashboard');
 
-  return { success: true, data: mapOrder(order) };
+  const mapped = mapOrder(order);
+  return {
+    success: true,
+    data: {
+      ...mapped,
+      redirectToPayment: requiresMockPaymentPage(input.paymentMethod),
+    },
+  };
+}
+
+export async function confirmOrderPayment(
+  id: string
+): Promise<ServiceResult<Order>> {
+  const supabase = await createServerSupabaseClient();
+
+  const { data: existing } = await supabase.from('orders').select('*').eq('id', id).single();
+  if (!existing) {
+    return { success: false, error: 'Order not found', code: 'NOT_FOUND' };
+  }
+
+  const { data, error } = await supabase
+    .from('orders')
+    .update({
+      payment_status: 'paid',
+      status: 'Confirmed',
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+    .select('*, order_items(*)')
+    .single();
+
+  if (error) {
+    return { success: false, error: error.message, code: 'UPDATE_ERROR' };
+  }
+
+  await sendOrderStatusEmail({
+    orderId: id,
+    customerId: data.customer_id as string,
+    email: data.email as string,
+    eventType: 'payment_confirmed',
+    orderNumber: data.order_number as number,
+    status: 'Confirmed',
+  });
+
+  revalidatePath('/admin/orders');
+  revalidatePath(`/admin/orders/${id}`);
+  revalidatePath('/account/orders');
+  revalidatePath(`/account/orders/${id}`);
+
+  return { success: true, data: mapOrder(data) };
+}
+
+export async function updateOrderTracking(
+  id: string,
+  trackingNumber: string,
+  status: OrderStatus = 'Shipped'
+): Promise<ServiceResult<Order>> {
+  const supabase = await createServerSupabaseClient();
+
+  const { data, error } = await supabase
+    .from('orders')
+    .update({
+      tracking_number: trackingNumber,
+      status,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+    .select('*, order_items(*)')
+    .single();
+
+  if (error) {
+    return { success: false, error: error.message, code: 'UPDATE_ERROR' };
+  }
+
+  await sendOrderStatusEmail({
+    orderId: id,
+    customerId: data.customer_id as string,
+    email: data.email as string,
+    eventType: 'order_shipped',
+    orderNumber: data.order_number as number,
+    status,
+    trackingNumber,
+  });
+
+  revalidatePath('/admin/orders');
+  revalidatePath(`/admin/orders/${id}`);
+  revalidatePath('/account/orders');
+  revalidatePath(`/account/orders/${id}`);
+
+  return { success: true, data: mapOrder(data) };
 }
 
 export async function getOrders(): Promise<ServiceResult<Order[]>> {
@@ -212,7 +346,17 @@ export async function updateOrderStatus(
     return { success: false, error: error.message, code: 'UPDATE_ERROR' };
   }
 
+  await sendOrderStatusEmail({
+    orderId: id,
+    customerId: data.customer_id as string,
+    email: data.email as string,
+    eventType: 'status_updated',
+    orderNumber: data.order_number as number,
+    status,
+  });
+
   revalidatePath('/orders');
+  revalidatePath('/account/orders');
   revalidatePath('/admin/orders');
   revalidatePath('/admin/dashboard');
 

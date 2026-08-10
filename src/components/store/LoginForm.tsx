@@ -1,17 +1,23 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { loginSchema, LoginFormData } from '@/lib/validation/schemas';
 import { signIn } from '@/lib/auth/customer';
+import { mergeGuestCartAction } from '@/app/(store)/actions';
+import { getGuestCart, clearGuestCart } from '@/lib/cart/guest-cart';
 import { cn } from '@/lib/utils';
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get('returnTo') ?? '/';
+  const isCheckout = returnTo.startsWith('/checkout');
+
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof LoginFormData, string>>>({});
   const [serverError, setServerError] = useState<string | null>(null);
@@ -56,19 +62,30 @@ export function LoginForm() {
       return;
     }
 
-    router.push('/');
+    const guestItems = getGuestCart();
+    if (guestItems.length > 0) {
+      await mergeGuestCartAction(guestItems);
+      clearGuestCart();
+    }
+
+    router.push(returnTo);
     router.refresh();
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {isCheckout && (
+        <div className="rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
+          Sign in to complete your order. Your cart items will be saved.
+        </div>
+      )}
+
       {serverError && (
         <div className="rounded-md border border-destructive bg-destructive/10 p-3 text-sm text-destructive">
           {serverError}
         </div>
       )}
 
-      {/* Email */}
       <div className="space-y-2">
         <Label htmlFor="email">
           Email <span className="text-destructive">*</span>
@@ -84,7 +101,6 @@ export function LoginForm() {
         {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
       </div>
 
-      {/* Password */}
       <div className="space-y-2">
         <Label htmlFor="password">
           Password <span className="text-destructive">*</span>
@@ -106,7 +122,10 @@ export function LoginForm() {
 
       <p className="text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{' '}
-        <Link href="/signup" className="font-medium text-primary hover:underline">
+        <Link
+          href={`/signup${returnTo !== '/' ? `?returnTo=${encodeURIComponent(returnTo)}` : ''}`}
+          className="font-medium text-primary hover:underline"
+        >
           Sign up
         </Link>
       </p>

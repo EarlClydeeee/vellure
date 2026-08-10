@@ -1,6 +1,7 @@
 /**
  * Seed script using the anon/publishable key (works with current RLS policies).
  * Run: npm run seed
+ * Requires: 001_initial_schema.sql + 003_tier1_commerce.sql applied first.
  */
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
@@ -55,17 +56,17 @@ const categories = [
 ];
 
 async function seed() {
-  // Verify connection and schema
   const { error: pingError } = await supabase.from('categories').select('id').limit(1);
   if (pingError) {
     console.error(
-      'Database not ready. Run supabase/migrations/001_initial_schema.sql in Supabase SQL Editor first.\n',
+      'Database not ready. Run supabase/migrations in Supabase SQL Editor first.\n',
       pingError.message
     );
     process.exit(1);
   }
 
   console.log('Clearing existing products...');
+  await supabase.from('product_images').delete().neq('id', '00000000-0000-0000-0000-000000000000');
   const { error: deleteError } = await supabase
     .from('products')
     .delete()
@@ -97,8 +98,11 @@ async function seed() {
       name: 'iPhone 17',
       description:
         'The latest iPhone with advanced camera system, all-day battery, and stunning display.',
-      price: 799.0,
+      price: 45999,
+      compare_at_price: 49999,
+      specs: { Storage: '256GB', Display: '6.3" Super Retina', Chip: 'A19' },
       stock_quantity: 32,
+      sales_count: 120,
       image_url: IPHONE_IMAGES.iphone17,
       category_id: categoryMap['For Phone'],
       status: 'Active',
@@ -107,8 +111,11 @@ async function seed() {
       name: 'iPhone 17 Pro',
       description:
         'Pro-grade performance with titanium design, pro camera, and the fastest chip.',
-      price: 999.0,
+      price: 65999,
+      compare_at_price: 69999,
+      specs: { Storage: '512GB', Display: '6.9" ProMotion', Chip: 'A19 Pro' },
       stock_quantity: 24,
+      sales_count: 85,
       image_url: IPHONE_IMAGES.iphone17Pro,
       category_id: categoryMap['For Phone'],
       status: 'Active',
@@ -117,8 +124,10 @@ async function seed() {
       name: 'iPhone 17e',
       description:
         'Essential iPhone features at an incredible value. Powerful, durable, and easy to love.',
-      price: 599.0,
+      price: 32999,
+      specs: { Storage: '128GB', Display: '6.1"', Chip: 'A18' },
       stock_quantity: 40,
+      sales_count: 45,
       image_url: IPHONE_IMAGES.iphone17e,
       category_id: categoryMap['For Phone'],
       status: 'Active',
@@ -127,8 +136,11 @@ async function seed() {
       name: 'iPhone Air',
       description:
         'Ultra-thin design meets pro capability. Light in hand, heavy on innovation.',
-      price: 899.0,
+      price: 54999,
+      compare_at_price: 57999,
+      specs: { Storage: '256GB', Weight: '165g', Thickness: '5.6mm' },
       stock_quantity: 18,
+      sales_count: 30,
       image_url: IPHONE_IMAGES.iphoneAir,
       category_id: categoryMap['For Phone'],
       status: 'Active',
@@ -137,8 +149,10 @@ async function seed() {
       name: 'Headsound Pro',
       description:
         'Premium wireless headphones with spatial audio and active noise cancellation.',
-      price: 249.0,
+      price: 12999,
+      specs: { 'Battery Life': '30 hours', ANC: 'Yes', Connectivity: 'Bluetooth 5.3' },
       stock_quantity: 45,
+      sales_count: 60,
       image_url: IPHONE_IMAGES.iphone17,
       category_id: categoryMap['For Music'],
       status: 'Active',
@@ -147,7 +161,7 @@ async function seed() {
       name: 'Smart Home Hub',
       description:
         'Control your entire home from one elegant hub. Works with all major smart devices.',
-      price: 129.0,
+      price: 6499,
       stock_quantity: 30,
       image_url: IPHONE_IMAGES.iphone17Pro,
       category_id: categoryMap['For Home'],
@@ -157,8 +171,10 @@ async function seed() {
       name: 'CloudVault 2TB',
       description:
         'Fast external storage with hardware encryption. Backup and access files anywhere.',
-      price: 89.0,
+      price: 4999,
+      specs: { Capacity: '2TB', Interface: 'USB-C 3.2', Encryption: 'AES-256' },
       stock_quantity: 55,
+      sales_count: 22,
       image_url: IPHONE_IMAGES.iphone17e,
       category_id: categoryMap['For Storage'],
       status: 'Active',
@@ -167,7 +183,7 @@ async function seed() {
       name: 'Phone Holder Sakti',
       description:
         'Magnetic phone mount for desk and car. Adjustable angle, secure grip.',
-      price: 29.9,
+      price: 899,
       stock_quantity: 100,
       image_url: IPHONE_IMAGES.iphoneAir,
       category_id: categoryMap['For Phone'],
@@ -176,8 +192,11 @@ async function seed() {
     {
       name: 'iPhone 17 — Midnight',
       description: 'iPhone 17 in Midnight finish. Same great phone, bold new color.',
-      price: 799.0,
+      price: 45999,
+      compare_at_price: 47999,
+      specs: { Storage: '256GB', Color: 'Midnight' },
       stock_quantity: 15,
+      sales_count: 10,
       image_url: IPHONE_IMAGES.iphone17,
       category_id: categoryMap['For Phone'],
       status: 'Active',
@@ -192,10 +211,29 @@ async function seed() {
 
   if (prodError) {
     console.error('Error seeding products:', prodError.message);
+    console.error('Tip: Apply supabase/migrations/003_tier1_commerce.sql if columns are missing.');
     process.exit(1);
   }
 
-  console.log(`Done! Inserted ${insertedProducts?.length ?? 0} products.`);
+  console.log('Seeding product gallery images...');
+  for (const product of insertedProducts ?? []) {
+    const gallery: string[] = [product.image_url as string];
+    if (product.name.includes('Pro')) {
+      gallery.push(IPHONE_IMAGES.iphone17Pro, IPHONE_IMAGES.iphoneAir);
+    } else if (product.name.includes('iPhone')) {
+      gallery.push(IPHONE_IMAGES.iphone17e);
+    }
+    const unique = [...new Set(gallery.filter(Boolean))];
+    await supabase.from('product_images').insert(
+      unique.map((url, i) => ({
+        product_id: product.id,
+        url,
+        sort_order: i,
+      }))
+    );
+  }
+
+  console.log(`Done! Inserted ${insertedProducts?.length ?? 0} products with Tier 1 data.`);
   console.log('Refresh http://localhost:3000/products to see them.');
 }
 

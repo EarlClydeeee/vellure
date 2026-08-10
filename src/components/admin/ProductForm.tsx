@@ -31,6 +31,15 @@ export function ProductForm({ categories, product }: ProductFormProps) {
   const [name, setName] = useState(product?.name ?? '');
   const [description, setDescription] = useState(product?.description ?? '');
   const [price, setPrice] = useState(product?.price?.toString() ?? '');
+  const [compareAtPrice, setCompareAtPrice] = useState(
+    product?.compareAtPrice?.toString() ?? ''
+  );
+  const [specsText, setSpecsText] = useState(
+    product?.specs ? Object.entries(product.specs).map(([k, v]) => `${k}: ${v}`).join('\n') : ''
+  );
+  const [extraImages, setExtraImages] = useState(
+    product?.images?.map((i) => i.url).join('\n') ?? ''
+  );
   const [stockQuantity, setStockQuantity] = useState(
     product?.stockQuantity?.toString() ?? '0'
   );
@@ -43,13 +52,28 @@ export function ProductForm({ categories, product }: ProductFormProps) {
     setErrors({});
     setServerError('');
 
+    const specs: Record<string, string> = {};
+    specsText.split('\n').forEach((line) => {
+      const idx = line.indexOf(':');
+      if (idx > 0) {
+        specs[line.slice(0, idx).trim()] = line.slice(idx + 1).trim();
+      }
+    });
+    const imageUrls = extraImages
+      .split('\n')
+      .map((s) => s.trim())
+      .filter(Boolean);
+
     const formData = {
       name,
       description: description || undefined,
       price: parseFloat(price) || 0,
+      compareAtPrice: compareAtPrice ? parseFloat(compareAtPrice) : null,
+      specs: Object.keys(specs).length ? specs : undefined,
       stockQuantity: parseInt(stockQuantity) || 0,
       imageUrl: imageUrl || '',
-      categoryId: categoryId || '',
+      imageUrls: imageUrls.length ? imageUrls : undefined,
+      categoryId: categoryId === 'none' ? '' : categoryId || '',
       status,
     };
 
@@ -154,10 +178,35 @@ export function ProductForm({ categories, product }: ProductFormProps) {
             <p className="text-sm text-destructive">{errors.stockQuantity}</p>
           )}
         </div>
+        <div className="space-y-2">
+          <Label htmlFor="compareAtPrice">Compare-at Price (sale)</Label>
+          <Input
+            id="compareAtPrice"
+            type="number"
+            step="0.01"
+            min="0"
+            value={compareAtPrice}
+            onChange={(e) => setCompareAtPrice(e.target.value)}
+            disabled={loading}
+            placeholder="Original price for strikethrough"
+          />
+        </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="imageUrl">Image URL or path</Label>
+        <Label htmlFor="specs">Specs (one per line: Key: Value)</Label>
+        <Textarea
+          id="specs"
+          value={specsText}
+          onChange={(e) => setSpecsText(e.target.value)}
+          placeholder={'Storage: 256GB\nColor: Midnight'}
+          disabled={loading}
+          rows={4}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="imageUrl">Primary Image URL or path</Label>
         <Input
           id="imageUrl"
           value={imageUrl}
@@ -168,6 +217,18 @@ export function ProductForm({ categories, product }: ProductFormProps) {
         {errors.imageUrl && (
           <p className="text-sm text-destructive">{errors.imageUrl}</p>
         )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="extraImages">Gallery Images (one URL per line)</Label>
+        <Textarea
+          id="extraImages"
+          value={extraImages}
+          onChange={(e) => setExtraImages(e.target.value)}
+          placeholder="/iphone/iphone17/iphone_17pro__t1j902iw6kya_large.jpg"
+          disabled={loading}
+          rows={3}
+        />
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

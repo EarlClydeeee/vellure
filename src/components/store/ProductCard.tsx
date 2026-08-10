@@ -4,31 +4,52 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { Heart, GitCompare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Product } from '@/lib/types';
-import { addToCartAction } from '@/app/(store)/actions';
+import { formatPrice } from '@/lib/format-price';
+import { addToGuestCart } from '@/lib/cart/guest-cart';
+import { addToCartAction, toggleWishlistAction } from '@/app/(store)/actions';
+import { useCart } from '@/components/store/CartProvider';
+import { addToCompare } from '@/lib/cart/compare';
 import { cn } from '@/lib/utils';
 
 interface ProductCardProps {
   product: Product;
   variant?: 'default' | 'deal';
+  isLoggedIn?: boolean;
 }
 
-export function ProductCard({ product, variant = 'default' }: ProductCardProps) {
+function StarRating({ rating, count }: { rating?: number; count?: number }) {
+  if (!rating || !count) return null;
+  return (
+    <p className="text-xs text-muted-foreground">
+      ★ {rating.toFixed(1)} ({count})
+    </p>
+  );
+}
+
+export function ProductCard({ product, variant = 'default', isLoggedIn = false }: ProductCardProps) {
   const router = useRouter();
+  const { refreshCartCount } = useCart();
   const [loading, setLoading] = useState<'cart' | 'buy' | null>(null);
   const isOutOfStock =
     product.stockQuantity === 0 || product.status === 'Out of Stock';
   const isInactive = product.status === 'Inactive';
   const disabled = isOutOfStock || isInactive;
-  const isDeal = variant === 'deal';
+  const isDeal = variant === 'deal' || (product.compareAtPrice != null && product.compareAtPrice > product.price);
+  const onSale = product.compareAtPrice != null && product.compareAtPrice > product.price;
 
   async function handleAddToCart() {
     setLoading('cart');
     try {
-      await addToCartAction(product.id, 1);
-    } catch {
-      // user may not be logged in
+      const result = await addToCartAction(product.id, 1);
+      if (result && 'requiresAuth' in result && result.requiresAuth) {
+        addToGuestCart(product.id, 1);
+      } else {
+        router.refresh();
+      }
+      refreshCartCount();
     } finally {
       setLoading(null);
     }
@@ -37,13 +58,33 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
   async function handleBuyNow() {
     setLoading('buy');
     try {
-      await addToCartAction(product.id, 1);
-      router.push('/checkout');
-    } catch {
-      router.push(`/products/${product.id}`);
+      const result = await addToCartAction(product.id, 1);
+      if (result && 'requiresAuth' in result && result.requiresAuth) {
+        addToGuestCart(product.id, 1);
+        refreshCartCount();
+        router.push('/login?returnTo=/checkout');
+      } else {
+        router.refresh();
+        router.push('/checkout');
+      }
     } finally {
       setLoading(null);
     }
+  }
+
+  async function handleWishlist(e: React.MouseEvent) {
+    e.preventDefault();
+    if (!isLoggedIn) {
+      router.push('/login');
+      return;
+    }
+    await toggleWishlistAction(product.id);
+    router.refresh();
+  }
+
+  function handleCompare(e: React.MouseEvent) {
+    e.preventDefault();
+    addToCompare(product.id);
   }
 
   return (
@@ -83,14 +124,41 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
       </Link>
 
       <div className="flex flex-1 flex-col gap-2 p-4">
-        <Link
-          href={`/products/${product.id}`}
-          className="cursor-pointer hover:underline"
-        >
+        <Link href={`/products/${product.id}`} className="cursor-pointer hover:underline">
           <h3 className="line-clamp-2 text-sm font-semibold">{product.name}</h3>
         </Link>
 
-        <p className="mt-auto text-lg font-bold">${product.price.toFixed(2)}</p>
+        <StarRating rating={product.averageRating} count={product.reviewCount} />
+
+        <div className="mt-auto flex items-baseline gap-2">
+          <p className="text-lg font-bold">{formatPrice(product.price)}</p>
+          {onSale && product.compareAtPrice && (
+            <p className="text-sm text-muted-foreground line-through">
+              {formatPrice(product.compareAtPrice)}
+            </p>
+          )}
+        </div>
+
+        <div className="flex gap-1 pt-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={handleWishlist}
+            aria-label="Add to wishlist"
+          >
+            <Heart className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={handleCompare}
+            aria-label="Compare"
+          >
+            <GitCompare className="h-4 w-4" />
+          </Button>
+        </div>
 
         {!isDeal && (
           <div className="flex gap-2 pt-1">

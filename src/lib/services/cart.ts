@@ -15,7 +15,11 @@ function mapCartItem(row: Record<string, unknown>): CartItem {
           name: product.name as string,
           description: (product.description as string) ?? null,
           price: Number(product.price),
+          compareAtPrice:
+            product.compare_at_price != null ? Number(product.compare_at_price) : null,
+          specs: (product.specs as Record<string, string>) ?? {},
           stockQuantity: product.stock_quantity as number,
+          salesCount: (product.sales_count as number) ?? 0,
           imageUrl: (product.image_url as string) ?? null,
           categoryId: (product.category_id as string) ?? null,
           status: product.status as Product['status'],

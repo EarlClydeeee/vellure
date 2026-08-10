@@ -5,18 +5,27 @@ import Image from 'next/image';
 import { Trash2, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { QuantitySelector } from '@/components/store/QuantitySelector';
-import { updateCartQuantityAction, removeFromCartAction } from '@/app/(store)/actions';
-import { CartItem } from '@/lib/types';
+import {
+  updateCartQuantityAction,
+  removeFromCartAction,
+} from '@/app/(store)/actions';
+import { updateGuestCartQuantity, removeFromGuestCart } from '@/lib/cart/guest-cart';
+import { useCart } from '@/components/store/CartProvider';
+import { formatPrice } from '@/lib/format-price';
+import { CartItem, Product } from '@/lib/types';
 
 interface CartItemRowProps {
   item: CartItem;
+  isGuest?: boolean;
+  guestProduct?: Product;
 }
 
-export function CartItemRow({ item }: CartItemRowProps) {
+export function CartItemRow({ item, isGuest, guestProduct }: CartItemRowProps) {
   const [isPending, startTransition] = useTransition();
   const [quantity, setQuantity] = useState(item.quantity);
+  const { refreshCartCount } = useCart();
 
-  const product = item.product;
+  const product = guestProduct ?? item.product;
   if (!product) return null;
 
   const lineSubtotal = product.price * quantity;
@@ -24,19 +33,29 @@ export function CartItemRow({ item }: CartItemRowProps) {
   function handleQuantityChange(newQuantity: number) {
     setQuantity(newQuantity);
     startTransition(async () => {
-      await updateCartQuantityAction(item.productId, newQuantity);
+      if (isGuest) {
+        updateGuestCartQuantity(item.productId, newQuantity);
+        refreshCartCount();
+      } else {
+        await updateCartQuantityAction(item.productId, newQuantity);
+      }
     });
   }
 
   function handleRemove() {
     startTransition(async () => {
-      await removeFromCartAction(item.productId);
+      if (isGuest) {
+        removeFromGuestCart(item.productId);
+        refreshCartCount();
+        window.location.reload();
+      } else {
+        await removeFromCartAction(item.productId);
+      }
     });
   }
 
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 border-b py-4">
-      {/* Product Image */}
       <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border bg-muted">
         {product.imageUrl ? (
           <Image
@@ -53,14 +72,12 @@ export function CartItemRow({ item }: CartItemRowProps) {
         )}
       </div>
 
-      {/* Product Info */}
       <div className="flex flex-1 flex-col sm:flex-row sm:items-center gap-4">
         <div className="flex-1">
           <h3 className="text-sm font-medium">{product.name}</h3>
-          <p className="text-sm text-muted-foreground">${product.price.toFixed(2)}</p>
+          <p className="text-sm text-muted-foreground">{formatPrice(product.price)}</p>
         </div>
 
-        {/* Quantity */}
         <div className="flex items-center gap-4">
           <QuantitySelector
             max={product.stockQuantity}
@@ -68,12 +85,10 @@ export function CartItemRow({ item }: CartItemRowProps) {
             onChange={handleQuantityChange}
           />
 
-          {/* Line Subtotal */}
-          <span className="w-20 text-right text-sm font-medium">
-            ${lineSubtotal.toFixed(2)}
+          <span className="w-24 text-right text-sm font-medium">
+            {formatPrice(lineSubtotal)}
           </span>
 
-          {/* Remove Button */}
           <Button
             variant="ghost"
             size="icon"

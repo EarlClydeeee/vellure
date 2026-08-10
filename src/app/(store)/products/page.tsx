@@ -5,12 +5,14 @@ import {
   ProductFilters,
 } from '@/lib/services/products';
 import { getCategoriesWithCounts } from '@/lib/services/categories';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { ShopHero } from '@/components/store/ShopHero';
 import { ShopSidebar } from '@/components/store/ShopSidebar';
 import { ProductGrid } from '@/components/store/ProductGrid';
 import { Pagination } from '@/components/store/Pagination';
 import { RecommendationsCarousel } from '@/components/store/RecommendationsCarousel';
 import { StoreSetupAlert } from '@/components/store/StoreSetupAlert';
+import { PriceSortSelect } from '@/components/store/PriceSortSelect';
 import { ShopSidebarSkeleton } from '@/components/store/skeletons/ShopSidebarSkeleton';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -33,7 +35,7 @@ function resolveSort(
   filter?: string
 ): ProductFilters['sortBy'] {
   if (sort === 'price_asc' || sort === 'price_desc') return sort;
-  if (filter === 'bestseller' || filter === 'discount') return 'newest';
+  if (filter === 'bestseller') return 'bestseller';
   return 'newest';
 }
 
@@ -41,10 +43,18 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const params = await searchParams;
   const page = Math.max(1, parseInt(params.page ?? '1', 10) || 1);
 
+  const supabase = await createServerSupabaseClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   const filters: ProductFilters = {
     search: params.search,
     categoryId: params.category,
     sortBy: resolveSort(params.sort, params.filter),
+    filter: params.filter === 'discount' || params.filter === 'bestseller'
+      ? params.filter
+      : undefined,
     activeOnly: true,
     page,
     pageSize: PAGE_SIZE,
@@ -93,11 +103,21 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           </Suspense>
 
           <div className="min-w-0 flex-1 space-y-8">
+            <div className="flex justify-end">
+              <Suspense fallback={<Skeleton className="h-9 w-40" />}>
+                <PriceSortSelect />
+              </Suspense>
+            </div>
+
             <StoreSetupAlert error={dbError} empty={showEmptySetup} />
 
             {!dbError && (
               <>
-                <ProductGrid products={paginated.products} columns={3} />
+                <ProductGrid
+                  products={paginated.products}
+                  columns={3}
+                  isLoggedIn={!!user}
+                />
 
                 <Suspense fallback={<Skeleton className="mx-auto h-9 w-64" />}>
                   <Pagination

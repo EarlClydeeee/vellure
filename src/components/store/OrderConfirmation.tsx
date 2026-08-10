@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Order } from '@/lib/types';
+import { formatPrice } from '@/lib/format-price';
 
 interface OrderConfirmationProps {
   order: Order;
@@ -30,14 +31,28 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
                 <span>
                   {item.productName} x {item.quantity}
                 </span>
-                <span>${item.subtotal.toFixed(2)}</span>
+                <span>{formatPrice(item.subtotal)}</span>
               </div>
             ))}
           </div>
         )}
-        <div className="border-t pt-2 flex justify-between font-medium">
-          <span>Total</span>
-          <span>${order.total.toFixed(2)}</span>
+        <div className="border-t pt-2 space-y-1 text-sm">
+          {order.shippingFee > 0 && (
+            <div className="flex justify-between">
+              <span>Shipping</span>
+              <span>{formatPrice(order.shippingFee)}</span>
+            </div>
+          )}
+          {order.discount > 0 && (
+            <div className="flex justify-between text-green-600">
+              <span>Discount</span>
+              <span>-{formatPrice(order.discount)}</span>
+            </div>
+          )}
+          <div className="flex justify-between font-medium">
+            <span>Total</span>
+            <span>{formatPrice(order.total)}</span>
+          </div>
         </div>
         <div className="text-sm text-muted-foreground space-y-1">
           <p>Payment: {order.paymentMethod}</p>
@@ -46,7 +61,7 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
       </div>
 
       <div className="flex gap-4">
-        <Link href="/orders">
+        <Link href="/account/orders">
           <Button variant="outline">View Orders</Button>
         </Link>
         <Link href="/products">

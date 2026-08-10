@@ -1,17 +1,21 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { signupSchema, SignupFormData } from '@/lib/validation/schemas';
 import { signUp } from '@/lib/auth/customer';
+import { mergeGuestCartAction } from '@/app/(store)/actions';
+import { getGuestCart, clearGuestCart } from '@/lib/cart/guest-cart';
 import { cn } from '@/lib/utils';
 
 export function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get('returnTo') ?? '/';
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof SignupFormData, string>>>({});
   const [serverError, setServerError] = useState<string | null>(null);
@@ -57,7 +61,13 @@ export function SignupForm() {
       return;
     }
 
-    router.push('/');
+    const guestItems = getGuestCart();
+    if (guestItems.length > 0) {
+      await mergeGuestCartAction(guestItems);
+      clearGuestCart();
+    }
+
+    router.push(returnTo);
     router.refresh();
   }
 
@@ -122,7 +132,10 @@ export function SignupForm() {
 
       <p className="text-center text-sm text-muted-foreground">
         Already have an account?{' '}
-        <Link href="/login" className="font-medium text-primary hover:underline">
+        <Link
+          href={`/login${returnTo !== '/' ? `?returnTo=${encodeURIComponent(returnTo)}` : ''}`}
+          className="font-medium text-primary hover:underline"
+        >
           Log in
         </Link>
       </p>

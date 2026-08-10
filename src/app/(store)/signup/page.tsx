@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { SignupForm } from '@/components/store/SignupForm';
@@ -21,7 +22,9 @@ export default async function SignupPage() {
             Join Vellure to start shopping
           </p>
         </div>
-        <SignupForm />
+        <Suspense fallback={<p className="text-center text-muted-foreground">Loading...</p>}>
+          <SignupForm />
+        </Suspense>
       </div>
     </div>
   );

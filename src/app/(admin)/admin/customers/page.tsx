@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { getCustomers } from '@/lib/services/customers';
+import { formatPrice } from '@/lib/format-price';
 
 export const dynamic = 'force-dynamic';
 
@@ -51,7 +52,7 @@ export default async function AdminCustomersPage() {
                   <TableCell>{customer.email}</TableCell>
                   <TableCell>{customer.contactNumber ?? '—'}</TableCell>
                   <TableCell>{customer.totalOrders}</TableCell>
-                  <TableCell>${customer.totalPurchaseAmount.toFixed(2)}</TableCell>
+                  <TableCell>{formatPrice(customer.totalPurchaseAmount)}</TableCell>
                   <TableCell>
                     <Badge variant="default">Active</Badge>
                   </TableCell>

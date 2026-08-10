@@ -6,11 +6,11 @@ import { Menu, Search, User, ShoppingBag, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { NavLink } from '@/components/store/NavLink';
+import { useCart } from '@/components/store/CartProvider';
 import { cn } from '@/lib/utils';
 
 interface HeaderProps {
   userEmail?: string | null;
-  cartItemCount?: number;
 }
 
 const navItems = [
@@ -19,8 +19,9 @@ const navItems = [
   { href: '/blog', label: 'Blog' },
 ];
 
-export function Header({ userEmail, cartItemCount = 0 }: HeaderProps) {
+export function Header({ userEmail }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { cartCount } = useCart();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/95 backdrop-blur-md supports-[backdrop-filter]:bg-white/90">
@@ -56,15 +57,15 @@ export function Header({ userEmail, cartItemCount = 0 }: HeaderProps) {
             aria-label="Shopping cart"
           >
             <ShoppingBag className="h-5 w-5" />
-            {cartItemCount > 0 && (
+            {cartCount > 0 && (
               <Badge className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#111111] p-0 text-[10px] text-white">
-                {cartItemCount > 9 ? '9+' : cartItemCount}
+                {cartCount > 9 ? '9+' : cartCount}
               </Badge>
             )}
           </NavLink>
 
           <NavLink
-            href={userEmail ? '/orders' : '/login'}
+            href={userEmail ? '/account' : '/login'}
             className="rounded-full p-0.5 text-gray-600 transition-colors hover:opacity-80"
             aria-label={userEmail ? 'My account' : 'Log in'}
           >
@@ -110,8 +111,17 @@ export function Header({ userEmail, cartItemCount = 0 }: HeaderProps) {
               className="text-sm font-medium text-gray-600 transition-colors hover:text-[#111111]"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Cart {cartItemCount > 0 && `(${cartItemCount})`}
+              Cart {cartCount > 0 && `(${cartCount})`}
             </NavLink>
+            {userEmail && (
+              <NavLink
+                href="/account"
+                className="text-sm font-medium text-gray-600 transition-colors hover:text-[#111111]"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                My Account
+              </NavLink>
+            )}
           </nav>
 
           <div className="mt-auto flex flex-col gap-2">
