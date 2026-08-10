@@ -4,18 +4,18 @@ import { landingHeroCopy } from '@/lib/data/marketing-content';
 
 export function LandingHero() {
   return (
-    <section className="relative min-h-[55vh] md:min-h-[65vh]">
+    <section className="relative min-h-[calc(100svh-5rem)] md:min-h-[calc(100svh-7.5rem)]">
       <Image
         src={landingHeroCopy.image}
         alt="Vellure lifestyle"
         fill
         priority
-        className="object-cover object-[center_30%]"
+        className="object-cover object-center"
         sizes="100vw"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
 
-      <div className="relative z-10 flex min-h-[55vh] flex-col items-center justify-center px-4 py-16 md:min-h-[65vh]">
+      <div className="relative z-10 flex min-h-[calc(100svh-5rem)] flex-col items-center justify-center px-4 md:min-h-[calc(100svh-7.5rem)]">
         <div className="text-center">
           {landingHeroCopy.lines.map((line) => (
             <p

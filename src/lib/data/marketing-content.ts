@@ -41,6 +41,85 @@ export type ServiceBadgeIcon =
   | 'headphones'
   | 'badge-check';
 
+export const iphoneModelShowcase = {
+  sidebarLabel: 'A NEW APPROACH TO PREMIUM TECH',
+  models: [
+    {
+      id: 'iphone17',
+      label: 'iPhone 17',
+      image: '/iphone/iphone17pro/iphone_17__fb1277oq3eaa_large.jpg',
+      href: '/products',
+    },
+    {
+      id: 'iphone17pro',
+      label: 'iPhone 17 Pro',
+      image: '/iphone/iphone17pro/iphone_17pro__t1j902iw6kya_large.jpg',
+      href: '/products',
+    },
+    {
+      id: 'iphoneair',
+      label: 'iPhone Air',
+      image:
+        '/iphone/iphone17pro/iphoneair/iphone-air-finish-select-202509-skyblue.webp',
+      href: '/products',
+    },
+    {
+      id: 'iphone17e',
+      label: 'iPhone 17e',
+      image: '/iphone/iphone17pro/iphone_17e__cq5ygzct314y_large.jpg',
+      href: '/products',
+    },
+  ],
+  cta: { label: 'Shop Vellure', href: '/products' },
+} as const;
+
+export const iphoneFeaturePress = {
+  sidebarLabel: 'HOT OFF THE PRESS',
+  cards: [
+    {
+      id: 'camera',
+      title: 'Pro Camera System',
+      description:
+        '48MP Fusion camera with cinematic video — capture every moment in stunning detail.',
+      image: '/iphone/iphone17pro/iphone_17pro__t1j902iw6kya_large.jpg',
+      cta: { label: 'Shop iPhone 17 Pro', href: '/products' },
+    },
+    {
+      id: 'battery',
+      title: 'All-Day Battery',
+      description:
+        'Power through your day in Manila — optimized battery for work, travel, and play.',
+      image:
+        '/iphone/iphone17pro/iphone17/iphone-17-finish-select-202509-black.webp',
+      cta: { label: 'Shop iPhone 17', href: '/products' },
+    },
+    {
+      id: 'design',
+      title: 'Ultra-Thin Design',
+      description:
+        'The thinnest iPhone ever — premium titanium build with pro capability inside.',
+      image:
+        '/iphone/iphone17pro/iphoneair/iphone-air-finish-select-202509-spaceblack.webp',
+      cta: { label: 'Shop iPhone Air', href: '/products' },
+    },
+  ],
+} as const;
+
+export const vellureMission = {
+  headline: 'Not just for you. For all of us.',
+  subcopy:
+    'We’re committed to bringing authentic Apple products to the Philippines with the least friction and the most trust.',
+  cta: { label: 'Learn more', href: '/blog/how-we-curate-premium-products' },
+  image: '/landing/intro-1700559910.jpg',
+  pillars: [
+    { icon: 'shield-check' as ServiceBadgeIcon, text: '100% authorized distributor stock' },
+    { icon: 'truck' as ServiceBadgeIcon, text: 'Nationwide delivery across the Philippines' },
+    { icon: 'credit-card' as ServiceBadgeIcon, text: 'GCash, Maya, COD, and bank transfer' },
+    { icon: 'headphones' as ServiceBadgeIcon, text: 'Local support on every order' },
+    { icon: 'badge-check' as ServiceBadgeIcon, text: 'Official warranty on every device' },
+  ],
+} as const;
+
 export const serviceBadges: {
   id: string;
   icon: ServiceBadgeIcon;

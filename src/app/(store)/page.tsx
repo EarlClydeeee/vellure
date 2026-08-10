@@ -1,15 +1,13 @@
 import { CategoryCards } from '@/components/store/CategoryCards';
-import { ServiceBadges } from '@/components/store/ServiceBadges';
 import { DealsSection } from '@/components/store/DealsSection';
 import { ExpandingGallery } from '@/components/store/ExpandingGallery';
 import { MasonryWrapperLanding } from '@/components/store/MasonryWrapperLanding';
 import { TestimonialWall } from '@/components/store/TestimonialWall';
-import { TrustStatsBar } from '@/components/store/marketing/TrustStatsBar';
 import { LandingHero } from '@/components/store/marketing/LandingHero';
-import { PromoBannerGrid } from '@/components/store/marketing/PromoBannerGrid';
-import { PaymentTrustStrip } from '@/components/store/marketing/PaymentTrustStrip';
+import { IphoneModelShowcase } from '@/components/store/marketing/IphoneModelShowcase';
+import { IphoneFeaturePress } from '@/components/store/marketing/IphoneFeaturePress';
+import { VellureMissionBand } from '@/components/store/marketing/VellureMissionBand';
 import { PromoVouchers } from '@/components/store/marketing/PromoVouchers';
-import { WhyVellure } from '@/components/store/marketing/WhyVellure';
 import { NewsletterCapture } from '@/components/store/marketing/NewsletterCapture';
 import { BlogTeaserSection } from '@/components/store/marketing/BlogTeaserSection';
 import { FaqSection } from '@/components/store/marketing/FaqSection';
@@ -35,19 +33,15 @@ export default async function HomePage() {
     <div className="flex flex-col">
       <LandingHero />
 
-      <TrustStatsBar />
+      <IphoneModelShowcase />
+
+      <IphoneFeaturePress />
+
+      <VellureMissionBand />
 
       <CategoryCards categories={categories} variant="abenson" />
 
-      <PromoBannerGrid />
-
-      <ServiceBadges />
-
-      <PaymentTrustStrip />
-
       <DealsSection products={products.slice(0, 8)} />
-
-      <WhyVellure />
 
       <ExpandingGallery />
 

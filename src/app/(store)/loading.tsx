@@ -3,25 +3,45 @@ import { Skeleton } from '@/components/ui/skeleton';
 export default function StoreLoading() {
   return (
     <div className="flex flex-col">
-      <div className="relative min-h-[55vh] md:min-h-[65vh]">
+      <div className="relative min-h-[calc(100svh-5rem)] md:min-h-[calc(100svh-7.5rem)]">
         <Skeleton className="absolute inset-0 rounded-none" />
-        <div className="relative z-10 flex min-h-[55vh] flex-col items-center justify-center gap-3 px-4 md:min-h-[65vh]">
+        <div className="relative z-10 flex min-h-[calc(100svh-5rem)] flex-col items-center justify-center gap-3 px-4 md:min-h-[calc(100svh-7.5rem)]">
           <Skeleton className="h-4 w-56 bg-white/30" />
           <Skeleton className="h-4 w-48 bg-white/30" />
           <Skeleton className="mt-4 h-11 w-32 bg-white/30" />
         </div>
       </div>
 
-      <div className="border-y border-sky-100 bg-vellure-surface py-10">
-        <div className="container mx-auto grid grid-cols-2 gap-8 px-4 md:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex flex-col items-center gap-2">
-              <Skeleton className="h-10 w-24" />
-              <Skeleton className="h-4 w-20" />
-            </div>
-          ))}
+      <div className="bg-white py-16 md:py-24">
+        <div className="container mx-auto grid gap-10 px-4 md:grid-cols-[auto_1fr_auto]">
+          <Skeleton className="hidden h-48 w-4 md:block" />
+          <Skeleton className="mx-auto aspect-[4/5] w-full max-w-md" />
+          <div className="space-y-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-10 w-40" />
+            ))}
+            <Skeleton className="mt-6 h-11 w-32" />
+          </div>
         </div>
       </div>
+
+      <div className="bg-white py-16 md:py-24">
+        <div className="container mx-auto flex gap-12 px-4">
+          <Skeleton className="hidden h-48 w-4 md:block" />
+          <div className="grid flex-1 gap-8 md:grid-cols-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i}>
+                <Skeleton className="mb-6 aspect-[3/4] w-full" />
+                <Skeleton className="h-6 w-3/4" />
+                <Skeleton className="mt-2 h-12 w-full" />
+                <Skeleton className="mt-4 h-10 w-36" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <Skeleton className="h-[480px] w-full rounded-none bg-[#1a3d2e]/40" />
 
       <div className="border-b px-4 py-8">
         <div className="container mx-auto flex justify-center gap-6">
@@ -30,33 +50,6 @@ export default function StoreLoading() {
               <Skeleton className="h-16 w-16 rounded-full md:h-20 md:w-20" />
               <Skeleton className="h-3 w-16" />
             </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="container mx-auto px-4 py-10">
-        <Skeleton className="mb-6 h-8 w-48" />
-        <div className="grid gap-4 md:grid-cols-2">
-          <Skeleton className="min-h-[280px] rounded-2xl md:min-h-[360px]" />
-          <div className="flex flex-col gap-4">
-            <Skeleton className="min-h-[160px] rounded-2xl" />
-            <Skeleton className="min-h-[160px] rounded-2xl" />
-          </div>
-        </div>
-      </div>
-
-      <div className="border-y bg-vellure-surface py-6">
-        <div className="container mx-auto flex justify-center gap-8">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-12 w-12 rounded-full" />
-          ))}
-        </div>
-      </div>
-
-      <div className="border-b py-6">
-        <div className="container mx-auto flex justify-center gap-8">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-8 w-24" />
           ))}
         </div>
       </div>
