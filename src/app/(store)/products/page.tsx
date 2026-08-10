@@ -96,7 +96,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
   return (
     <div>
-      <div className="container mx-auto px-4 pb-8 pt-8 md:pt-10">
+      <div className="container mx-auto px-2 pb-8 pt-6 sm:px-4 md:pt-10">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="font-display text-3xl font-medium text-vellure-text md:text-4xl">
