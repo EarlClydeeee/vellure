@@ -1,84 +1,14 @@
 'use client';
 
 import Link from 'next/link';
+import {
+  MASONRY_IPHONE_TILES,
+  distributeMasonryToColumns,
+  type MasonryTileData,
+} from '@/lib/assets/public-gallery';
 import { cn } from '@/lib/utils';
 
-interface MasonryTileData {
-  src: string;
-  alt: string;
-  title: string;
-  subtitle: string;
-  href?: string;
-}
-
-const COLUMN_ONE: MasonryTileData[] = [
-  {
-    src: 'https://images.unsplash.com/photo-1600607686527-6fb886090705?w=800&auto=format&fit=crop&q=60',
-    alt: 'Modern Living',
-    title: 'Modern Living',
-    subtitle: 'Clean lines and soft light',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&auto=format&fit=crop&q=60',
-    alt: 'Workspace',
-    title: 'Workspace',
-    subtitle: 'Productivity essentials',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop&q=60',
-    alt: 'Minimalist Hall',
-    title: 'Minimalist Hall',
-    subtitle: 'Architectural symmetry',
-  },
-];
-
-const COLUMN_TWO: MasonryTileData[] = [
-  {
-    src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&auto=format&fit=crop&q=60',
-    alt: 'Portrait Mode',
-    title: 'Portrait Mode',
-    subtitle: 'Capturing the moment',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1621600411688-4be93cd68504?w=800&auto=format&fit=crop&q=60',
-    alt: 'Abstract Art',
-    title: 'Abstract Art',
-    subtitle: 'Fluid shapes and colors',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=800&auto=format&fit=crop&q=60',
-    alt: 'Morning Fog',
-    title: 'Morning Fog',
-    subtitle: "Nature's silence",
-  },
-];
-
-const COLUMN_THREE: MasonryTileData[] = [
-  {
-    src: 'https://images.unsplash.com/photo-1707343843437-caacff5cfa74?w=800&auto=format&fit=crop&q=60',
-    alt: 'Ocean Waves',
-    title: 'Ocean Waves',
-    subtitle: 'Serenity in motion',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop&q=60',
-    alt: 'Yosemite',
-    title: 'Yosemite',
-    subtitle: 'Valley view',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800&auto=format&fit=crop&q=60',
-    alt: 'Urban Architecture',
-    title: 'Urban Architecture',
-    subtitle: 'City perspectives',
-  },
-];
-
-const COLUMNS = [
-  { tiles: COLUMN_ONE, direction: 'normal' as const },
-  { tiles: COLUMN_TWO, direction: 'reverse' as const },
-  { tiles: COLUMN_THREE, direction: 'normal' as const },
-];
+const COLUMN_DIRECTIONS = ['normal', 'reverse', 'normal'] as const;
 
 function MasonryTile({ tile }: { tile: MasonryTileData }) {
   const content = (
@@ -150,6 +80,13 @@ interface MasonryWrapperLandingProps {
   title?: string;
   className?: string;
 }
+
+const COLUMNS = distributeMasonryToColumns(MASONRY_IPHONE_TILES, 3).map(
+  (tiles, index) => ({
+    tiles,
+    direction: COLUMN_DIRECTIONS[index] ?? ('normal' as const),
+  })
+);
 
 export function MasonryWrapperLanding({
   title = 'The Vellure Collection',

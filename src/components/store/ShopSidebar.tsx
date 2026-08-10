@@ -85,17 +85,17 @@ function SidebarContent({
                 })}
                 onClick={onNavigate}
                 className={cn(
-                  'flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm transition-colors',
+                  'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors',
                   isActive
                     ? 'bg-muted font-medium text-foreground'
                     : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
                 )}
               >
-                <span className="flex items-center gap-2">
+                <span className="flex min-w-0 flex-1 items-center gap-2">
                   {isAll ? categoryIcons.all : getCategoryIcon(category.name)}
-                  {category.name}
+                  <span className="truncate">{category.name}</span>
                 </span>
-                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-medium text-white">
+                <span className="ml-auto flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-medium text-white">
                   {category.productCount}
                 </span>
               </NavLink>

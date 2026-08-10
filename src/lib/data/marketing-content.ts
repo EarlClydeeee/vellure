@@ -92,7 +92,7 @@ export const promoBanners = [
     title: 'Shop All Tech',
     subtitle: 'Latest gadgets and accessories',
     href: '/products',
-    image: '/images/shop-hero.jpg',
+    image: '/iphone/iphone17/iphone_17pro__t1j902iw6kya_large.jpg',
     large: true,
   },
   {
@@ -100,7 +100,8 @@ export const promoBanners = [
     title: 'iPhone Collection',
     subtitle: 'New arrivals in stock',
     href: '/products?category=Smartphones',
-    image: '/iphone/iphone17/iphone_17pro__t1j902iw6kya_large.jpg',
+    image:
+      '/iphone/iphone17pro/iphone17/iphone-17-finish-select-202509-black.webp',
     large: false,
   },
   {
@@ -108,7 +109,8 @@ export const promoBanners = [
     title: 'Hot Deals',
     subtitle: 'Limited-time savings',
     href: '/products?sort=price_asc',
-    image: '/iphone/iphone17/iphone_air__b5qmgl05ojyq_large.jpg',
+    image:
+      '/iphone/iphone17pro/iphoneair/iphone-air-finish-select-202509-skyblue.webp',
     large: false,
   },
 ] as const;
@@ -257,19 +259,22 @@ export const blogTeasers = [
     id: 'team',
     title: 'Meet The Team',
     excerpt: 'Get to know the people behind Vellure.',
-    href: '/blog',
+    href: '/blog/meet-the-team',
+    image: '/meet-the-team/Earl.webp',
   },
   {
     id: 'arrivals',
     title: 'New Arrivals This Season',
     excerpt: 'Discover what is new in our shop.',
-    href: '/blog',
+    href: '/blog/new-arrivals-this-season',
+    image: '/iphone/iphone17/iphone_17pro__t1j902iw6kya_large.jpg',
   },
   {
     id: 'curate',
     title: 'How We Curate Premium Products',
     excerpt: 'Our process for selecting every item we sell.',
-    href: '/blog',
+    href: '/blog/how-we-curate-premium-products',
+    image: '/iphone/iphone17/iphone_17__fb1277oq3eaa_large.jpg',
   },
 ] as const;
 

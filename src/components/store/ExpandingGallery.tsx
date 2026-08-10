@@ -2,56 +2,20 @@
 
 import { useCallback, useState } from 'react';
 import Link from 'next/link';
+import {
+  IPHONE_GALLERY_ITEMS,
+  type ExpandingGalleryItem,
+} from '@/lib/assets/public-gallery';
 import { cn } from '@/lib/utils';
 
-interface GalleryItem {
-  src: string;
-  title: string;
-  description: string;
-  href: string;
-}
-
-const GALLERY_ITEMS: GalleryItem[] = [
-  {
-    src: 'https://images.unsplash.com/photo-1633885274964-d5a5d914bcb3?q=80&w=687&auto=format&fit=crop',
-    title: 'Abstract Art',
-    description: 'Explore vibrant colors and modern geometric designs',
-    href: '/products',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1589194837807-30a2f9540ad9?q=80&w=687&auto=format&fit=crop',
-    title: 'Nature Photography',
-    description: 'Breathtaking landscapes and natural wonders',
-    href: '/products',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1582644826651-f71401f0f3f6?q=80&w=687&auto=format&fit=crop',
-    title: 'Urban Design',
-    description: 'Modern architecture and city life captured beautifully',
-    href: '/products',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1614679967638-fe153775eff6?q=80&w=765&auto=format&fit=crop',
-    title: 'Creative Workspace',
-    description: 'Inspiring workspaces for creative professionals',
-    href: '/products',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1617195737496-bc30194e3a19?q=80&w=735&auto=format&fit=crop',
-    title: 'Digital Innovation',
-    description: 'The future of technology and creative tools',
-    href: '/products',
-  },
-];
-
 interface ExpandingGalleryProps {
-  items?: GalleryItem[];
+  items?: ExpandingGalleryItem[];
   title?: string;
   className?: string;
 }
 
 export function ExpandingGallery({
-  items = GALLERY_ITEMS,
+  items = IPHONE_GALLERY_ITEMS,
   title = 'Explore iPhone 17',
   className,
 }: ExpandingGalleryProps) {
