@@ -2,6 +2,7 @@
  * Seed script using the anon/publishable key (works with current RLS policies).
  * Run: npm run seed
  * Requires: 001_initial_schema.sql + 003_tier1_commerce.sql applied first.
+ * Test customer: run 005_seed_test_users.sql or set TEST_USER_* in .env.local.
  */
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
@@ -30,11 +31,12 @@ loadEnv();
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey =
   process.env.SUPABASE_SERVICE_ROLE_KEY ||
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
   console.error(
-    'Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local'
+    'Missing NEXT_PUBLIC_SUPABASE_URL or Supabase key (NEXT_PUBLIC_SUPABASE_ANON_KEY / NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) in .env.local'
   );
   process.exit(1);
 }

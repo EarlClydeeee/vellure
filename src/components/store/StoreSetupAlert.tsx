@@ -21,10 +21,19 @@ export function StoreSetupAlert({ error, empty }: StoreSetupAlertProps) {
             <>
               <p className="font-semibold">Database connection failed</p>
               <p className="text-amber-900/80">{error}</p>
-              <p>
-                Check <code className="rounded bg-amber-100 px-1">.env.local</code> has the
-                correct Supabase URL and key, then restart the dev server.
-              </p>
+              {error.includes('product_images') ? (
+                <p>
+                  The <code className="rounded bg-amber-100 px-1">product_images</code> table is
+                  missing. Run migration{' '}
+                  <code className="rounded bg-amber-100 px-1">003_tier1_commerce.sql</code> in the
+                  Supabase SQL Editor (see steps below).
+                </p>
+              ) : (
+                <p>
+                  Check <code className="rounded bg-amber-100 px-1">.env.local</code> has the
+                  correct Supabase URL and key, then restart the dev server.
+                </p>
+              )}
             </>
           ) : (
             <>
@@ -44,9 +53,17 @@ export function StoreSetupAlert({ error, empty }: StoreSetupAlertProps) {
             <li>
               Then run{' '}
               <code className="rounded bg-amber-100 px-1">
+                supabase/migrations/003_tier1_commerce.sql
+              </code>{' '}
+              (creates <code className="rounded bg-amber-100 px-1">product_images</code> and
+              other commerce tables)
+            </li>
+            <li>
+              Seed products:{' '}
+              <code className="rounded bg-amber-100 px-1">
                 supabase/migrations/002_seed_products.sql
               </code>{' '}
-              (or <code className="rounded bg-amber-100 px-1">npm run seed</code>)
+              or <code className="rounded bg-amber-100 px-1">npm run seed</code>
             </li>
             <li>Refresh this page</li>
           </ol>

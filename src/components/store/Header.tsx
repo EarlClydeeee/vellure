@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { NavLink } from '@/components/store/NavLink';
 import { AnnouncementBar } from '@/components/store/marketing/AnnouncementBar';
 import { useCart } from '@/components/store/CartProvider';
+import { useSession } from '@/components/SessionProvider';
 import { VELLURE_LOGO } from '@/lib/assets/brand';
 import { cn } from '@/lib/utils';
 
@@ -95,17 +96,38 @@ function NavTextLinks({
   );
 }
 
+function accountHref(role: string, hasEmail: boolean): string {
+  if (!hasEmail) return '/login';
+  if (role === 'admin') return '/admin/dashboard';
+  return '/account';
+}
+
+function SessionRoleBadge({ role }: { role: string }) {
+  if (role !== 'admin' && role !== 'customer') return null;
+  return (
+    <Badge
+      variant={role === 'admin' ? 'default' : 'secondary'}
+      className={cn(
+        'text-[10px] uppercase tracking-wide',
+        role === 'admin' && 'bg-vellure-primary'
+      )}
+    >
+      {role === 'admin' ? 'Admin' : 'Customer'}
+    </Badge>
+  );
+}
+
 function NavUtilityIcons({
   variant,
   userEmail,
+  sessionRole,
   cartCount,
-  showMenuButton,
   onMenuOpen,
 }: {
   variant: NavVariant;
   userEmail?: string | null;
+  sessionRole: string;
   cartCount: number;
-  showMenuButton?: boolean;
   onMenuOpen?: () => void;
 }) {
   const iconClass =
@@ -121,7 +143,7 @@ function NavUtilityIcons({
 
   return (
     <div className="flex items-center gap-0.5 sm:gap-1">
-      {showMenuButton && onMenuOpen && (
+      {onMenuOpen && (
         <button
           type="button"
           className={cn(iconClass, 'sm:hidden')}
@@ -137,9 +159,15 @@ function NavUtilityIcons({
       </NavLink>
 
       <NavLink
-        href={userEmail ? '/account' : '/login'}
+        href={accountHref(sessionRole, !!userEmail)}
         className={iconClass}
-        aria-label={userEmail ? 'My account' : 'Log in'}
+        aria-label={
+          userEmail
+            ? sessionRole === 'admin'
+              ? 'Admin dashboard'
+              : 'My account'
+            : 'Log in'
+        }
       >
         <User className={iconSize} />
       </NavLink>
@@ -156,11 +184,13 @@ function NavUtilityIcons({
 
 function NavPill({
   userEmail,
+  sessionRole,
   cartCount,
   showLinks,
   onMenuOpen,
 }: {
   userEmail?: string | null;
+  sessionRole: string;
   cartCount: number;
   showLinks: boolean;
   onMenuOpen?: () => void;
@@ -176,8 +206,8 @@ function NavPill({
       <NavUtilityIcons
         variant="pill"
         userEmail={userEmail}
+        sessionRole={sessionRole}
         cartCount={cartCount}
-        showMenuButton={showLinks}
         onMenuOpen={onMenuOpen}
       />
     </div>
@@ -186,11 +216,13 @@ function NavPill({
 
 function StickyNavBar({
   userEmail,
+  sessionRole,
   cartCount,
   showLinks,
   onMenuOpen,
 }: {
   userEmail?: string | null;
+  sessionRole: string;
   cartCount: number;
   showLinks: boolean;
   onMenuOpen?: () => void;
@@ -209,8 +241,8 @@ function StickyNavBar({
       <NavUtilityIcons
         variant="bar"
         userEmail={userEmail}
+        sessionRole={sessionRole}
         cartCount={cartCount}
-        showMenuButton={showLinks}
         onMenuOpen={onMenuOpen}
       />
     </>
@@ -221,22 +253,37 @@ function MobileDrawer({
   open,
   onClose,
   userEmail,
+  sessionRole,
   cartCount,
 }: {
   open: boolean;
   onClose: () => void;
   userEmail?: string | null;
+  sessionRole: string;
   cartCount: number;
 }) {
   return (
     <>
       <div
         className={cn(
-          'fixed inset-y-0 right-0 z-[60] w-72 border-l bg-white shadow-xl transition-transform duration-200 ease-in-out',
+          'fixed inset-y-0 right-0 z-[60] w-[min(100vw-3rem,18rem)] border-l bg-white shadow-xl transition-transform duration-200 ease-in-out',
           open ? 'translate-x-0' : 'translate-x-full'
         )}
       >
-        <div className="flex h-full flex-col p-6 pt-20">
+        <div className="flex h-full flex-col p-6 pt-6">
+          <div className="mb-6 flex items-center justify-between">
+            <span className="text-sm font-semibold uppercase tracking-wider text-vellure-primary">
+              Menu
+            </span>
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              aria-label="Close menu"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
           <nav className="flex flex-col gap-4">
             {navItems.map((item) => (
               <NavLink
@@ -257,11 +304,11 @@ function MobileDrawer({
             </NavLink>
             {userEmail && (
               <NavLink
-                href="/account"
+                href={accountHref(sessionRole, true)}
                 className="text-sm font-medium text-gray-600 transition-colors hover:text-vellure-primary"
                 onClick={onClose}
               >
-                My Account
+                {sessionRole === 'admin' ? 'Admin Dashboard' : 'My Account'}
               </NavLink>
             )}
           </nav>
@@ -269,6 +316,9 @@ function MobileDrawer({
           <div className="mt-auto flex flex-col gap-2">
             {userEmail ? (
               <>
+                <div className="flex items-center gap-2">
+                  <SessionRoleBadge role={sessionRole} />
+                </div>
                 <span className="truncate text-sm text-muted-foreground">
                   {userEmail}
                 </span>
@@ -310,6 +360,9 @@ export function Header({ userEmail }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { cartCount } = useCart();
+  const session = useSession();
+  const sessionRole = session.role;
+  const displayEmail = session.email ?? userEmail ?? null;
   const pathname = usePathname();
   const isHome = pathname === '/';
   const logoOnly = isLogoOnlyNav(pathname);
@@ -333,7 +386,7 @@ export function Header({ userEmail }: HeaderProps) {
     return () => window.removeEventListener('scroll', onScroll);
   }, [isHome]);
 
-  const openMobileMenu = showNavLinks ? () => setMobileMenuOpen(true) : undefined;
+  const openMobileMenu = () => setMobileMenuOpen(true);
 
   return (
     <>
@@ -358,14 +411,16 @@ export function Header({ userEmail }: HeaderProps) {
 
           {showOverlayNav || !isHome ? (
             <NavPill
-              userEmail={userEmail}
+              userEmail={displayEmail}
+              sessionRole={sessionRole}
               cartCount={cartCount}
               showLinks={showNavLinks}
               onMenuOpen={openMobileMenu}
             />
           ) : (
             <StickyNavBar
-              userEmail={userEmail}
+              userEmail={displayEmail}
+              sessionRole={sessionRole}
               cartCount={cartCount}
               showLinks={showNavLinks}
               onMenuOpen={openMobileMenu}
@@ -374,14 +429,13 @@ export function Header({ userEmail }: HeaderProps) {
         </div>
       </header>
 
-      {showNavLinks && (
-        <MobileDrawer
-          open={mobileMenuOpen}
-          onClose={() => setMobileMenuOpen(false)}
-          userEmail={userEmail}
-          cartCount={cartCount}
-        />
-      )}
+      <MobileDrawer
+        open={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        userEmail={displayEmail}
+        sessionRole={sessionRole}
+        cartCount={cartCount}
+      />
     </>
   );
 }

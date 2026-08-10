@@ -6,6 +6,7 @@ import {
 } from '@/lib/services/products';
 import { getCategoriesWithCounts } from '@/lib/services/categories';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { ShopSidebar } from '@/components/store/ShopSidebar';
 import { ProductGrid } from '@/components/store/ProductGrid';
 import { Pagination } from '@/components/store/Pagination';
@@ -43,10 +44,13 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const params = await searchParams;
   const page = Math.max(1, parseInt(params.page ?? '1', 10) || 1);
 
-  const supabase = await createServerSupabaseClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user = null;
+  if (isSupabaseConfigured()) {
+    const supabase = await createServerSupabaseClient();
+    ({
+      data: { user },
+    } = await supabase.auth.getUser());
+  }
 
   const filters: ProductFilters = {
     search: params.search,
@@ -68,7 +72,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     ]);
 
   const dbError =
-    !paginatedResult.success
+    !isSupabaseConfigured()
+      ? 'Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to .env.local, then restart the dev server.'
+      : !paginatedResult.success
       ? paginatedResult.error
       : !categoriesResult.success
         ? categoriesResult.error

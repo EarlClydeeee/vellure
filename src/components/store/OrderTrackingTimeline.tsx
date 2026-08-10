@@ -39,12 +39,15 @@ export function OrderTrackingTimeline({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5 md:gap-2">
         {STEPS.map((step, index) => {
           const done = index <= currentIndex;
           const Icon = step.icon;
           return (
-            <div key={step.status} className="flex items-center gap-2 sm:flex-col sm:text-center">
+            <div
+              key={step.status}
+              className="flex items-center gap-2 rounded-lg border border-transparent p-2 md:flex-col md:text-center md:p-0"
+            >
               <Icon
                 className={cn(
                   'h-5 w-5',

@@ -33,11 +33,11 @@ function getTimeLeft(target: number): TimeLeft | null {
 
 function Unit({ value, label }: { value: string; label: string }) {
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="min-w-[80px] rounded-xl border border-white/10 bg-vellure-primary px-6 py-5 text-center text-4xl font-bold tabular-nums text-white shadow-lg sm:min-w-[80px]">
+    <div className="flex flex-col items-center gap-1 sm:gap-2">
+      <div className="min-w-[3.5rem] rounded-lg border border-white/10 bg-vellure-primary px-2 py-2 text-center text-xl font-bold tabular-nums text-white shadow-lg sm:min-w-[5rem] sm:rounded-xl sm:px-4 sm:py-4 sm:text-3xl md:min-w-[5rem] md:px-6 md:py-5 md:text-4xl">
         {value}
       </div>
-      <span className="text-xs font-semibold uppercase tracking-widest text-gray-400">
+      <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 sm:text-xs">
         {label}
       </span>
     </div>
@@ -50,16 +50,30 @@ export function CountdownTimer({
   className,
 }: CountdownTimerProps) {
   const target = new Date(targetDate).getTime();
-  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(() =>
-    getTimeLeft(target)
-  );
+  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const tick = () => setTimeLeft(getTimeLeft(target));
     tick();
+    setReady(true);
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
   }, [target]);
+
+  if (!ready) {
+    return (
+      <div
+        className={cn('flex flex-wrap items-start justify-center gap-2 sm:gap-4', className)}
+        aria-hidden="true"
+      >
+        <Unit value="--" label="Days" />
+        <Unit value="--" label="Hours" />
+        <Unit value="--" label="Minutes" />
+        <Unit value="--" label="Seconds" />
+      </div>
+    );
+  }
 
   if (!timeLeft) {
     return (
@@ -70,7 +84,7 @@ export function CountdownTimer({
   }
 
   return (
-    <div className={cn('flex items-start gap-3 sm:gap-4', className)}>
+    <div className={cn('flex flex-wrap items-start justify-center gap-2 sm:gap-4', className)}>
       <Unit value={pad(timeLeft.days)} label="Days" />
       <Unit value={pad(timeLeft.hours)} label="Hours" />
       <Unit value={pad(timeLeft.minutes)} label="Minutes" />

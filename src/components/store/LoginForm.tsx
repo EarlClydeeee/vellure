@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { loginSchema, LoginFormData } from '@/lib/validation/schemas';
 import { signIn } from '@/lib/auth/customer';
-import { mergeGuestCartAction } from '@/app/(store)/actions';
+import { mergeGuestCartAction, completeStoreLoginAction } from '@/app/(store)/actions';
 import { getGuestCart, clearGuestCart } from '@/lib/cart/guest-cart';
 import { cn } from '@/lib/utils';
 
@@ -62,13 +62,27 @@ export function LoginForm() {
       return;
     }
 
-    const guestItems = getGuestCart();
-    if (guestItems.length > 0) {
-      await mergeGuestCartAction(guestItems);
-      clearGuestCart();
+    const loginResult = await completeStoreLoginAction(
+      parsed.data.email,
+      parsed.data.password,
+      returnTo
+    );
+
+    if (!loginResult.success) {
+      setServerError(loginResult.error);
+      setIsLoading(false);
+      return;
     }
 
-    router.push(returnTo);
+    if (!loginResult.isAdmin) {
+      const guestItems = getGuestCart();
+      if (guestItems.length > 0) {
+        await mergeGuestCartAction(guestItems);
+        clearGuestCart();
+      }
+    }
+
+    router.push(loginResult.redirectTo);
     router.refresh();
   }
 
