@@ -48,12 +48,12 @@ function SearchBarInner({ variant = 'default', className }: SearchBarInnerProps)
             placeholder="Search on Vellure"
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            className="h-11 w-full rounded-full border border-gray-200 bg-gray-50 pl-11 pr-4 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]/20"
+            className="h-11 w-full rounded-full border border-gray-200 bg-gray-50 pl-11 pr-4 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vellure-primary/20"
           />
         </div>
         <button
           type="submit"
-          className="h-11 shrink-0 rounded-full bg-[#111111] px-6 text-sm font-medium text-white transition-colors hover:bg-[#111111]/90"
+          className="h-11 shrink-0 rounded-full bg-vellure-primary px-6 text-sm font-medium text-white transition-colors hover:bg-vellure-primary/90"
         >
           Search
         </button>
@@ -72,7 +72,7 @@ function SearchBarInner({ variant = 'default', className }: SearchBarInnerProps)
       />
       <button
         type="submit"
-        className="h-11 shrink-0 rounded-full bg-[#111111] px-6 text-sm font-medium text-white transition-colors hover:bg-[#111111]/90"
+        className="h-11 shrink-0 rounded-full bg-vellure-primary px-6 text-sm font-medium text-white transition-colors hover:bg-vellure-primary/90"
       >
         Search
       </button>

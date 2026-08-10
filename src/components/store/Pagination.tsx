@@ -61,7 +61,7 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
               className={cn(
                 'flex h-9 w-9 items-center justify-center rounded-full text-sm transition-colors',
                 page === currentPage
-                  ? 'bg-[#111111] text-white'
+                  ? 'bg-vellure-primary text-white'
                   : 'hover:bg-muted'
               )}
             >

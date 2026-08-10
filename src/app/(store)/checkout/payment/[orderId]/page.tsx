@@ -98,7 +98,7 @@ export default async function MockPaymentPage({ params }: PaymentPageProps) {
           <ol className="space-y-3 text-sm">
             {instructions.steps.map((step, i) => (
               <li key={i} className="flex gap-3">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#111111] text-xs text-white">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-vellure-primary text-xs text-white">
                   {i + 1}
                 </span>
                 <span>{step}</span>

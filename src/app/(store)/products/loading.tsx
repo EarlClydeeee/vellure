@@ -1,4 +1,3 @@
-import { ShopHeroSkeleton } from '@/components/store/skeletons/ShopHeroSkeleton';
 import { ShopSidebarSkeleton } from '@/components/store/skeletons/ShopSidebarSkeleton';
 import { ProductGridSkeleton } from '@/components/store/skeletons/ProductGridSkeleton';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -6,8 +5,15 @@ import { Skeleton } from '@/components/ui/skeleton';
 export default function ProductsLoading() {
   return (
     <div>
-      <ShopHeroSkeleton />
-      <div className="container mx-auto px-4 pb-8 pt-20 md:pt-24">
+      <div className="container mx-auto px-4 pb-8 pt-8 md:pt-10">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <Skeleton className="h-9 w-24" />
+            <Skeleton className="mt-2 h-4 w-36" />
+          </div>
+          <Skeleton className="h-11 w-full rounded-full sm:max-w-md" />
+        </div>
+
         <div className="flex flex-col gap-8 lg:flex-row">
           <ShopSidebarSkeleton />
           <div className="min-w-0 flex-1 space-y-8">

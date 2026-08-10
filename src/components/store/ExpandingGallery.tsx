@@ -3,9 +3,10 @@
 import { useCallback, useState } from 'react';
 import Link from 'next/link';
 import {
-  IPHONE_GALLERY_ITEMS,
+  EXPLORE_IPHONE_GALLERY_ITEMS,
   type ExpandingGalleryItem,
 } from '@/lib/assets/public-gallery';
+import { locale } from '@/lib/data/marketing-content';
 import { cn } from '@/lib/utils';
 
 interface ExpandingGalleryProps {
@@ -14,8 +15,12 @@ interface ExpandingGalleryProps {
   className?: string;
 }
 
+function formatPrice(amount: number): string {
+  return `${locale.symbol}${amount.toLocaleString(locale.country === 'PH' ? 'en-PH' : 'en-US')}`;
+}
+
 export function ExpandingGallery({
-  items = IPHONE_GALLERY_ITEMS,
+  items = EXPLORE_IPHONE_GALLERY_ITEMS,
   title = 'Explore iPhone 17',
   className,
 }: ExpandingGalleryProps) {
@@ -76,8 +81,8 @@ export function ExpandingGallery({
           right: 0;
           background: linear-gradient(
             to top,
-            rgba(0, 0, 0, 0.2) 0%,
-            rgba(0, 0, 0, 0.12) 40%,
+            rgba(0, 0, 0, 0.55) 0%,
+            rgba(0, 0, 0, 0.25) 50%,
             transparent 100%
           );
           padding: 30px 20px;
@@ -90,25 +95,43 @@ export function ExpandingGallery({
 
         .expanding-gallery-overlay h3 {
           margin: 0 0 8px;
-          font-family: 'Courier New', system-ui, sans-serif;
+          font-family: var(--font-display), 'Cormorant Garamond', Georgia, serif;
           font-size: 22px;
-          font-weight: 700;
+          font-weight: 500;
           color: #ffffff;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
         }
 
-        .expanding-gallery-overlay p {
+        .expanding-gallery-overlay .expanding-gallery-description {
           margin: 0;
-          font-family: 'Courier New', system-ui, sans-serif;
+          font-family: var(--font-sans), 'Nunito Sans', system-ui, sans-serif;
           font-size: 14px;
           line-height: 1.5;
-          color: #ffffff;
+          color: rgba(255, 255, 255, 0.9);
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
+        }
+
+        .expanding-gallery-price {
+          margin: 12px 0 0;
+          font-family: var(--font-sans), 'Nunito Sans', system-ui, sans-serif;
+          font-size: 18px;
+          font-weight: 600;
+          color: #ffffff;
+          display: flex;
+          align-items: baseline;
+          gap: 8px;
+        }
+
+        .expanding-gallery-compare {
+          font-size: 14px;
+          font-weight: 400;
+          color: rgba(255, 255, 255, 0.65);
+          text-decoration: line-through;
         }
 
         .expanding-gallery-wrapper:hover .expanding-gallery-column {
@@ -169,14 +192,18 @@ export function ExpandingGallery({
             font-size: 18px;
           }
 
-          .expanding-gallery-overlay p {
+          .expanding-gallery-overlay .expanding-gallery-description {
             font-size: 13px;
+          }
+
+          .expanding-gallery-price {
+            font-size: 16px;
           }
         }
       `}</style>
 
       <div className="container mx-auto">
-        <h2 className="mb-8 text-2xl font-bold tracking-tight text-vellure-text sm:text-3xl">
+        <h2 className="font-display mb-8 text-2xl font-medium tracking-tight text-vellure-text sm:text-3xl">
           {title}
         </h2>
         <div
@@ -210,7 +237,17 @@ export function ExpandingGallery({
                   <img src={item.src} alt={item.title} />
                   <div className="expanding-gallery-overlay">
                     <h3>{item.title}</h3>
-                    <p>{item.description}</p>
+                    <p className="expanding-gallery-description">{item.description}</p>
+                    {isExpanded && (
+                      <p className="expanding-gallery-price">
+                        {formatPrice(item.price)}
+                        {item.compareAtPrice != null && (
+                          <span className="expanding-gallery-compare">
+                            {formatPrice(item.compareAtPrice)}
+                          </span>
+                        )}
+                      </p>
+                    )}
                   </div>
                 </Link>
               </div>

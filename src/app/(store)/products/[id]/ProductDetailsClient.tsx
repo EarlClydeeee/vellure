@@ -53,7 +53,7 @@ export function ProductDetailsClient({
           size="lg"
           disabled={disabled || buyLoading}
           onClick={handleBuyNow}
-          className="w-full sm:w-auto bg-[#111111] hover:bg-[#111111]/90"
+          className="w-full sm:w-auto bg-vellure-primary hover:bg-vellure-primary/90"
         >
           {buyLoading ? 'Processing...' : 'Buy Now'}
         </Button>

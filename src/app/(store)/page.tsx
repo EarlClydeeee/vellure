@@ -1,16 +1,13 @@
-import { ShopHero } from '@/components/store/ShopHero';
 import { CategoryCards } from '@/components/store/CategoryCards';
-import { ServiceBadges } from '@/components/store/ServiceBadges';
 import { DealsSection } from '@/components/store/DealsSection';
 import { ExpandingGallery } from '@/components/store/ExpandingGallery';
 import { MasonryWrapperLanding } from '@/components/store/MasonryWrapperLanding';
 import { TestimonialWall } from '@/components/store/TestimonialWall';
-import { AnnouncementBar } from '@/components/store/marketing/AnnouncementBar';
-import { TrustStatsBar } from '@/components/store/marketing/TrustStatsBar';
-import { PromoBannerGrid } from '@/components/store/marketing/PromoBannerGrid';
-import { PaymentTrustStrip } from '@/components/store/marketing/PaymentTrustStrip';
+import { LandingHero } from '@/components/store/marketing/LandingHero';
+import { IphoneModelShowcase } from '@/components/store/marketing/IphoneModelShowcase';
+import { IphoneFeaturePress } from '@/components/store/marketing/IphoneFeaturePress';
+import { VellureMissionBand } from '@/components/store/marketing/VellureMissionBand';
 import { PromoVouchers } from '@/components/store/marketing/PromoVouchers';
-import { WhyVellure } from '@/components/store/marketing/WhyVellure';
 import { NewsletterCapture } from '@/components/store/marketing/NewsletterCapture';
 import { BlogTeaserSection } from '@/components/store/marketing/BlogTeaserSection';
 import { FaqSection } from '@/components/store/marketing/FaqSection';
@@ -34,25 +31,17 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col">
-      <AnnouncementBar />
+      <LandingHero />
 
-      <ShopHero showSearch />
+      <IphoneModelShowcase />
 
-      <TrustStatsBar />
+      <IphoneFeaturePress />
 
-      <div className="pt-16 md:pt-20">
-        <CategoryCards categories={categories} variant="abenson" />
-      </div>
+      <VellureMissionBand />
 
-      <PromoBannerGrid />
-
-      <ServiceBadges />
-
-      <PaymentTrustStrip />
+      <CategoryCards categories={categories} variant="abenson" />
 
       <DealsSection products={products.slice(0, 8)} />
-
-      <WhyVellure />
 
       <ExpandingGallery />
 

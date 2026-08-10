@@ -12,7 +12,7 @@ export function FaqSection() {
     <section id="faq" className="py-12 md:py-16">
       <div className="container mx-auto max-w-3xl px-4">
         <div className="mb-8 text-center">
-          <h2 className="text-2xl font-bold text-vellure-text md:text-3xl">
+          <h2 className="font-display text-2xl font-medium text-vellure-text md:text-3xl">
             Frequently Asked Questions
           </h2>
           <p className="mt-2 text-slate-600">

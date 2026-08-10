@@ -13,7 +13,7 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
     <section className="px-4 py-12">
       <div className="container mx-auto">
         <div className="mb-8 flex items-center justify-between">
-          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          <h2 className="font-display text-2xl font-medium tracking-tight sm:text-3xl">
             Featured Products
           </h2>
           <NavLink

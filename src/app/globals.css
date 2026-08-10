@@ -25,6 +25,10 @@
   --color-footer-bg: hsl(var(--footer-bg));
   --color-badge-red: hsl(var(--badge-red));
   --color-star-yellow: hsl(var(--star-yellow));
+  --color-vellure-green: hsl(var(--vellure-green));
+  --color-vellure-green-dark: hsl(var(--vellure-green-dark));
+  --color-vellure-green-light: hsl(var(--vellure-green-light));
+  --color-vellure-ink: hsl(var(--vellure-ink));
   --color-vellure-primary: hsl(var(--vellure-primary));
   --color-vellure-cta: hsl(var(--vellure-cta));
   --color-vellure-surface: hsl(var(--vellure-surface));
@@ -37,6 +41,7 @@
 
   --font-sans: var(--font-nunito), "Nunito Sans", ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-rubik), "Rubik", ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-cormorant), "Cormorant Garamond", ui-serif, Georgia, serif;
 }
 
 :root {
@@ -66,10 +71,14 @@
   --footer-bg: 0 0% 10%;
   --badge-red: 0 84% 60%;
   --star-yellow: 43 96% 56%;
-  --vellure-primary: 199 89% 48%;
-  --vellure-cta: 25 95% 53%;
-  --vellure-surface: 204 100% 97%;
-  --vellure-text: 201 96% 18%;
+  --vellure-green: 152 40% 17%;
+  --vellure-green-dark: 152 42% 13%;
+  --vellure-green-light: 150 25% 95%;
+  --vellure-ink: 20 6% 10%;
+  --vellure-primary: var(--vellure-green);
+  --vellure-cta: var(--vellure-green-dark);
+  --vellure-surface: var(--vellure-green-light);
+  --vellure-text: var(--vellure-ink);
 }
 
 .dark {
@@ -103,11 +112,19 @@
     font-family: var(--font-sans);
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-heading);
+    font-family: var(--font-display);
   }
 }
 
 @layer utilities {
+  .text-brand-label {
+    @apply font-sans text-xs font-medium uppercase tracking-[0.25em];
+  }
+
+  .btn-ghost-brand {
+    @apply inline-block border border-vellure-primary px-6 py-2.5 font-sans text-xs font-medium uppercase tracking-[0.12em] text-vellure-primary transition-colors duration-200 hover:bg-vellure-primary hover:text-white;
+  }
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;

@@ -76,13 +76,13 @@ export function TestimonialWall({
     <section className={cn('overflow-hidden py-12', className)}>
       <style jsx global>{`
         @keyframes marquee-left {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
         @keyframes marquee-right {
-          0% { transform: translateX(-50%); }
-          100% { transform: translateX(0); }
-        }
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
         .animate-marquee-left {
           animation: marquee-left linear infinite;
         }
@@ -104,18 +104,18 @@ export function TestimonialWall({
                 aria-hidden
               />
             ))}
-          </div>
+    </div>
           <span className="text-lg font-bold text-vellure-text">
             {testimonialAggregate.rating}/5
           </span>
-        </div>
+  </div>
         <p className="text-sm text-slate-600">
           from {testimonialAggregate.count.toLocaleString()}+ shoppers
         </p>
-        <h2 className="mt-4 text-2xl font-bold tracking-tight text-vellure-text sm:text-3xl">
+        <h2 className="font-display mt-4 text-2xl font-medium tracking-tight text-vellure-text sm:text-3xl">
           {title}
         </h2>
-      </div>
+</div>
       <MarqueeRow items={row1.length ? row1 : testimonials} direction="left" />
       <MarqueeRow items={row2.length ? row2 : testimonials} direction="right" />
     </section>

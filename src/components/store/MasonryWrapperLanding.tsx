@@ -96,7 +96,7 @@ export function MasonryWrapperLanding({
   return (
     <section className={cn('px-4 py-12', className)}>
       <style jsx global>{`
-        @keyframes scrollVertical {
+@keyframes scrollVertical {
           0% {
             transform: translateY(0);
           }
@@ -104,16 +104,16 @@ export function MasonryWrapperLanding({
             transform: translateY(-50%);
           }
         }
-        .group:hover .overlay-bg {
-          opacity: 1 !important;
-        }
-        .group:hover .overlay-content {
-          opacity: 1 !important;
-          transform: translateY(0) scale(1) !important;
-        }
+.group:hover .overlay-bg {
+    opacity: 1 !important;
+}
+.group:hover .overlay-content {
+    opacity: 1 !important;
+    transform: translateY(0) scale(1) !important;
+}
       `}</style>
       <div className="container mx-auto">
-        <h2 className="mb-8 text-2xl font-bold tracking-tight text-vellure-text sm:text-3xl">
+        <h2 className="font-display mb-8 text-2xl font-medium tracking-tight text-vellure-text sm:text-3xl">
           {title}
         </h2>
         <div
@@ -124,7 +124,7 @@ export function MasonryWrapperLanding({
             <ScrollColumn key={i} tiles={col.tiles} direction={col.direction} />
           ))}
         </div>
-      </div>
+    </div>
     </section>
   );
 }
