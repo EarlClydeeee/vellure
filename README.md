@@ -1,23 +1,20 @@
 # Vellure — E-Commerce Website
 
-CubeTech Web Development Intern Assessment submission. Full-stack e-commerce with a customer storefront and admin dashboard.
+CubeTech Web Development Intern Assessment submission. Full-stack e-commerce platform with a customer storefront and admin dashboard.
 
 ---
 
-## Submission Requirements
+## Submission Details
 
 | Requirement | Details |
 |-------------|---------|
 | **GitHub repository** | https://github.com/EarlClydeeee/vellure |
-| **Live customer website** | _Replace after deploy — e.g. `https://vellure.vercel.app`_ |
-| **Live admin dashboard** | _Same deployment — e.g. `https://vellure.vercel.app/admin/login`_ |
-| **README with setup** | This file |
+| **Live customer website** | http://localhost:3000 |
+| **Live admin dashboard** | http://localhost:3000/admin/login |
 | **Admin login credentials** | See [Admin Login Credentials](#admin-login-credentials) |
 | **Technologies used** | See [Technologies Used](#technologies-used) |
 | **Desktop & mobile screenshots** | See [Screenshots](#screenshots) |
 | **System flow explanation** | See [System Flow](#system-flow) |
-
-> After deploying to Vercel, update the **Live customer website** and **Live admin dashboard** links in the table above and in your submission form.
 
 ---
 
@@ -25,13 +22,13 @@ CubeTech Web Development Intern Assessment submission. Full-stack e-commerce wit
 
 | Field | Value |
 |-------|-------|
-| **URL** | `/admin/login` (local: http://localhost:3000/admin/login) |
+| **URL** | `/admin/login` |
 | **Email** | `admin@gmail.com` |
 | **Password** | `admin1234` |
 
-Authentication is **simulated** for the assessment: sign in at `/admin/login` with the email and password above. They must match `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env.local` (HttpOnly session cookie — not Supabase Auth for the admin panel).
+Admin authentication is simulated for this assessment: credentials are validated against environment variables and stored in an HttpOnly session cookie.
 
-### Test customer (storefront login)
+### Test Customer Account
 
 | Field | Value |
 |-------|-------|
@@ -39,7 +36,7 @@ Authentication is **simulated** for the assessment: sign in at `/admin/login` wi
 | **Email** | `test@gmail.com` |
 | **Password** | `test1234` |
 
-Created by [`supabase/migrations/005_seed_test_users.sql`](supabase/migrations/005_seed_test_users.sql). Use this account to test checkout, cart sync, and `/account/*` pages.
+Use this account to test checkout, cart sync, and customer account pages (`/account/*`).
 
 ---
 
@@ -96,7 +93,7 @@ flowchart TB
   DB --> Browse
 ```
 
-**Short explanation**
+**How the system works**
 
 1. **Browse** — Guests and customers view the home page, product listing (10+ products), and product details. Data is read from Supabase.
 2. **Cart** — Guests store cart items in `localStorage`; logged-in customers sync cart rows to Supabase. The cart persists after refresh.
@@ -110,14 +107,29 @@ flowchart TB
 
 ## Screenshots
 
-Desktop and mobile screenshots are stored in [`docs/screenshots/`](docs/screenshots/).
+Desktop and mobile screenshots are in [`docs/screenshots/`](docs/screenshots/).
 
-| Area | Pages to capture |
-|------|------------------|
-| **Customer (desktop + mobile)** | Home, product listing, product details, cart, checkout, order confirmation |
-| **Admin (desktop)** | Login, dashboard, products, orders, order details, customers |
+**Customer website**
 
-See [`docs/screenshots/README.md`](docs/screenshots/README.md) for the full capture checklist and file naming convention.
+| Page | Desktop | Mobile |
+|------|---------|--------|
+| Home | `01-home-desktop.png` | `01-home-mobile.png` |
+| Product listing | `02-products-desktop.png` | `02-products-mobile.png` |
+| Product details | `03-product-detail-desktop.png` | `03-product-detail-mobile.png` |
+| Shopping cart | `04-cart-desktop.png` | `04-cart-mobile.png` |
+| Checkout | `05-checkout-desktop.png` | `05-checkout-mobile.png` |
+| Order confirmation | `06-order-confirmation-desktop.png` | `06-order-confirmation-mobile.png` |
+
+**Admin dashboard**
+
+| Page | Desktop |
+|------|---------|
+| Login | `07-admin-login-desktop.png` |
+| Dashboard | `08-admin-dashboard-desktop.png` |
+| Products | `09-admin-products-desktop.png` |
+| Orders | `10-admin-orders-desktop.png` |
+| Order details | `11-admin-order-detail-desktop.png` |
+| Customers | `12-admin-customers-desktop.png` |
 
 ---
 
@@ -127,56 +139,52 @@ See [`docs/screenshots/README.md`](docs/screenshots/README.md) for the full capt
 
 - Node.js 20+
 - npm
-- A [Supabase](https://supabase.com/) project (free tier is sufficient)
+- A [Supabase](https://supabase.com/) project
 
 ### Installation
 
-1. **Clone the repository**
+1. Clone the repository
 
    ```bash
    git clone https://github.com/EarlClydeeee/vellure.git
    cd vellure
    ```
 
-2. **Install dependencies**
+2. Install dependencies
 
    ```bash
    npm install
    ```
 
-3. **Configure environment**
+3. Configure environment
 
    ```bash
    cp .env.local.example .env.local
    ```
 
-   Edit `.env.local` with your Supabase project URL, publishable/anon key, and admin credentials.
+   Set your Supabase project URL, publishable key, and admin credentials in `.env.local`.
 
-4. **Run database migrations**
+4. Run database migrations
 
-   In the Supabase SQL Editor, run these files **in order**:
+   In the Supabase SQL Editor, run these files in order:
 
    - `supabase/migrations/001_initial_schema.sql`
    - `supabase/migrations/003_tier1_commerce.sql`
-   - `supabase/migrations/005_seed_test_users.sql` — test customer account (see credentials below)
+   - `supabase/migrations/005_seed_test_users.sql`
 
-   Optional: `supabase/migrations/002_seed_products.sql` if you prefer SQL-only product seeding instead of the npm script.
-
-5. **Seed sample data**
+5. Seed sample data
 
    ```bash
    npm run seed
    ```
 
-   This creates categories, 10+ products with images, and a test customer account (if configured in env).
-
-6. **Start the development server**
+6. Start the development server
 
    ```bash
    npm run dev
    ```
 
-7. **Open in browser**
+7. Open in browser
 
    | App | URL |
    |-----|-----|
@@ -186,39 +194,16 @@ See [`docs/screenshots/README.md`](docs/screenshots/README.md) for the full capt
 ### Environment Variables
 
 ```env
-# Supabase (Dashboard → Project Settings → API)
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_publishable_key
-# or: NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 
-# Admin (simulated auth — match credentials above)
 ADMIN_EMAIL=admin@gmail.com
 ADMIN_PASSWORD=admin1234
 
-# Optional — seed script / elevated writes
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-
-# Optional — test customer created by seed script
 TEST_USER_EMAIL=test@gmail.com
 TEST_USER_PASSWORD=test1234
 ```
-
----
-
-## Deployment
-
-Deploy to [Vercel](https://vercel.com):
-
-1. Import the GitHub repository.
-2. Add all environment variables from `.env.local` in the Vercel project settings.
-3. Deploy — the customer site and admin dashboard share one deployment.
-4. Update the **Live customer website** and **Live admin dashboard** links at the top of this README.
-
-```bash
-npx vercel --prod
-```
-
-Admin dashboard URL after deploy: `https://your-domain.vercel.app/admin/login`
 
 ---
 
@@ -226,12 +211,13 @@ Admin dashboard URL after deploy: `https://your-domain.vercel.app/admin/login`
 
 ### Customer Website
 
-- Home: navigation, promo banner, categories, featured products, footer
+- Home: navigation, promo banner, categories, deals, footer
 - Product listing (10+ products): search, category filter, price sort, stock status
 - Product details: image gallery, specs, quantity selector, related products, Buy Now
 - Shopping cart: guest (`localStorage`) + authenticated (Supabase); persists on refresh
 - Checkout: login required; COD, E-Wallet, Bank Transfer; order confirmation
 - Account: profile, addresses, orders with tracking timeline, wishlist
+- Responsive layout: 2-column product grid on mobile, full desktop layout on larger screens
 
 ### Admin Dashboard
 
@@ -241,34 +227,6 @@ Admin dashboard URL after deploy: `https://your-domain.vercel.app/admin/login`
 - Category CRUD: deletion blocked when products are assigned
 - Order management: order table, status updates, order detail view
 - Customer list: name, email, contact, order count, total purchases, account status
-
----
-
-## Project Structure
-
-```
-src/
-├── app/
-│   ├── (store)/          # Customer storefront
-│   │   ├── page.tsx      # Home
-│   │   ├── products/     # Listing & details
-│   │   ├── cart/         # Shopping cart
-│   │   ├── checkout/     # Checkout & mock payment
-│   │   ├── account/      # Profile, addresses, orders, wishlist
-│   │   ├── login/        # Customer login
-│   │   └── signup/       # Customer sign-up
-│   ├── (admin)/admin/    # Admin dashboard
-│   └── api/              # API routes (admin login/logout, etc.)
-├── components/
-│   ├── ui/               # shadcn/ui
-│   ├── store/            # Customer components
-│   └── admin/            # Admin components
-├── lib/
-│   ├── services/         # Database services
-│   ├── validation/       # Zod schemas
-│   └── cart/             # Guest cart & compare
-└── middleware.ts         # Route protection (customer + admin)
-```
 
 ---
 
