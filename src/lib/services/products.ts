@@ -84,6 +84,15 @@ function mapProduct(row: Record<string, unknown>): Product {
   };
 }
 
+function mapProductRows(data: unknown): Product[] {
+  if (!Array.isArray(data)) return [];
+  return data.map((row) => mapProduct(row as Record<string, unknown>));
+}
+
+function mapProductRow(data: unknown): Product {
+  return mapProduct(data as Record<string, unknown>);
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function applyProductFilters(query: any, filters?: ProductFilters) {
   let q = query;
@@ -123,7 +132,22 @@ function applyProductFilters(query: any, filters?: ProductFilters) {
   return q;
 }
 
-const PRODUCT_SELECT = '*, categories(*), product_images(*)';
+const PRODUCT_SELECT_FULL = '*, categories(*), product_images(*)';
+const PRODUCT_SELECT_BASE = '*, categories(*)';
+
+function isMissingProductImagesRelation(message: string): boolean {
+  return message.includes('product_images');
+}
+
+async function runProductSelect<T extends { data: unknown; error: { message: string } | null; count?: number | null }>(
+  run: (select: string) => PromiseLike<T>
+): Promise<T> {
+  const full = await run(PRODUCT_SELECT_FULL);
+  if (full.error && isMissingProductImagesRelation(full.error.message)) {
+    return run(PRODUCT_SELECT_BASE);
+  }
+  return full;
+}
 
 async function syncProductImages(productId: string, imageUrls: string[]) {
   const supabase = await createServerSupabaseClient();
@@ -148,16 +172,15 @@ export async function getProducts(
 
   const supabase = await createServerSupabaseClient();
 
-  let query = supabase.from('products').select(PRODUCT_SELECT);
-  query = applyProductFilters(query, filters);
-
-  const { data, error } = await query;
+  const { data, error } = await runProductSelect((select) =>
+    applyProductFilters(supabase.from('products').select(select), filters)
+  );
 
   if (error) {
     return { success: false, error: error.message, code: 'QUERY_ERROR' };
   }
 
-  let products = (data ?? []).map(mapProduct);
+  let products = mapProductRows(data);
   if (filters?.filter === 'discount') {
     products = products.filter(
       (p) => p.compareAtPrice != null && p.compareAtPrice > p.price
@@ -170,22 +193,32 @@ export async function getProducts(
 export async function getProductsPaginated(
   filters?: ProductFilters
 ): Promise<ServiceResult<PaginatedProducts>> {
-  const supabase = await createServerSupabaseClient();
   const page = Math.max(1, filters?.page ?? 1);
   const pageSize = filters?.pageSize ?? 9;
+
+  if (!isSupabaseConfigured()) {
+    return {
+      success: true,
+      data: { products: [], totalCount: 0, page, pageSize, totalPages: 1 },
+    };
+  }
+
+  const supabase = await createServerSupabaseClient();
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
 
-  let query = supabase.from('products').select(PRODUCT_SELECT, { count: 'exact' });
-  query = applyProductFilters(query, filters);
-
-  const { data, error, count } = await query.range(from, to);
+  const { data, error, count } = await runProductSelect((select) =>
+    applyProductFilters(
+      supabase.from('products').select(select, { count: 'exact' }),
+      filters
+    ).range(from, to)
+  );
 
   if (error) {
     return { success: false, error: error.message, code: 'QUERY_ERROR' };
   }
 
-  let products = (data ?? []).map(mapProduct);
+  let products = mapProductRows(data);
   if (filters?.filter === 'discount') {
     products = products.filter(
       (p) => p.compareAtPrice != null && p.compareAtPrice > p.price
@@ -207,11 +240,9 @@ export async function getProductById(
 ): Promise<ServiceResult<Product | null>> {
   const supabase = await createServerSupabaseClient();
 
-  const { data, error } = await supabase
-    .from('products')
-    .select(PRODUCT_SELECT)
-    .eq('id', id)
-    .single();
+  const { data, error } = await runProductSelect((select) =>
+    supabase.from('products').select(select).eq('id', id).single()
+  );
 
   if (error) {
     if (error.code === 'PGRST116') {
@@ -220,7 +251,7 @@ export async function getProductById(
     return { success: false, error: error.message, code: 'QUERY_ERROR' };
   }
 
-  const product = mapProduct(data);
+  const product = mapProductRow(data);
   if (options?.activeOnly && product.status !== 'Active') {
     return { success: true, data: null };
   }
@@ -234,16 +265,15 @@ export async function getProductsByIds(
   if (ids.length === 0) return { success: true, data: [] };
 
   const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase
-    .from('products')
-    .select(PRODUCT_SELECT)
-    .in('id', ids);
+  const { data, error } = await runProductSelect((select) =>
+    supabase.from('products').select(select).in('id', ids)
+  );
 
   if (error) {
     return { success: false, error: error.message, code: 'QUERY_ERROR' };
   }
 
-  return { success: true, data: (data ?? []).map(mapProduct) };
+  return { success: true, data: mapProductRows(data) };
 }
 
 export async function getProductsByCategory(
@@ -251,18 +281,20 @@ export async function getProductsByCategory(
 ): Promise<ServiceResult<Product[]>> {
   const supabase = await createServerSupabaseClient();
 
-  const { data, error } = await supabase
-    .from('products')
-    .select(PRODUCT_SELECT)
-    .eq('category_id', categoryId)
-    .eq('status', 'Active')
-    .order('created_at', { ascending: false });
+  const { data, error } = await runProductSelect((select) =>
+    supabase
+      .from('products')
+      .select(select)
+      .eq('category_id', categoryId)
+      .eq('status', 'Active')
+      .order('created_at', { ascending: false })
+  );
 
   if (error) {
     return { success: false, error: error.message, code: 'QUERY_ERROR' };
   }
 
-  return { success: true, data: (data ?? []).map(mapProduct) };
+  return { success: true, data: mapProductRows(data) };
 }
 
 export async function createProduct(
@@ -270,37 +302,41 @@ export async function createProduct(
 ): Promise<ServiceResult<Product>> {
   const supabase = await createServerSupabaseClient();
 
-  const { data, error } = await supabase
-    .from('products')
-    .insert({
-      name: input.name,
-      description: input.description ?? null,
-      price: input.price,
-      compare_at_price: input.compareAtPrice ?? null,
-      specs: input.specs ?? {},
-      stock_quantity: input.stockQuantity,
-      image_url: input.imageUrl ?? null,
-      category_id: input.categoryId ?? null,
-      status: input.status,
-    })
-    .select(PRODUCT_SELECT)
-    .single();
+  const { data, error } = await runProductSelect((select) =>
+    supabase
+      .from('products')
+      .insert({
+        name: input.name,
+        description: input.description ?? null,
+        price: input.price,
+        compare_at_price: input.compareAtPrice ?? null,
+        specs: input.specs ?? {},
+        stock_quantity: input.stockQuantity,
+        image_url: input.imageUrl ?? null,
+        category_id: input.categoryId ?? null,
+        status: input.status,
+      })
+      .select(select)
+      .single()
+  );
 
   if (error) {
     return { success: false, error: error.message, code: 'INSERT_ERROR' };
   }
 
+  const product = mapProductRow(data);
+
   if (input.imageUrls?.length) {
-    await syncProductImages(data.id as string, input.imageUrls);
+    await syncProductImages(product.id, input.imageUrls);
   }
 
   revalidatePath('/products');
   revalidatePath('/');
 
-  const refreshed = await getProductById(data.id as string);
+  const refreshed = await getProductById(product.id);
   return refreshed.success && refreshed.data
     ? { success: true, data: refreshed.data }
-    : { success: true, data: mapProduct(data) };
+    : { success: true, data: product };
 }
 
 export async function updateProduct(
@@ -325,12 +361,9 @@ export async function updateProduct(
     updateData.category_id = input.categoryId ?? null;
   if (input.status !== undefined) updateData.status = input.status;
 
-  const { data, error } = await supabase
-    .from('products')
-    .update(updateData)
-    .eq('id', id)
-    .select(PRODUCT_SELECT)
-    .single();
+  const { data, error } = await runProductSelect((select) =>
+    supabase.from('products').update(updateData).eq('id', id).select(select).single()
+  );
 
   if (error) {
     return { success: false, error: error.message, code: 'UPDATE_ERROR' };
@@ -347,7 +380,7 @@ export async function updateProduct(
   const refreshed = await getProductById(id);
   return refreshed.success && refreshed.data
     ? { success: true, data: refreshed.data }
-    : { success: true, data: mapProduct(data) };
+    : { success: true, data: mapProductRow(data) };
 }
 
 export async function deleteProduct(
