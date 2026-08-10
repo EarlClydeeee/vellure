@@ -1,5 +1,6 @@
 import { revalidatePath } from 'next/cache';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { Product, ProductImage, ProductStatus } from '@/lib/types';
 import { ServiceResult } from '@/lib/types/service';
 
@@ -141,6 +142,10 @@ async function syncProductImages(productId: string, imageUrls: string[]) {
 export async function getProducts(
   filters?: ProductFilters
 ): Promise<ServiceResult<Product[]>> {
+  if (!isSupabaseConfigured()) {
+    return { success: true, data: [] };
+  }
+
   const supabase = await createServerSupabaseClient();
 
   let query = supabase.from('products').select(PRODUCT_SELECT);
