@@ -31,7 +31,7 @@ export default function AccountLayout({
                 className={cn(
                   'rounded-md px-3 py-2 text-sm font-medium transition-colors',
                   pathname.startsWith(item.href)
-                    ? 'bg-[#111111] text-white'
+                    ? 'bg-vellure-primary text-white'
                     : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 )}
               >

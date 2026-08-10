@@ -14,7 +14,14 @@ export const heroCopy = {
   secondaryCta: { label: 'View Deals', href: '/products?sort=price_asc' },
 } as const;
 
+export const landingHeroCopy = {
+  image: '/landing/intro-1700559910.jpg',
+  lines: ['IPHONES & ACCESSORIES.', 'REFINED PERFORMANCE.'],
+  cta: { label: 'Shop All', href: '/products' },
+} as const;
+
 export const announcementBar = {
+  bannerLine: 'Express shipping · Easy returns · Authorized Apple products',
   message: `Free shipping on orders ${locale.symbol}${locale.freeShippingThreshold.toLocaleString()}+`,
   submessage: 'Order by 2 PM for same-day dispatch in Metro Manila',
   tagalog: `Libreng shipping sa orders ${locale.symbol}${locale.freeShippingThreshold.toLocaleString()}+`,
@@ -34,6 +41,86 @@ export type ServiceBadgeIcon =
   | 'shield-check'
   | 'headphones'
   | 'badge-check';
+
+export const iphoneModelShowcase = {
+  sidebarLabel: 'A NEW APPROACH TO PREMIUM TECH',
+  models: [
+    {
+      id: 'iphone17',
+      label: 'iPhone 17',
+      image: '/iphone/iphone17pro/iphone_17__fb1277oq3eaa_large.jpg',
+      href: '/products',
+    },
+    {
+      id: 'iphone17pro',
+      label: 'iPhone 17 Pro',
+      image: '/iphone/iphone17pro/iphone_17pro__t1j902iw6kya_large.jpg',
+      href: '/products',
+    },
+    {
+      id: 'iphoneair',
+      label: 'iPhone Air',
+      image:
+        '/iphone/iphone17pro/iphoneair/iphone-air-finish-select-202509-skyblue.webp',
+      href: '/products',
+    },
+    {
+      id: 'iphone17e',
+      label: 'iPhone 17e',
+      image: '/iphone/iphone17pro/iphone_17e__cq5ygzct314y_large.jpg',
+      href: '/products',
+    },
+  ],
+  cta: { label: 'Shop Vellure', href: '/products' },
+} as const;
+
+export const iphoneFeaturePress = {
+  sidebarLabel: 'HOT OFF THE PRESS',
+  cards: [
+    {
+      id: 'camera',
+      title: 'Pro Camera System',
+      description:
+        '48MP Fusion camera with cinematic video — capture every moment in stunning detail.',
+      image:
+      '/images/iphonecamera.png',
+      cta: { label: 'Shop iPhone 17 Pro', href: '/products' },
+    },
+    {
+      id: 'battery',
+      title: 'All-Day Battery',
+      description:
+        'Power through your day in Manila — optimized battery for work, travel, and play.',
+      image:
+        'https://www.apple.com/v/iphone-17/h/images/overview/welcome/hero_startframe__e9e7pcnguyqi_large.jpg',
+      cta: { label: 'Shop iPhone 17', href: '/products' },
+    },
+    {
+      id: 'design',
+      title: 'Ultra-Thin Design',
+      description:
+        'The thinnest iPhone ever — premium titanium build with pro capability inside.',
+      image:
+        'https://www.apple.com/v/iphone-air/h/images/overview/welcome/hero__c8vidxwr9imq_large.jpg',
+      cta: { label: 'Shop iPhone Air', href: '/products' },
+    },
+  ],
+} as const;
+
+export const vellureMission = {
+  headline: 'Not just for you. For all of us.',
+  subcopy:
+    'We’re committed to bringing authentic Apple products to the Philippines with the least friction and the most trust.',
+  cta: { label: 'Learn more', href: '/blog/how-we-curate-premium-products' },
+  image: '/landing/intro-1700559910.jpg',
+  pillars: [
+    { icon: 'shield-check' as ServiceBadgeIcon, text: '100% authorized distributor stock' },
+    { icon: 'truck' as ServiceBadgeIcon, text: 'Nationwide delivery across the Philippines' },
+    { icon: 'credit-card' as ServiceBadgeIcon, text: 'GCash, Maya, COD, and bank transfer' },
+    { icon: 'headphones' as ServiceBadgeIcon, text: 'Local support on every order' },
+    { icon: 'badge-check' as ServiceBadgeIcon, text: 'Official warranty on every device' },
+  ],
+} as const;
 
 export const serviceBadges: {
   id: string;
@@ -121,28 +208,28 @@ export const promoVouchers = [
     code: 'WELCOME10',
     title: '10% Off First Order',
     description: `New customers only. Min. spend ${locale.symbol}2,500.`,
-    accent: 'bg-sky-500',
+    accent: 'bg-vellure-primary',
   },
   {
     id: 'tech',
     code: 'TECH88',
     title: '8.8 Tech Sale',
     description: 'Extra 8% off selected electronics this week.',
-    accent: 'bg-orange-500',
+    accent: 'bg-vellure-cta',
   },
   {
     id: 'ship',
     code: 'FREESHIP',
     title: 'Free Shipping',
     description: `On orders over ${locale.symbol}${locale.freeShippingThreshold.toLocaleString()} nationwide.`,
-    accent: 'bg-emerald-500',
+    accent: 'bg-emerald-700',
   },
   {
     id: 'bundle',
     code: 'BUNDLE15',
     title: 'Bundle & Save 15%',
     description: 'Mix accessories with any device purchase.',
-    accent: 'bg-violet-500',
+    accent: 'bg-teal-800',
   },
 ] as const;
 

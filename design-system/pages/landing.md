@@ -2,25 +2,71 @@
 
 Overrides `design-system/vellure/MASTER.md` for `/`.
 
-## Colors (marketing)
-- Primary trust: `#0EA5E9` (sky blue bands, links)
-- CTA accent: `#F97316` (Shop Now, See More, sticky CTA)
-- Surface alternate: `#F0F9FF`
-- Marketing text: `#0C4A6E`
+## Editorial hero (Troubadour-inspired)
+
+- **Background:** [`/landing/intro-1700559910.jpg`](/landing/intro-1700559910.jpg) — full viewport below header
+- **Headline:** two uppercase lines, `tracking-[0.2em]`, white text, no giant logo overlay
+- **CTA:** ghost button — transparent, white border, uppercase; no orange pill on hero
+- **Overlay:** light bottom gradient only (`from-black/40`); keep photo warm and visible
+- **AnnouncementBar:** hidden on landing
+- **TrustStatsBar:** removed from landing
+
+## Header (global)
+
+- White sticky bar with border
+- Center nav: **Shop** · Vellure logo (`/vellure-logo.png`) · **Blog**
+- Utility icons (search, cart, account) top-right
+- Mobile: hamburger drawer with Shop, Blog, cart, account
+
+## Favicon
+
+- Generated from [`/vellure-logo.png`](/vellure-logo.png) as `/favicon.ico`
+
+## Troubadour feature sections
+
+### IphoneModelShowcase
+- Vertical sidebar: `A NEW APPROACH TO PREMIUM TECH`
+- Center: stacked card image swap on hover/tap
+- Right rail: iPhone 17, iPhone 17 Pro, iPhone Air, iPhone 17e
+- Active label `text-vellure-ink`, inactive `#9ca3af`
+- Ghost outline CTA: Shop Vellure (`.btn-ghost-brand`)
+
+### IphoneFeaturePress
+- Vertical sidebar: `HOT OFF THE PRESS`
+- 3 cards: Pro Camera, All-Day Battery, Ultra-Thin Design
+- Outline CTA buttons — green border via `.btn-ghost-brand`
+
+### VellureMissionBand
+- Background: `bg-vellure-primary` (`#1a3d2e` forest green)
+- Split layout: headline + pillars left, lifestyle photo right
+- Ghost white Learn more CTA
+
+## Colors (store-wide)
+
+- Primary green: `#1a3d2e` — `--vellure-green` / `bg-vellure-primary`
+- CTA dark green: `#143326` — `--vellure-green-dark` / `bg-vellure-cta`
+- Surface tint: `#EEF4F1` — `--vellure-green-light` / `bg-vellure-surface`
+- Ink text: `#1C1917` — `--vellure-ink` / `text-vellure-text`
 
 ## Typography
-- Headings: Rubik
-- Body: Nunito Sans
+
+- Display + headings: Cormorant Garamond (`font-display`)
+- Body + UI: Nunito Sans (`font-sans`)
+- Sidebar labels: `.text-brand-label` — sans, uppercase, wide tracking
 
 ## Market
+
 - Philippines-first copy (PHP, GCash/Maya/COD)
 
 ## Section order
-AnnouncementBar → ShopHero → TrustStats → Categories → PromoBanners → ServiceBadges → PaymentTrustStrip → Deals → WhyVellure → iPhone Gallery → Vouchers → Masonry → Testimonials → Newsletter → BlogTeaser → FAQ → Final CTA
+
+LandingHero → IphoneModelShowcase → IphoneFeaturePress → VellureMissionBand → Categories → Deals → ExpandingGallery → Vouchers → Masonry → Testimonials → Newsletter → BlogTeaser → FAQ → Final CTA
 
 ## UX rules
+
 - Lucide icons only
 - `cursor-pointer` on interactive cards
 - `transition-colors duration-200` on hovers
+- Model showcase: hover on desktop, tap on mobile
 - `prefers-reduced-motion`: disable masonry scroll + testimonial marquee
 - Sticky CTA hides near footer

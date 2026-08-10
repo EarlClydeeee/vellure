@@ -34,7 +34,7 @@ function getTimeLeft(target: number): TimeLeft | null {
 function Unit({ value, label }: { value: string; label: string }) {
   return (
     <div className="flex flex-col items-center gap-2">
-      <div className="min-w-[80px] rounded-xl border border-white/10 bg-[#111111] px-6 py-5 text-center text-4xl font-bold tabular-nums text-white shadow-lg sm:min-w-[80px]">
+      <div className="min-w-[80px] rounded-xl border border-white/10 bg-vellure-primary px-6 py-5 text-center text-4xl font-bold tabular-nums text-white shadow-lg sm:min-w-[80px]">
         {value}
       </div>
       <span className="text-xs font-semibold uppercase tracking-widest text-gray-400">

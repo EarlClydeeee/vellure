@@ -72,7 +72,7 @@ export function CategoryCards({
   return (
     <section className="px-4 py-12">
       <div className="container mx-auto">
-        <h2 className="mb-8 text-2xl font-bold tracking-tight sm:text-3xl">
+        <h2 className="font-display mb-8 text-2xl font-medium tracking-tight sm:text-3xl">
           Shop by Category
         </h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -80,7 +80,7 @@ export function CategoryCards({
             <Link key={category.id} href={`/products?category=${category.id}`}>
               <Card className="group cursor-pointer border-[#e5e7eb] transition-shadow hover:shadow-md">
                 <CardContent className="flex items-center justify-between p-6">
-                  <span className="text-lg font-medium transition-colors group-hover:text-[#111111]">
+                  <span className="text-lg font-medium transition-colors group-hover:text-vellure-primary">
                     {category.name}
                   </span>
                   <span className="rounded-full bg-red-500 px-2 py-0.5 text-xs font-medium text-white">

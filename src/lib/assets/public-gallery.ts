@@ -13,6 +13,8 @@ export interface ExpandingGalleryItem {
   title: string;
   description: string;
   href: string;
+  price: number;
+  compareAtPrice?: number;
 }
 
 export interface MasonryTileData {
@@ -61,36 +63,71 @@ export const PUBLIC_GALLERY_IMAGES: GalleryImage[] = [
   },
 ];
 
+export const EXPLORE_IPHONE_GALLERY_ITEMS: ExpandingGalleryItem[] = [
+  {
+    src: '/explore/iphone_17__fb1277oq3eaa_large.jpg',
+    title: 'iPhone 17',
+    description: 'Advanced camera, all-day battery, stunning display',
+    href: '/products',
+    price: 45999,
+    compareAtPrice: 49999,
+  },
+  {
+    src: '/explore/iphone_air__b5qmgl05ojyq_large.jpg',
+    title: 'iPhone Air',
+    description: 'Ultra-thin design meets pro capability',
+    href: '/products',
+    price: 54999,
+    compareAtPrice: 57999,
+  },
+  {
+    src: '/explore/iphone_17e__cq5ygzct314y_large.jpg',
+    title: 'iPhone 17e',
+    description: 'Essential iPhone features at incredible value',
+    href: '/products',
+    price: 32999,
+  },
+];
+
+/** @deprecated Use EXPLORE_IPHONE_GALLERY_ITEMS for the landing explore section */
 export const IPHONE_GALLERY_ITEMS: ExpandingGalleryItem[] = [
   {
     src: IPHONE_MOCKUP_IMAGES.iphone17BlackWebp,
     title: 'iPhone 17',
     description: 'Advanced camera, all-day battery, stunning display',
     href: '/products',
+    price: 45999,
+    compareAtPrice: 49999,
   },
   {
     src: IPHONE_MOCKUP_IMAGES.iphone17Pro,
     title: 'iPhone 17 Pro',
     description: 'Titanium design with pro camera and fastest chip',
     href: '/products',
+    price: 65999,
+    compareAtPrice: 69999,
   },
   {
     src: IPHONE_MOCKUP_IMAGES.iphone17LavenderWebp,
     title: 'iPhone 17 Lavender',
     description: 'Bold color, premium build, everyday power',
     href: '/products',
+    price: 45999,
   },
   {
     src: IPHONE_MOCKUP_IMAGES.iphoneAirSkyBlueWebp,
     title: 'iPhone Air',
     description: 'Ultra-thin design meets pro capability',
     href: '/products',
+    price: 54999,
+    compareAtPrice: 57999,
   },
   {
     src: IPHONE_MOCKUP_IMAGES.iphone17SageWebp,
     title: 'iPhone 17 Sage',
     description: 'Essential iPhone features at incredible value',
     href: '/products',
+    price: 32999,
   },
 ];
 

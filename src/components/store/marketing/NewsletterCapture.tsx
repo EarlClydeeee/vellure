@@ -80,7 +80,7 @@ export function NewsletterCapture({ variant = 'inline', className }: NewsletterC
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-vellure-primary/10 text-vellure-primary">
             <Mail className="h-6 w-6" aria-hidden />
           </div>
-          <h2 className="text-2xl font-bold text-vellure-text md:text-3xl">
+          <h2 className="font-display text-2xl font-medium text-vellure-text md:text-3xl">
             {newsletter.headline}
           </h2>
           <p className="mt-2 text-slate-600">{newsletter.subcopy}</p>
@@ -97,7 +97,7 @@ export function NewsletterCapture({ variant = 'inline', className }: NewsletterC
               placeholder={newsletter.inlinePlaceholder}
               required
               aria-label="Email address"
-              className="flex-1 rounded-full border border-sky-200 bg-white px-5 py-3 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-vellure-primary"
+              className="flex-1 rounded-full border border-vellure-primary/20 bg-white px-5 py-3 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-vellure-primary"
             />
             <Button
               type="submit"

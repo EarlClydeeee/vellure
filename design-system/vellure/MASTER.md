@@ -18,20 +18,20 @@
 
 | Role | Hex | CSS Variable |
 |------|-----|--------------|
-| Primary | `#1C1917` | `--color-primary` |
-| Secondary | `#44403C` | `--color-secondary` |
-| CTA/Accent | `#CA8A04` | `--color-cta` |
-| Background | `#FAFAF9` | `--color-background` |
-| Text | `#0C0A09` | `--color-text` |
+| Primary Green | `#1a3d2e` | `--vellure-green` / `vellure-primary` |
+| CTA Dark Green | `#143326` | `--vellure-green-dark` / `vellure-cta` |
+| Surface Tint | `#EEF4F1` | `--vellure-green-light` / `vellure-surface` |
+| Ink Text | `#1C1917` | `--vellure-ink` / `vellure-text` |
+| Background | `#FFFFFF` | `--background` |
 
-**Color Notes:** Premium black + gold accent
+**Color Notes:** Forest green editorial brand with light green surfaces
 
 ### Typography
 
-- **Heading Font:** Rubik
-- **Body Font:** Nunito Sans
-- **Mood:** ecommerce, clean, shopping, product, retail, conversion
-- **Google Fonts:** [Rubik + Nunito Sans](https://fonts.google.com/share?selection.family=Nunito+Sans:wght@300;400;500;600;700|Rubik:wght@300;400;500;600;700)
+- **Display + Heading Font:** Cormorant Garamond (`font-display`)
+- **Body Font:** Nunito Sans (`font-sans`)
+- **Mood:** editorial, premium, trust, Apple-adjacent retail
+- **Google Fonts:** [Cormorant Garamond + Nunito Sans](https://fonts.google.com/share?selection.family=Cormorant+Garamond:wght@400;500;600|Nunito+Sans:wght@300;400;500;600;700)
 
 **CSS Import:**
 ```css

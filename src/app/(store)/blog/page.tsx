@@ -35,7 +35,7 @@ export default function BlogPage() {
                 </div>
               )}
               <div className="p-6">
-                <h2 className="text-lg font-semibold text-vellure-text group-hover:text-vellure-primary">
+                <h2 className="font-display text-lg font-medium text-vellure-text group-hover:text-vellure-primary">
                   {post.title}
                 </h2>
                 <p className="mt-2 text-sm text-muted-foreground">

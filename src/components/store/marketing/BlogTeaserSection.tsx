@@ -9,7 +9,7 @@ export function BlogTeaserSection() {
       <div className="container mx-auto px-4">
         <div className="mb-8 flex items-end justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-bold text-vellure-text md:text-3xl">
+            <h2 className="font-display text-2xl font-medium text-vellure-text md:text-3xl">
               Latest from Vellure
             </h2>
             <p className="mt-1 text-sm text-slate-600">

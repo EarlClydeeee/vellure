@@ -1,5 +1,6 @@
 import { revalidatePath } from 'next/cache';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { Category } from '@/lib/types';
 import { ServiceResult } from '@/lib/types/service';
 
@@ -13,6 +14,10 @@ function mapCategory(row: Record<string, unknown>): Category {
 }
 
 export async function getCategories(): Promise<ServiceResult<Category[]>> {
+  if (!isSupabaseConfigured()) {
+    return { success: true, data: [] };
+  }
+
   const supabase = await createServerSupabaseClient();
 
   const { data, error } = await supabase
@@ -34,6 +39,21 @@ export interface CategoryWithCount extends Category {
 export async function getCategoriesWithCounts(): Promise<
   ServiceResult<CategoryWithCount[]>
 > {
+  if (!isSupabaseConfigured()) {
+    return {
+      success: true,
+      data: [
+        {
+          id: 'all',
+          name: 'All Product',
+          productCount: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ],
+    };
+  }
+
   const supabase = await createServerSupabaseClient();
 
   const [categoriesResult, productsResult] = await Promise.all([
