@@ -11,13 +11,16 @@ Overrides `design-system/vellure/MASTER.md` for `/`.
 - **AnnouncementBar:** hidden on landing
 - **TrustStatsBar:** removed from landing
 
-## Header (landing only)
+## Header (global)
 
-- White background, no blur border
-- Centered **VELLURE** wordmark — Cormorant Garamond, uppercase, wide tracking
-- Nav row below logo: Shop · iPhone · Blog · Why Vellure
+- White sticky bar with border
+- Center nav: **Shop** · Vellure logo (`/vellure-logo.png`) · **Blog**
 - Utility icons (search, cart, account) top-right
-- Other routes keep compact sticky header unchanged
+- Mobile: hamburger drawer with Shop, Blog, cart, account
+
+## Favicon
+
+- Generated from [`/vellure-logo.png`](/vellure-logo.png) as `/favicon.ico`
 
 ## Troubadour feature sections
 

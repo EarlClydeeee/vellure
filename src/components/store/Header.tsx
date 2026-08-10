@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Menu, Search, User, ShoppingBag, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,29 +15,49 @@ interface HeaderProps {
   userEmail?: string | null;
 }
 
-const navItems = [
-  { href: '/', label: 'Branda' },
-  { href: '/products', label: 'Shop' },
-  { href: '/blog', label: 'Blog' },
-];
+const navLeft = [{ href: '/products', label: 'Shop' }] as const;
 
-const landingNavItems = [
-  { href: '/products', label: 'Shop' },
-  { href: '/products?category=Smartphones', label: 'iPhone' },
+const navRight = [
   { href: '/blog', label: 'Blog' },
-  { href: '/blog/how-we-curate-premium-products', label: 'Why Vellure' },
-];
+  { href: '/blog/meet-the-team', label: 'Meet the Team' },
+  { href: '/contact', label: 'Contact Us' },
+] as const;
+
+const allNavItems = [...navLeft, ...navRight];
+
+const navLinkClass =
+  'text-xs font-medium uppercase tracking-[0.12em] text-gray-600 transition-colors hover:text-vellure-primary md:text-sm';
+
+/** Nav links collapse to logo-only on these routes (and sub-routes). */
+const LOGO_ONLY_PREFIXES = ['/products', '/blog', '/contact'];
+
+function isLogoOnlyNav(pathname: string): boolean {
+  return LOGO_ONLY_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+  );
+}
+
+function VellureLogoLink({ className }: { className?: string }) {
+  return (
+    <NavLink href="/" className={cn('shrink-0 px-1', className)} aria-label="Vellure home">
+      <Image
+        src="/vellure-logo.png"
+        alt="Vellure"
+        width={120}
+        height={48}
+        className="h-8 w-auto sm:h-9 md:h-10"
+        priority
+      />
+    </NavLink>
+  );
+}
 
 function HeaderUtilities({
   userEmail,
   cartCount,
-  onMenuToggle,
-  mobileMenuOpen,
 }: {
   userEmail?: string | null;
   cartCount: number;
-  onMenuToggle?: () => void;
-  mobileMenuOpen?: boolean;
 }) {
   return (
     <div className="flex items-center gap-1 sm:gap-2">
@@ -70,20 +91,6 @@ function HeaderUtilities({
           <User className="h-4 w-4" />
         </span>
       </NavLink>
-
-      {onMenuToggle && (
-        <button
-          className="ml-1 flex items-center rounded-full p-2 hover:bg-gray-100 md:hidden"
-          onClick={onMenuToggle}
-          aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-        >
-          {mobileMenuOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
-        </button>
-      )}
     </div>
   );
 }
@@ -91,13 +98,11 @@ function HeaderUtilities({
 function MobileDrawer({
   open,
   onClose,
-  navItems: items,
   userEmail,
   cartCount,
 }: {
   open: boolean;
   onClose: () => void;
-  navItems: { href: string; label: string }[];
   userEmail?: string | null;
   cartCount: number;
 }) {
@@ -111,7 +116,7 @@ function MobileDrawer({
       >
         <div className="flex h-full flex-col p-6 pt-20">
           <nav className="flex flex-col gap-4">
-            {items.map((item) => (
+            {allNavItems.map((item) => (
               <NavLink
                 key={item.href}
                 href={item.href}
@@ -183,95 +188,71 @@ export function Header({ userEmail }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { cartCount } = useCart();
   const pathname = usePathname();
-  const isLanding = pathname === '/';
+  const logoOnly = isLogoOnlyNav(pathname);
+  const showFullNav = !logoOnly;
 
-  if (isLanding) {
-    return (
-      <header className="sticky top-0 z-50 w-full bg-white">
-        <div className="container relative mx-auto px-4 py-4 md:py-5">
-          <div className="absolute right-4 top-4 md:right-0 md:top-5">
-            <HeaderUtilities userEmail={userEmail} cartCount={cartCount} />
+  return (
+    <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/95 backdrop-blur-md supports-[backdrop-filter]:bg-white/90">
+      <div className="container relative mx-auto flex h-16 items-center px-4">
+        {showFullNav && (
+          <button
+            className="absolute left-4 rounded-full p-2 hover:bg-gray-100 md:hidden"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+          >
+            {mobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
+        )}
+
+        {logoOnly ? (
+          <div className="mx-auto flex flex-1 justify-center">
+            <VellureLogoLink />
           </div>
+        ) : (
+          <nav
+            className="mx-auto hidden items-center justify-center gap-4 sm:gap-6 md:flex md:gap-8 lg:gap-10"
+            aria-label="Main navigation"
+          >
+            {navLeft.map((item) => (
+              <NavLink key={item.href} href={item.href} className={navLinkClass}>
+                {item.label}
+              </NavLink>
+            ))}
 
-          <div className="flex items-center justify-center md:block md:text-center">
-            <button
-              className="absolute left-4 top-4 rounded-full p-2 hover:bg-gray-100 md:hidden"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-            >
-              {mobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </button>
+            <VellureLogoLink />
 
-            <NavLink
-              href="/"
-              className="font-display text-2xl font-medium uppercase tracking-[0.25em] text-vellure-ink md:text-3xl"
-            >
-              Vellure
-            </NavLink>
-          </div>
-
-          <nav className="mt-4 hidden items-center justify-center gap-8 md:flex">
-            {landingNavItems.map((item) => (
-              <NavLink
-                key={item.href}
-                href={item.href}
-                className="text-xs font-medium uppercase tracking-[0.12em] text-gray-600 transition-colors hover:text-vellure-primary"
-              >
+            {navRight.map((item) => (
+              <NavLink key={item.href} href={item.href} className={navLinkClass}>
                 {item.label}
               </NavLink>
             ))}
           </nav>
-        </div>
+        )}
 
+        {/* Mobile: logo centered when full nav (links in drawer) */}
+        {showFullNav && (
+          <div className="mx-auto md:hidden">
+            <VellureLogoLink />
+          </div>
+        )}
+
+        <div className={cn('absolute right-4 md:right-0', logoOnly && 'right-4')}>
+          <HeaderUtilities userEmail={userEmail} cartCount={cartCount} />
+        </div>
+      </div>
+
+      {showFullNav && (
         <MobileDrawer
           open={mobileMenuOpen}
           onClose={() => setMobileMenuOpen(false)}
-          navItems={landingNavItems}
           userEmail={userEmail}
           cartCount={cartCount}
         />
-      </header>
-    );
-  }
-
-  return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/95 backdrop-blur-md supports-[backdrop-filter]:bg-white/90">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <NavLink href="/" className="shrink-0 font-display text-xl font-medium uppercase tracking-[0.2em] text-vellure-ink md:text-2xl">
-          Vellure
-        </NavLink>
-
-        <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-10 md:flex">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.href}
-              href={item.href}
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-vellure-primary"
-            >
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
-
-        <HeaderUtilities
-          userEmail={userEmail}
-          cartCount={cartCount}
-          onMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)}
-          mobileMenuOpen={mobileMenuOpen}
-        />
-      </div>
-
-      <MobileDrawer
-        open={mobileMenuOpen}
-        onClose={() => setMobileMenuOpen(false)}
-        navItems={navItems}
-        userEmail={userEmail}
-        cartCount={cartCount}
-      />
+      )}
     </header>
   );
 }

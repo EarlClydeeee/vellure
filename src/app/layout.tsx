@@ -24,6 +24,11 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   title: "Vellure",
   description: "Vellure - Premium E-Commerce Store",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/vellure-logo.png",
+  },
 };
 
 export default function RootLayout({

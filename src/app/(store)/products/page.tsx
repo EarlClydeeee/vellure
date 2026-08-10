@@ -6,13 +6,13 @@ import {
 } from '@/lib/services/products';
 import { getCategoriesWithCounts } from '@/lib/services/categories';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
-import { ShopHero } from '@/components/store/ShopHero';
 import { ShopSidebar } from '@/components/store/ShopSidebar';
 import { ProductGrid } from '@/components/store/ProductGrid';
 import { Pagination } from '@/components/store/Pagination';
 import { RecommendationsCarousel } from '@/components/store/RecommendationsCarousel';
 import { StoreSetupAlert } from '@/components/store/StoreSetupAlert';
 import { PriceSortSelect } from '@/components/store/PriceSortSelect';
+import { SearchBar } from '@/components/store/SearchBar';
 import { ShopSidebarSkeleton } from '@/components/store/skeletons/ShopSidebarSkeleton';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -90,9 +90,17 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
   return (
     <div>
-      <ShopHero title="Shop" tagline="Give All You Need" showSearch />
+      <div className="container mx-auto px-4 pb-8 pt-8 md:pt-10">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h1 className="font-display text-3xl font-medium text-vellure-text md:text-4xl">
+              Shop
+            </h1>
+            <p className="mt-1 text-sm text-muted-foreground">Give All You Need</p>
+          </div>
+          <SearchBar className="w-full sm:max-w-md" />
+        </div>
 
-      <div className="container mx-auto px-4 pb-8 pt-20 md:pt-24">
         <div className="flex flex-col gap-8 lg:flex-row">
           <Suspense fallback={<ShopSidebarSkeleton />}>
             <ShopSidebar

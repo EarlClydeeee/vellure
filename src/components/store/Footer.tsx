@@ -43,18 +43,18 @@ export function Footer() {
                 Blog
               </NavLink>
               <NavLink
-                href="/"
+                href="/blog/meet-the-team"
                 className="text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
                 Meet The Team
               </NavLink>
-              <a
-                href="mailto:hello@vellure.com"
+              <NavLink
+                href="/contact"
                 className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
                 <Mail className="h-4 w-4" />
                 Contact Us
-              </a>
+              </NavLink>
             </nav>
           </div>
 
