@@ -84,6 +84,15 @@ function mapProduct(row: Record<string, unknown>): Product {
   };
 }
 
+function mapProductRows(data: unknown): Product[] {
+  if (!Array.isArray(data)) return [];
+  return data.map((row) => mapProduct(row as Record<string, unknown>));
+}
+
+function mapProductRow(data: unknown): Product {
+  return mapProduct(data as Record<string, unknown>);
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function applyProductFilters(query: any, filters?: ProductFilters) {
   let q = query;
@@ -171,7 +180,7 @@ export async function getProducts(
     return { success: false, error: error.message, code: 'QUERY_ERROR' };
   }
 
-  let products = (data ?? []).map(mapProduct);
+  let products = mapProductRows(data);
   if (filters?.filter === 'discount') {
     products = products.filter(
       (p) => p.compareAtPrice != null && p.compareAtPrice > p.price
@@ -209,7 +218,7 @@ export async function getProductsPaginated(
     return { success: false, error: error.message, code: 'QUERY_ERROR' };
   }
 
-  let products = (data ?? []).map(mapProduct);
+  let products = mapProductRows(data);
   if (filters?.filter === 'discount') {
     products = products.filter(
       (p) => p.compareAtPrice != null && p.compareAtPrice > p.price
@@ -242,7 +251,7 @@ export async function getProductById(
     return { success: false, error: error.message, code: 'QUERY_ERROR' };
   }
 
-  const product = mapProduct(data);
+  const product = mapProductRow(data);
   if (options?.activeOnly && product.status !== 'Active') {
     return { success: true, data: null };
   }
@@ -264,7 +273,7 @@ export async function getProductsByIds(
     return { success: false, error: error.message, code: 'QUERY_ERROR' };
   }
 
-  return { success: true, data: (data ?? []).map(mapProduct) };
+  return { success: true, data: mapProductRows(data) };
 }
 
 export async function getProductsByCategory(
@@ -285,7 +294,7 @@ export async function getProductsByCategory(
     return { success: false, error: error.message, code: 'QUERY_ERROR' };
   }
 
-  return { success: true, data: (data ?? []).map(mapProduct) };
+  return { success: true, data: mapProductRows(data) };
 }
 
 export async function createProduct(
@@ -315,17 +324,19 @@ export async function createProduct(
     return { success: false, error: error.message, code: 'INSERT_ERROR' };
   }
 
+  const product = mapProductRow(data);
+
   if (input.imageUrls?.length) {
-    await syncProductImages(data.id as string, input.imageUrls);
+    await syncProductImages(product.id, input.imageUrls);
   }
 
   revalidatePath('/products');
   revalidatePath('/');
 
-  const refreshed = await getProductById(data.id as string);
+  const refreshed = await getProductById(product.id);
   return refreshed.success && refreshed.data
     ? { success: true, data: refreshed.data }
-    : { success: true, data: mapProduct(data) };
+    : { success: true, data: product };
 }
 
 export async function updateProduct(
@@ -369,7 +380,7 @@ export async function updateProduct(
   const refreshed = await getProductById(id);
   return refreshed.success && refreshed.data
     ? { success: true, data: refreshed.data }
-    : { success: true, data: mapProduct(data) };
+    : { success: true, data: mapProductRow(data) };
 }
 
 export async function deleteProduct(
