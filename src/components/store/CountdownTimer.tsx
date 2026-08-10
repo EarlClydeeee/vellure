@@ -50,16 +50,30 @@ export function CountdownTimer({
   className,
 }: CountdownTimerProps) {
   const target = new Date(targetDate).getTime();
-  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(() =>
-    getTimeLeft(target)
-  );
+  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const tick = () => setTimeLeft(getTimeLeft(target));
     tick();
+    setReady(true);
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
   }, [target]);
+
+  if (!ready) {
+    return (
+      <div
+        className={cn('flex flex-wrap items-start justify-center gap-2 sm:gap-4', className)}
+        aria-hidden="true"
+      >
+        <Unit value="--" label="Days" />
+        <Unit value="--" label="Hours" />
+        <Unit value="--" label="Minutes" />
+        <Unit value="--" label="Seconds" />
+      </div>
+    );
+  }
 
   if (!timeLeft) {
     return (
