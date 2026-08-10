@@ -24,7 +24,7 @@ When you shop with us, you're supporting a small team that cares about every det
     slug: 'new-arrivals-this-season',
     title: 'New Arrivals This Season',
     excerpt: 'Discover what is new in our shop.',
-    image: '/iphone/iphone17/iphone_17pro__t1j902iw6kya_large.jpg',
+    image: '/iphone/iphone17pro/iphone_17pro__t1j902iw6kya_large.jpg',
     publishedAt: '2026-02-15',
     body: `This season brings fresh inventory across our iPhone lineup — from the latest iPhone 17 series to essential accessories that complete your setup.
 
@@ -36,7 +36,7 @@ Browse the shop to see what's new, or filter by New Arrival on the products page
     slug: 'how-we-curate-premium-products',
     title: 'How We Curate Premium Products',
     excerpt: 'Our process for selecting every item we sell.',
-    image: '/iphone/iphone17/iphone_17__fb1277oq3eaa_large.jpg',
+    image: '/iphone/iphone17pro/iphone_17__fb1277oq3eaa_large.jpg',
     publishedAt: '2026-01-20',
     body: `Every product on Vellure passes a simple test: would we recommend it to a friend?
 

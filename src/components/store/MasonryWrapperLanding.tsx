@@ -17,9 +17,10 @@ function MasonryTile({ tile }: { tile: MasonryTileData }) {
       <img
         src={tile.src}
         alt={tile.alt}
-        className="block h-auto w-full transition-all duration-700 group-hover:scale-110"
+        loading="lazy"
+        className="block h-full min-h-[220px] w-full object-contain p-6 transition-transform duration-700 group-hover:scale-105"
       />
-      <div className="overlay-bg absolute inset-0 flex flex-col justify-end p-6 opacity-0 transition-opacity duration-300 ease-in-out [background:linear-gradient(to_top,rgba(0,0,0,0.8)_0%,transparent_100%)]">
+      <div className="overlay-bg absolute inset-0 flex flex-col justify-end p-6 opacity-0 transition-opacity duration-300 ease-in-out [background:linear-gradient(to_top,rgba(0,0,0,0.75)_0%,transparent_55%)]">
         <div className="overlay-content translate-y-5 opacity-0 transition-all duration-300 ease-in-out">
           <h3 className="mb-1 text-lg font-bold text-white">{tile.title}</h3>
           <p className="text-sm text-white/90">{tile.subtitle}</p>
@@ -29,7 +30,7 @@ function MasonryTile({ tile }: { tile: MasonryTileData }) {
   );
 
   const className =
-    'group relative mb-5 block cursor-pointer overflow-hidden bg-[#1a1a1a]';
+    'group relative mb-5 block min-h-[220px] cursor-pointer overflow-hidden rounded-xl bg-slate-100';
 
   if (tile.href) {
     return (

@@ -92,7 +92,7 @@ export const promoBanners = [
     title: 'Shop All Tech',
     subtitle: 'Latest gadgets and accessories',
     href: '/products',
-    image: '/iphone/iphone17/iphone_17pro__t1j902iw6kya_large.jpg',
+    image: '/iphone/iphone17pro/iphone_17pro__t1j902iw6kya_large.jpg',
     large: true,
   },
   {
@@ -267,14 +267,14 @@ export const blogTeasers = [
     title: 'New Arrivals This Season',
     excerpt: 'Discover what is new in our shop.',
     href: '/blog/new-arrivals-this-season',
-    image: '/iphone/iphone17/iphone_17pro__t1j902iw6kya_large.jpg',
+    image: '/iphone/iphone17pro/iphone_17pro__t1j902iw6kya_large.jpg',
   },
   {
     id: 'curate',
     title: 'How We Curate Premium Products',
     excerpt: 'Our process for selecting every item we sell.',
     href: '/blog/how-we-curate-premium-products',
-    image: '/iphone/iphone17/iphone_17__fb1277oq3eaa_large.jpg',
+    image: '/iphone/iphone17pro/iphone_17__fb1277oq3eaa_large.jpg',
   },
 ] as const;
 
