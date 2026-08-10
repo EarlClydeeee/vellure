@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import {
+  credentialsMatchAdmin,
+  getAdminConfigEmail,
+  SESSION_DURATION_MS,
+} from '@/lib/auth/admin-session';
 
 const COOKIE_NAME = 'admin_session';
-const SESSION_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 export async function POST(request: Request) {
   try {
@@ -10,29 +14,29 @@ export async function POST(request: Request) {
 
     if (!username || !password) {
       return NextResponse.json(
-        { error: 'Username and password are required' },
+        { error: 'Email and password are required' },
         { status: 400 }
       );
     }
 
-    const adminUsername = process.env.ADMIN_USERNAME;
-    const adminPassword = process.env.ADMIN_PASSWORD;
-
-    if (!adminUsername || !adminPassword) {
+    const adminEmail = getAdminConfigEmail();
+    if (!adminEmail || !process.env.ADMIN_PASSWORD) {
       return NextResponse.json(
-        { error: 'Admin credentials not configured' },
+        {
+          error:
+            'Admin credentials not configured. Set ADMIN_EMAIL and ADMIN_PASSWORD in .env.local',
+        },
         { status: 500 }
       );
     }
 
-    if (username !== adminUsername || password !== adminPassword) {
-      return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
-      );
+    if (!credentialsMatchAdmin(username, password)) {
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    const token = Buffer.from(JSON.stringify({ timestamp: Date.now() })).toString('base64');
+    const token = Buffer.from(
+      JSON.stringify({ timestamp: Date.now(), email: adminEmail })
+    ).toString('base64');
     const cookieStore = await cookies();
     cookieStore.set(COOKIE_NAME, token, {
       httpOnly: true,
@@ -42,11 +46,8 @@ export async function POST(request: Request) {
       maxAge: SESSION_DURATION_MS / 1000,
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, email: adminEmail });
   } catch {
-    return NextResponse.json(
-      { error: 'Invalid request body' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }
 }

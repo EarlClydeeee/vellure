@@ -1,28 +1,36 @@
 import { cookies } from 'next/headers';
-import { SESSION_DURATION_MS, validateAdminSessionToken } from '@/lib/auth/admin-session';
+import {
+  SESSION_DURATION_MS,
+  credentialsMatchAdmin,
+  getAdminConfigEmail,
+  parseAdminSessionToken,
+  validateAdminSessionToken,
+} from '@/lib/auth/admin-session';
 
 const COOKIE_NAME = 'admin_session';
 
-function createSessionToken(): string {
-  const payload = JSON.stringify({ timestamp: Date.now() });
+function createSessionToken(email: string): string {
+  const payload = JSON.stringify({ timestamp: Date.now(), email });
   return Buffer.from(payload).toString('base64');
 }
 
-export { isAdminEmail, validateAdminSessionToken } from '@/lib/auth/admin-session';
+export {
+  isAdminEmail,
+  validateAdminSessionToken,
+  getAdminConfigEmail,
+  credentialsMatchAdmin,
+} from '@/lib/auth/admin-session';
 
-export async function adminLogin(username: string, password: string): Promise<boolean> {
-  const adminUsername = process.env.ADMIN_USERNAME;
-  const adminPassword = process.env.ADMIN_PASSWORD;
-
-  if (!adminUsername || !adminPassword) {
+export async function adminLogin(
+  identifier: string,
+  password: string
+): Promise<boolean> {
+  if (!credentialsMatchAdmin(identifier, password)) {
     return false;
   }
 
-  if (username !== adminUsername || password !== adminPassword) {
-    return false;
-  }
-
-  const token = createSessionToken();
+  const email = getAdminConfigEmail()!;
+  const token = createSessionToken(email);
   const cookieStore = await cookies();
   cookieStore.set(COOKIE_NAME, token, {
     httpOnly: true,
@@ -50,4 +58,11 @@ export async function isAdminAuthenticated(): Promise<boolean> {
   const cookieStore = await cookies();
   const session = cookieStore.get(COOKIE_NAME);
   return validateAdminSessionToken(session?.value);
+}
+
+export async function getAdminSessionEmail(): Promise<string | null> {
+  const cookieStore = await cookies();
+  const session = cookieStore.get(COOKIE_NAME);
+  const payload = parseAdminSessionToken(session?.value);
+  return payload?.email ?? getAdminConfigEmail();
 }

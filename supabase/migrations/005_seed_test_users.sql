@@ -6,7 +6,7 @@
 -- │   Dashboard: /admin/login                                               │
 -- │   Email:     admin@gmail.com                                            │
 -- │   Password:  admin1234                                                  │
--- │   .env.local: ADMIN_USERNAME=admin@gmail.com                            │
+-- │   .env.local: ADMIN_EMAIL=admin@gmail.com                               │
 -- │               ADMIN_PASSWORD=admin1234                                  │
 -- └─────────────────────────────────────────────────────────────────────────┘
 --

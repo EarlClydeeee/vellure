@@ -271,7 +271,8 @@ export async function completeStoreLoginAction(
   if (!sessionStarted) {
     return {
       success: false as const,
-      error: 'Admin session could not be started. Check ADMIN_USERNAME and ADMIN_PASSWORD in .env.local.',
+      error:
+        'Admin session could not be started. Check ADMIN_EMAIL and ADMIN_PASSWORD in .env.local.',
     };
   }
 

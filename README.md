@@ -29,7 +29,7 @@ CubeTech Web Development Intern Assessment submission. Full-stack e-commerce wit
 | **Email** | `admin@gmail.com` |
 | **Password** | `admin1234` |
 
-Authentication is **simulated** for the assessment: sign in at `/admin/login` with the email and password above. They must match `ADMIN_USERNAME` and `ADMIN_PASSWORD` in `.env.local` (HttpOnly session cookie — not Supabase Auth for the admin panel).
+Authentication is **simulated** for the assessment: sign in at `/admin/login` with the email and password above. They must match `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env.local` (HttpOnly session cookie — not Supabase Auth for the admin panel).
 
 ### Test customer (storefront login)
 
@@ -192,7 +192,7 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_publishable_key
 # or: NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 
 # Admin (simulated auth — match credentials above)
-ADMIN_USERNAME=admin@gmail.com
+ADMIN_EMAIL=admin@gmail.com
 ADMIN_PASSWORD=admin1234
 
 # Optional — seed script / elevated writes
