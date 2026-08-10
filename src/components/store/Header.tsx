@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { NavLink } from '@/components/store/NavLink';
 import { AnnouncementBar } from '@/components/store/marketing/AnnouncementBar';
 import { useCart } from '@/components/store/CartProvider';
+import { VELLURE_LOGO } from '@/lib/assets/brand';
 import { cn } from '@/lib/utils';
 
 interface HeaderProps {
@@ -51,10 +52,10 @@ function VellureLogoLink({
       aria-label="Back to Vellure home"
     >
       <Image
-        src="/vellure-logo.png"
+        src={VELLURE_LOGO}
         alt="Vellure"
-        width={140}
-        height={56}
+        width={600}
+        height={600}
         className={cn(
           'h-8 w-auto sm:h-9 md:h-10',
           inverted && 'brightness-0 invert'
