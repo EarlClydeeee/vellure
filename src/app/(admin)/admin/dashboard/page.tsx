@@ -30,7 +30,7 @@ export default async function AdminDashboardPage() {
   if (!result.success) {
     return (
       <div>
-        <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+        <h1 className="mb-6 text-2xl font-bold sm:text-3xl">Dashboard</h1>
         <p className="text-destructive">Failed to load dashboard metrics.</p>
       </div>
     );
@@ -40,7 +40,7 @@ export default async function AdminDashboardPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+      <h1 className="mb-6 text-2xl font-bold sm:text-3xl">Dashboard</h1>
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         <SummaryCard
           label="Total Products"

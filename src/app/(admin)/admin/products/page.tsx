@@ -40,8 +40,8 @@ export default async function AdminProductsPage({ searchParams }: Props) {
 
   return (
     <div>
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
-        <h1 className="text-3xl font-bold">Products</h1>
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-2xl font-bold sm:text-3xl">Products</h1>
         <Button asChild>
           <Link href="/admin/products/new">
             <Plus className="h-4 w-4" />

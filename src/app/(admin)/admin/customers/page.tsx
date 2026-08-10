@@ -23,9 +23,9 @@ export default async function AdminCustomersPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Customers</h1>
-      <div className="relative w-full overflow-auto rounded-md border">
-        <Table>
+      <h1 className="mb-6 text-2xl font-bold sm:text-3xl">Customers</h1>
+      <div className="relative -mx-4 w-[calc(100%+2rem)] overflow-x-auto rounded-md border sm:mx-0 sm:w-full">
+        <Table className="min-w-[640px]">
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>

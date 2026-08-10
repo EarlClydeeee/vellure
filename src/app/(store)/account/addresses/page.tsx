@@ -23,8 +23,8 @@ export default async function AccountAddressesPage() {
       {addresses.length > 0 && (
         <div className="space-y-4">
           {addresses.map((addr) => (
-            <div key={addr.id} className="rounded-lg border p-4 flex justify-between gap-4">
-              <div>
+            <div key={addr.id} className="flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:justify-between sm:gap-4">
+              <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <p className="font-medium">{addr.label}</p>
                   {addr.isDefault && <Badge variant="secondary">Default</Badge>}

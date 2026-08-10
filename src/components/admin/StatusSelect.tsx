@@ -57,7 +57,7 @@ export function StatusSelect({ orderId, currentStatus }: StatusSelectProps) {
   return (
     <div className="space-y-3">
       <Select defaultValue={currentStatus} onValueChange={handleChange} disabled={loading}>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-full max-w-[220px]">
           <SelectValue placeholder="Select status" />
         </SelectTrigger>
         <SelectContent>
@@ -70,13 +70,14 @@ export function StatusSelect({ orderId, currentStatus }: StatusSelectProps) {
       </Select>
 
       {showTracking && (
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           <Input
             placeholder="Tracking number"
             value={trackingNumber}
             onChange={(e) => setTrackingNumber(e.target.value)}
+            className="min-w-0 flex-1"
           />
-          <Button size="sm" onClick={handleShip} disabled={loading}>
+          <Button size="sm" onClick={handleShip} disabled={loading} className="shrink-0">
             Ship
           </Button>
         </div>

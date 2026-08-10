@@ -52,8 +52,8 @@ export function ProductTable({ products }: ProductTableProps) {
 
   return (
     <>
-      <div className="relative w-full overflow-auto rounded-md border">
-        <Table>
+      <div className="relative -mx-4 w-[calc(100%+2rem)] overflow-x-auto rounded-md border sm:mx-0 sm:w-full">
+        <Table className="min-w-[720px]">
           <TableHeader>
             <TableRow>
               <TableHead className="w-[60px]">Image</TableHead>
