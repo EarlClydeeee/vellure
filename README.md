@@ -31,6 +31,16 @@ CubeTech Web Development Intern Assessment submission. Full-stack e-commerce wit
 
 Authentication is **simulated** for the assessment: credentials are validated against `ADMIN_USERNAME` and `ADMIN_PASSWORD` in `.env.local`, and a secure HttpOnly session cookie is set. No Supabase account is required for admin access.
 
+### Test customer (storefront login)
+
+| Field | Value |
+|-------|-------|
+| **URL** | `/login` |
+| **Email** | `test@gmail.com` |
+| **Password** | `test1234` |
+
+Created by [`supabase/migrations/005_seed_test_users.sql`](supabase/migrations/005_seed_test_users.sql). Use this account to test checkout, cart sync, and `/account/*` pages.
+
 ---
 
 ## Technologies Used
@@ -148,8 +158,9 @@ See [`docs/screenshots/README.md`](docs/screenshots/README.md) for the full capt
 
    - `supabase/migrations/001_initial_schema.sql`
    - `supabase/migrations/003_tier1_commerce.sql`
+   - `supabase/migrations/005_seed_test_users.sql` — test customer account (see credentials below)
 
-   Optional: `supabase/migrations/002_seed_products.sql` if you prefer SQL-only seeding instead of the npm script.
+   Optional: `supabase/migrations/002_seed_products.sql` if you prefer SQL-only product seeding instead of the npm script.
 
 5. **Seed sample data**
 
