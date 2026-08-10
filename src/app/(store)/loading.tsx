@@ -3,9 +3,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 export default function StoreLoading() {
   return (
     <div className="flex flex-col">
-      <div className="relative min-h-[calc(100svh-5rem)] md:min-h-[calc(100svh-7.5rem)]">
+      <div className="relative min-h-[100svh]">
         <Skeleton className="absolute inset-0 rounded-none" />
-        <div className="relative z-10 flex min-h-[calc(100svh-5rem)] flex-col items-center justify-center gap-3 px-4 md:min-h-[calc(100svh-7.5rem)]">
+        <div className="relative z-10 flex min-h-[100svh] flex-col items-center justify-center gap-3 px-4">
           <Skeleton className="h-4 w-56 bg-white/30" />
           <Skeleton className="h-4 w-48 bg-white/30" />
           <Skeleton className="mt-4 h-11 w-32 bg-white/30" />

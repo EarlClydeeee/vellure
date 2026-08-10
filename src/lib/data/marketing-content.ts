@@ -21,6 +21,7 @@ export const landingHeroCopy = {
 } as const;
 
 export const announcementBar = {
+  bannerLine: 'Express shipping · Easy returns · Authorized Apple products',
   message: `Free shipping on orders ${locale.symbol}${locale.freeShippingThreshold.toLocaleString()}+`,
   submessage: 'Order by 2 PM for same-day dispatch in Metro Manila',
   tagalog: `Libreng shipping sa orders ${locale.symbol}${locale.freeShippingThreshold.toLocaleString()}+`,

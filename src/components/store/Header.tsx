@@ -8,6 +8,7 @@ import { Menu, Search, User, ShoppingBag, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { NavLink } from '@/components/store/NavLink';
+import { AnnouncementBar } from '@/components/store/marketing/AnnouncementBar';
 import { useCart } from '@/components/store/CartProvider';
 import { cn } from '@/lib/utils';
 
@@ -15,20 +16,13 @@ interface HeaderProps {
   userEmail?: string | null;
 }
 
-const navLeft = [{ href: '/products', label: 'Shop' }] as const;
-
-const navRight = [
+const navItems = [
+  { href: '/products', label: 'Shop' },
   { href: '/blog', label: 'Blog' },
   { href: '/blog/meet-the-team', label: 'Meet the Team' },
   { href: '/contact', label: 'Contact Us' },
 ] as const;
 
-const allNavItems = [...navLeft, ...navRight];
-
-const navLinkClass =
-  'text-xs font-medium uppercase tracking-[0.12em] text-gray-600 transition-colors hover:text-vellure-primary md:text-sm';
-
-/** Nav links collapse to logo-only on these routes (and sub-routes). */
 const LOGO_ONLY_PREFIXES = ['/products', '/blog', '/contact'];
 
 function isLogoOnlyNav(pathname: string): boolean {
@@ -37,60 +31,98 @@ function isLogoOnlyNav(pathname: string): boolean {
   );
 }
 
-function VellureLogoLink({ className }: { className?: string }) {
+const pillLinkClass =
+  'hidden whitespace-nowrap px-2 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80 sm:inline-block sm:text-xs';
+
+function VellureLogoLink({
+  inverted = false,
+  className,
+}: {
+  inverted?: boolean;
+  className?: string;
+}) {
   return (
-    <NavLink href="/" className={cn('shrink-0 px-1', className)} aria-label="Vellure home">
+    <NavLink href="/" className={cn('shrink-0', className)} aria-label="Vellure home">
       <Image
         src="/vellure-logo.png"
         alt="Vellure"
-        width={120}
-        height={48}
-        className="h-8 w-auto sm:h-9 md:h-10"
+        width={140}
+        height={56}
+        className={cn(
+          'h-8 w-auto sm:h-9 md:h-10',
+          inverted && 'brightness-0 invert'
+        )}
         priority
       />
     </NavLink>
   );
 }
 
-function HeaderUtilities({
+function NavPill({
   userEmail,
   cartCount,
+  showLinks,
+  onMenuOpen,
 }: {
   userEmail?: string | null;
   cartCount: number;
+  showLinks: boolean;
+  onMenuOpen?: () => void;
 }) {
   return (
-    <div className="flex items-center gap-1 sm:gap-2">
-      <NavLink
-        href="/products"
-        className="rounded-full p-2.5 text-gray-600 transition-colors hover:bg-gray-100 hover:text-vellure-primary"
-        aria-label="Search products"
-      >
-        <Search className="h-5 w-5" />
-      </NavLink>
+    <div className="flex items-center rounded-full bg-vellure-primary py-1.5 pl-3 pr-1.5 sm:py-2 sm:pl-4 sm:pr-2">
+      {showLinks &&
+        navItems.map((item) => (
+          <NavLink key={item.href} href={item.href} className={pillLinkClass}>
+            {item.label}
+          </NavLink>
+        ))}
 
-      <NavLink
-        href="/cart"
-        className="relative rounded-full p-2.5 text-gray-600 transition-colors hover:bg-gray-100 hover:text-vellure-primary"
-        aria-label="Shopping cart"
-      >
-        <ShoppingBag className="h-5 w-5" />
-        {cartCount > 0 && (
-          <Badge className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-vellure-primary p-0 text-[10px] text-white">
-            {cartCount > 9 ? '9+' : cartCount}
-          </Badge>
+      {showLinks && (
+        <span className="mx-1 hidden h-4 w-px bg-white/25 sm:block" aria-hidden />
+      )}
+
+      <div className="flex items-center gap-0.5 sm:gap-1">
+        {showLinks && onMenuOpen && (
+          <button
+            type="button"
+            className="rounded-full p-2 text-white transition-opacity hover:opacity-80 sm:hidden"
+            onClick={onMenuOpen}
+            aria-label="Open menu"
+          >
+            <Menu className="h-4 w-4" />
+          </button>
         )}
-      </NavLink>
 
-      <NavLink
-        href={userEmail ? '/account' : '/login'}
-        className="rounded-full p-0.5 text-gray-600 transition-colors hover:opacity-80"
-        aria-label={userEmail ? 'My account' : 'Log in'}
-      >
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
-          <User className="h-4 w-4" />
-        </span>
-      </NavLink>
+        <NavLink
+          href="/products"
+          className="rounded-full p-2 text-white transition-opacity hover:opacity-80"
+          aria-label="Search products"
+        >
+          <Search className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
+        </NavLink>
+
+        <NavLink
+          href={userEmail ? '/account' : '/login'}
+          className="rounded-full p-2 text-white transition-opacity hover:opacity-80"
+          aria-label={userEmail ? 'My account' : 'Log in'}
+        >
+          <User className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
+        </NavLink>
+
+        <NavLink
+          href="/cart"
+          className="relative rounded-full p-2 text-white transition-opacity hover:opacity-80"
+          aria-label="Shopping cart"
+        >
+          <ShoppingBag className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
+          {cartCount > 0 && (
+            <Badge className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-white p-0 text-[10px] text-vellure-primary">
+              {cartCount > 9 ? '9+' : cartCount}
+            </Badge>
+          )}
+        </NavLink>
+      </div>
     </div>
   );
 }
@@ -110,13 +142,13 @@ function MobileDrawer({
     <>
       <div
         className={cn(
-          'fixed inset-y-0 right-0 z-[60] w-72 border-l bg-white shadow-xl transition-transform duration-200 ease-in-out md:hidden',
+          'fixed inset-y-0 right-0 z-[60] w-72 border-l bg-white shadow-xl transition-transform duration-200 ease-in-out',
           open ? 'translate-x-0' : 'translate-x-full'
         )}
       >
         <div className="flex h-full flex-col p-6 pt-20">
           <nav className="flex flex-col gap-4">
-            {allNavItems.map((item) => (
+            {navItems.map((item) => (
               <NavLink
                 key={item.href}
                 href={item.href}
@@ -176,7 +208,7 @@ function MobileDrawer({
 
       {open && (
         <div
-          className="fixed inset-0 z-[55] bg-black/50 md:hidden"
+          className="fixed inset-0 z-[55] bg-black/50"
           onClick={onClose}
         />
       )}
@@ -188,64 +220,48 @@ export function Header({ userEmail }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { cartCount } = useCart();
   const pathname = usePathname();
+  const isHome = pathname === '/';
   const logoOnly = isLogoOnlyNav(pathname);
-  const showFullNav = !logoOnly;
+  const showNavLinks = !logoOnly;
+  const overlay = isHome;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/95 backdrop-blur-md supports-[backdrop-filter]:bg-white/90">
-      <div className="container relative mx-auto flex h-16 items-center px-4">
-        {showFullNav && (
-          <button
-            className="absolute left-4 rounded-full p-2 hover:bg-gray-100 md:hidden"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-          >
-            {mobileMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
-          </button>
+    <>
+      <header
+        className={cn(
+          'z-50 w-full',
+          overlay ? 'absolute left-0 right-0 top-0' : 'sticky top-0 border-b border-gray-100 bg-white'
         )}
+      >
+        <AnnouncementBar />
 
-        {logoOnly ? (
-          <div className="mx-auto flex flex-1 justify-center">
-            <VellureLogoLink />
-          </div>
-        ) : (
-          <nav
-            className="mx-auto hidden items-center justify-center gap-4 sm:gap-6 md:flex md:gap-8 lg:gap-10"
-            aria-label="Main navigation"
-          >
-            {navLeft.map((item) => (
-              <NavLink key={item.href} href={item.href} className={navLinkClass}>
-                {item.label}
-              </NavLink>
-            ))}
-
-            <VellureLogoLink />
-
-            {navRight.map((item) => (
-              <NavLink key={item.href} href={item.href} className={navLinkClass}>
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
-        )}
-
-        {/* Mobile: logo centered when full nav (links in drawer) */}
-        {showFullNav && (
-          <div className="mx-auto md:hidden">
-            <VellureLogoLink />
-          </div>
-        )}
-
-        <div className={cn('absolute right-4 md:right-0', logoOnly && 'right-4')}>
-          <HeaderUtilities userEmail={userEmail} cartCount={cartCount} />
+        <div className="container mx-auto flex items-center justify-between px-4 py-4 md:py-5">
+          {logoOnly ? (
+            <div className="relative flex w-full items-center justify-center">
+              <VellureLogoLink />
+              <div className="absolute right-0">
+                <NavPill
+                  userEmail={userEmail}
+                  cartCount={cartCount}
+                  showLinks={false}
+                />
+              </div>
+            </div>
+          ) : (
+            <>
+              <VellureLogoLink inverted={overlay} />
+              <NavPill
+                userEmail={userEmail}
+                cartCount={cartCount}
+                showLinks={showNavLinks}
+                onMenuOpen={() => setMobileMenuOpen(true)}
+              />
+            </>
+          )}
         </div>
-      </div>
+      </header>
 
-      {showFullNav && (
+      {showNavLinks && (
         <MobileDrawer
           open={mobileMenuOpen}
           onClose={() => setMobileMenuOpen(false)}
@@ -253,6 +269,6 @@ export function Header({ userEmail }: HeaderProps) {
           cartCount={cartCount}
         />
       )}
-    </header>
+    </>
   );
 }

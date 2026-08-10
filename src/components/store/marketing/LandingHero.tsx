@@ -4,7 +4,7 @@ import { landingHeroCopy } from '@/lib/data/marketing-content';
 
 export function LandingHero() {
   return (
-    <section className="relative min-h-[calc(100svh-5rem)] md:min-h-[calc(100svh-7.5rem)]">
+    <section className="relative min-h-[100svh]">
       <Image
         src={landingHeroCopy.image}
         alt="Vellure lifestyle"
@@ -15,7 +15,7 @@ export function LandingHero() {
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
 
-      <div className="relative z-10 flex min-h-[calc(100svh-5rem)] flex-col items-center justify-center px-4 md:min-h-[calc(100svh-7.5rem)]">
+      <div className="relative z-10 flex min-h-[100svh] flex-col items-center justify-center px-4">
         <div className="text-center">
           {landingHeroCopy.lines.map((line) => (
             <p
