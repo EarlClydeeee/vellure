@@ -123,7 +123,22 @@ function applyProductFilters(query: any, filters?: ProductFilters) {
   return q;
 }
 
-const PRODUCT_SELECT = '*, categories(*), product_images(*)';
+const PRODUCT_SELECT_FULL = '*, categories(*), product_images(*)';
+const PRODUCT_SELECT_BASE = '*, categories(*)';
+
+function isMissingProductImagesRelation(message: string): boolean {
+  return message.includes('product_images');
+}
+
+async function runProductSelect<T extends { data: unknown; error: { message: string } | null; count?: number | null }>(
+  run: (select: string) => PromiseLike<T>
+): Promise<T> {
+  const full = await run(PRODUCT_SELECT_FULL);
+  if (full.error && isMissingProductImagesRelation(full.error.message)) {
+    return run(PRODUCT_SELECT_BASE);
+  }
+  return full;
+}
 
 async function syncProductImages(productId: string, imageUrls: string[]) {
   const supabase = await createServerSupabaseClient();
@@ -148,10 +163,9 @@ export async function getProducts(
 
   const supabase = await createServerSupabaseClient();
 
-  let query = supabase.from('products').select(PRODUCT_SELECT);
-  query = applyProductFilters(query, filters);
-
-  const { data, error } = await query;
+  const { data, error } = await runProductSelect((select) =>
+    applyProductFilters(supabase.from('products').select(select), filters)
+  );
 
   if (error) {
     return { success: false, error: error.message, code: 'QUERY_ERROR' };
@@ -176,10 +190,12 @@ export async function getProductsPaginated(
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
 
-  let query = supabase.from('products').select(PRODUCT_SELECT, { count: 'exact' });
-  query = applyProductFilters(query, filters);
-
-  const { data, error, count } = await query.range(from, to);
+  const { data, error, count } = await runProductSelect((select) =>
+    applyProductFilters(
+      supabase.from('products').select(select, { count: 'exact' }),
+      filters
+    ).range(from, to)
+  );
 
   if (error) {
     return { success: false, error: error.message, code: 'QUERY_ERROR' };
@@ -207,11 +223,9 @@ export async function getProductById(
 ): Promise<ServiceResult<Product | null>> {
   const supabase = await createServerSupabaseClient();
 
-  const { data, error } = await supabase
-    .from('products')
-    .select(PRODUCT_SELECT)
-    .eq('id', id)
-    .single();
+  const { data, error } = await runProductSelect((select) =>
+    supabase.from('products').select(select).eq('id', id).single()
+  );
 
   if (error) {
     if (error.code === 'PGRST116') {
@@ -234,10 +248,9 @@ export async function getProductsByIds(
   if (ids.length === 0) return { success: true, data: [] };
 
   const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase
-    .from('products')
-    .select(PRODUCT_SELECT)
-    .in('id', ids);
+  const { data, error } = await runProductSelect((select) =>
+    supabase.from('products').select(select).in('id', ids)
+  );
 
   if (error) {
     return { success: false, error: error.message, code: 'QUERY_ERROR' };
@@ -251,12 +264,14 @@ export async function getProductsByCategory(
 ): Promise<ServiceResult<Product[]>> {
   const supabase = await createServerSupabaseClient();
 
-  const { data, error } = await supabase
-    .from('products')
-    .select(PRODUCT_SELECT)
-    .eq('category_id', categoryId)
-    .eq('status', 'Active')
-    .order('created_at', { ascending: false });
+  const { data, error } = await runProductSelect((select) =>
+    supabase
+      .from('products')
+      .select(select)
+      .eq('category_id', categoryId)
+      .eq('status', 'Active')
+      .order('created_at', { ascending: false })
+  );
 
   if (error) {
     return { success: false, error: error.message, code: 'QUERY_ERROR' };
@@ -270,21 +285,23 @@ export async function createProduct(
 ): Promise<ServiceResult<Product>> {
   const supabase = await createServerSupabaseClient();
 
-  const { data, error } = await supabase
-    .from('products')
-    .insert({
-      name: input.name,
-      description: input.description ?? null,
-      price: input.price,
-      compare_at_price: input.compareAtPrice ?? null,
-      specs: input.specs ?? {},
-      stock_quantity: input.stockQuantity,
-      image_url: input.imageUrl ?? null,
-      category_id: input.categoryId ?? null,
-      status: input.status,
-    })
-    .select(PRODUCT_SELECT)
-    .single();
+  const { data, error } = await runProductSelect((select) =>
+    supabase
+      .from('products')
+      .insert({
+        name: input.name,
+        description: input.description ?? null,
+        price: input.price,
+        compare_at_price: input.compareAtPrice ?? null,
+        specs: input.specs ?? {},
+        stock_quantity: input.stockQuantity,
+        image_url: input.imageUrl ?? null,
+        category_id: input.categoryId ?? null,
+        status: input.status,
+      })
+      .select(select)
+      .single()
+  );
 
   if (error) {
     return { success: false, error: error.message, code: 'INSERT_ERROR' };
@@ -325,12 +342,9 @@ export async function updateProduct(
     updateData.category_id = input.categoryId ?? null;
   if (input.status !== undefined) updateData.status = input.status;
 
-  const { data, error } = await supabase
-    .from('products')
-    .update(updateData)
-    .eq('id', id)
-    .select(PRODUCT_SELECT)
-    .single();
+  const { data, error } = await runProductSelect((select) =>
+    supabase.from('products').update(updateData).eq('id', id).select(select).single()
+  );
 
   if (error) {
     return { success: false, error: error.message, code: 'UPDATE_ERROR' };
