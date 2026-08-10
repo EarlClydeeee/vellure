@@ -56,15 +56,19 @@ export default async function AdminOrderDetailPage({ params }: Props) {
 
   return (
     <div>
-      <div className="flex items-center gap-4 mb-6">
-        <Button variant="ghost" size="icon" asChild>
+      <div className="mb-6 flex flex-wrap items-center gap-3 sm:gap-4">
+        <Button variant="ghost" size="icon" asChild className="shrink-0">
           <Link href="/admin/orders">
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </Button>
-        <h1 className="text-3xl font-bold">Order #{order.orderNumber}</h1>
-        <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>
-        <Badge variant="outline">{order.paymentStatus}</Badge>
+        <h1 className="text-xl font-bold sm:text-2xl md:text-3xl">
+          Order #{order.orderNumber}
+        </h1>
+        <div className="flex flex-wrap gap-2">
+          <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>
+          <Badge variant="outline">{order.paymentStatus}</Badge>
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 mb-6">
@@ -157,8 +161,8 @@ export default async function AdminOrderDetailPage({ params }: Props) {
           <CardTitle className="text-lg">Order Items</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="relative w-full overflow-auto">
-            <Table>
+          <div className="relative w-full overflow-x-auto">
+            <Table className="min-w-[480px]">
               <TableHeader>
                 <TableRow>
                   <TableHead>Product</TableHead>

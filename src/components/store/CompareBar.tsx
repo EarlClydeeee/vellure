@@ -21,12 +21,12 @@ export function CompareBar() {
   if (ids.length === 0) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 border-t bg-white p-4 shadow-lg">
-      <div className="container mx-auto flex items-center justify-between gap-4">
+    <div className="fixed bottom-0 left-0 right-0 z-40 border-t bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-lg">
+      <div className="container mx-auto flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm font-medium">
           Compare ({ids.length}/4)
         </p>
-        <div className="flex gap-2">
+        <div className="flex w-full gap-2 sm:w-auto">
           <Button
             variant="ghost"
             size="sm"

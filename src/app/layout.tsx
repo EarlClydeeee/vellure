@@ -38,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`h-full antialiased ${rubik.variable} ${nunitoSans.variable} ${cormorant.variable}`}>
-      <body className="min-h-full flex flex-col font-sans">{children}</body>
+      <body className="min-h-full flex flex-col overflow-x-hidden font-sans">{children}</body>
     </html>
   );
 }

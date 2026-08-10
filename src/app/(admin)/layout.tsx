@@ -9,7 +9,7 @@ export default function AdminLayout({
     <div className="flex min-h-screen flex-col md:flex-row">
       <AdminSidebar />
       <main className="flex-1 overflow-auto">
-        <div className="container mx-auto p-6">{children}</div>
+        <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:p-6">{children}</div>
       </main>
     </div>
   );
