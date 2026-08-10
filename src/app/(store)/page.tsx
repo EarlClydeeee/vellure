@@ -1,12 +1,11 @@
-import { ShopHero } from '@/components/store/ShopHero';
 import { CategoryCards } from '@/components/store/CategoryCards';
 import { ServiceBadges } from '@/components/store/ServiceBadges';
 import { DealsSection } from '@/components/store/DealsSection';
 import { ExpandingGallery } from '@/components/store/ExpandingGallery';
 import { MasonryWrapperLanding } from '@/components/store/MasonryWrapperLanding';
 import { TestimonialWall } from '@/components/store/TestimonialWall';
-import { AnnouncementBar } from '@/components/store/marketing/AnnouncementBar';
 import { TrustStatsBar } from '@/components/store/marketing/TrustStatsBar';
+import { LandingHero } from '@/components/store/marketing/LandingHero';
 import { PromoBannerGrid } from '@/components/store/marketing/PromoBannerGrid';
 import { PaymentTrustStrip } from '@/components/store/marketing/PaymentTrustStrip';
 import { PromoVouchers } from '@/components/store/marketing/PromoVouchers';
@@ -34,15 +33,11 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col">
-      <AnnouncementBar />
-
-      <ShopHero showSearch />
+      <LandingHero />
 
       <TrustStatsBar />
 
-      <div className="pt-16 md:pt-20">
-        <CategoryCards categories={categories} variant="abenson" />
-      </div>
+      <CategoryCards categories={categories} variant="abenson" />
 
       <PromoBannerGrid />
 

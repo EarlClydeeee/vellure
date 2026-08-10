@@ -20,7 +20,12 @@ export function ShopHero({
   showMarketingCtas = true,
 }: ShopHeroProps) {
   return (
-    <section className="relative pb-16 md:pb-20">
+    <section
+      className={cn(
+        'relative',
+        showSearch || tagline ? 'pb-24 md:pb-28' : 'pb-16 md:pb-20'
+      )}
+    >
       <div className="relative flex min-h-[320px] items-center justify-center overflow-hidden sm:min-h-[380px] md:min-h-[420px]">
         <div
           className="absolute inset-0 scale-105 bg-cover bg-center"
@@ -69,16 +74,18 @@ export function ShopHero({
               className={cn(
                 'flex flex-col items-stretch gap-4 rounded-2xl border border-gray-100 bg-white px-5 py-5 shadow-[0_8px_30px_rgba(0,0,0,0.08)] sm:px-8 sm:py-6',
                 showSearch
-                  ? 'md:flex-row md:items-center md:justify-between'
+                  ? 'md:flex-row md:items-center md:justify-between md:gap-6'
                   : 'md:items-center md:justify-center'
               )}
             >
               {tagline && (
-                <p className="shrink-0 text-lg font-semibold tracking-tight text-vellure-text md:text-xl">
+                <p className="shrink-0 text-lg font-semibold tracking-tight text-vellure-text md:text-xl md:whitespace-nowrap">
                   {tagline}
                 </p>
               )}
-              {showSearch && <SearchBar variant="hero" className="md:max-w-lg" />}
+              {showSearch && (
+                <SearchBar variant="hero" className="w-full md:max-w-lg md:shrink-0" />
+              )}
             </div>
           </div>
         </div>

@@ -14,6 +14,12 @@ export const heroCopy = {
   secondaryCta: { label: 'View Deals', href: '/products?sort=price_asc' },
 } as const;
 
+export const landingHeroCopy = {
+  image: '/landing/intro-1700559910.jpg',
+  lines: ['IPHONES & ACCESSORIES.', 'REFINED PERFORMANCE.'],
+  cta: { label: 'Shop All', href: '/products' },
+} as const;
+
 export const announcementBar = {
   message: `Free shipping on orders ${locale.symbol}${locale.freeShippingThreshold.toLocaleString()}+`,
   submessage: 'Order by 2 PM for same-day dispatch in Metro Manila',

@@ -1,12 +1,16 @@
-import { ShopHeroSkeleton } from '@/components/store/skeletons/ShopHeroSkeleton';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function StoreLoading() {
   return (
     <div className="flex flex-col">
-      <Skeleton className="h-10 w-full rounded-none bg-vellure-text/20" />
-
-      <ShopHeroSkeleton />
+      <div className="relative min-h-[55vh] md:min-h-[65vh]">
+        <Skeleton className="absolute inset-0 rounded-none" />
+        <div className="relative z-10 flex min-h-[55vh] flex-col items-center justify-center gap-3 px-4 md:min-h-[65vh]">
+          <Skeleton className="h-4 w-56 bg-white/30" />
+          <Skeleton className="h-4 w-48 bg-white/30" />
+          <Skeleton className="mt-4 h-11 w-32 bg-white/30" />
+        </div>
+      </div>
 
       <div className="border-y border-sky-100 bg-vellure-surface py-10">
         <div className="container mx-auto grid grid-cols-2 gap-8 px-4 md:grid-cols-4">
