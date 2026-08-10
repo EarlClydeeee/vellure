@@ -13,7 +13,7 @@ CubeTech Web Development Intern Assessment submission. Full-stack e-commerce pla
 | **Live admin dashboard** | http://localhost:3000/admin/login |
 | **Admin login credentials** | See [Admin Login Credentials](#admin-login-credentials) |
 | **Technologies used** | See [Technologies Used](#technologies-used) |
-| **Desktop & mobile screenshots** | See [Screenshots](#screenshots) |
+| **Desktop & mobile screenshots** | See [Docs](#docs) |
 | **System flow explanation** | See [System Flow](#system-flow) |
 
 ---
@@ -105,31 +105,14 @@ flowchart TB
 
 ---
 
-## Screenshots
+## Docs
 
-Desktop and mobile screenshots are in [`docs/screenshots/`](docs/screenshots/).
+Desktop and mobile screenshots are provided as PDFs in the [`docs/`](docs/) folder:
 
-**Customer website**
-
-| Page | Desktop | Mobile |
-|------|---------|--------|
-| Home | `01-home-desktop.png` | `01-home-mobile.png` |
-| Product listing | `02-products-desktop.png` | `02-products-mobile.png` |
-| Product details | `03-product-detail-desktop.png` | `03-product-detail-mobile.png` |
-| Shopping cart | `04-cart-desktop.png` | `04-cart-mobile.png` |
-| Checkout | `05-checkout-desktop.png` | `05-checkout-mobile.png` |
-| Order confirmation | `06-order-confirmation-desktop.png` | `06-order-confirmation-mobile.png` |
-
-**Admin dashboard**
-
-| Page | Desktop |
-|------|---------|
-| Login | `07-admin-login-desktop.png` |
-| Dashboard | `08-admin-dashboard-desktop.png` |
-| Products | `09-admin-products-desktop.png` |
-| Orders | `10-admin-orders-desktop.png` |
-| Order details | `11-admin-order-detail-desktop.png` |
-| Customers | `12-admin-customers-desktop.png` |
+| View | File |
+|------|------|
+| **Desktop (laptop)** | [`docs/FOR LAPTOP VIEW.pdf`](docs/FOR%20LAPTOP%20VIEW.pdf) |
+| **Mobile** | [`docs/FOR MOBILE VIEW.pdf`](docs/FOR%20MOBILE%20VIEW.pdf) |
 
 ---
 
