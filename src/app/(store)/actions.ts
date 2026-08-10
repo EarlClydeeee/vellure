@@ -16,6 +16,7 @@ import {
   returnRequestSchema,
 } from '@/lib/validation/schemas';
 import { revalidatePath } from 'next/cache';
+import { adminLogin, isAdminEmail } from '@/lib/auth/admin';
 import type { CheckoutFormData, AddressFormData, ReviewFormData, ReturnRequestFormData } from '@/lib/validation/schemas';
 import type { ShippingZoneId } from '@/lib/types';
 
@@ -251,4 +252,32 @@ export async function createReturnRequestAction(formData: ReturnRequestFormData)
     orderId: parsed.data.orderId,
     reason: parsed.data.reason,
   });
+}
+
+export async function completeStoreLoginAction(
+  email: string,
+  password: string,
+  returnTo: string
+) {
+  if (!isAdminEmail(email)) {
+    return {
+      success: true as const,
+      isAdmin: false as const,
+      redirectTo: returnTo || '/',
+    };
+  }
+
+  const sessionStarted = await adminLogin(email, password);
+  if (!sessionStarted) {
+    return {
+      success: false as const,
+      error: 'Admin session could not be started. Check ADMIN_USERNAME and ADMIN_PASSWORD in .env.local.',
+    };
+  }
+
+  return {
+    success: true as const,
+    isAdmin: true as const,
+    redirectTo: '/admin/dashboard',
+  };
 }

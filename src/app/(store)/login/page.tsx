@@ -1,16 +1,28 @@
 import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { isAdminEmail, isAdminAuthenticated } from '@/lib/auth/admin';
 import { LoginForm } from '@/components/store/LoginForm';
 
-export default async function LoginPage() {
+interface LoginPageProps {
+  searchParams: Promise<{ returnTo?: string }>;
+}
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const { returnTo } = await searchParams;
   const supabase = await createServerSupabaseClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (user) {
-    redirect('/');
+    if (isAdminEmail(user.email)) {
+      if (await isAdminAuthenticated()) {
+        redirect('/admin/dashboard');
+      }
+      redirect('/admin/login');
+    }
+    redirect(returnTo && returnTo.startsWith('/') ? returnTo : '/');
   }
 
   return (

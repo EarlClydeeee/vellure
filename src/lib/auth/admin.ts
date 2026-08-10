@@ -1,24 +1,14 @@
 import { cookies } from 'next/headers';
+import { SESSION_DURATION_MS, validateAdminSessionToken } from '@/lib/auth/admin-session';
 
 const COOKIE_NAME = 'admin_session';
-const SESSION_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 function createSessionToken(): string {
   const payload = JSON.stringify({ timestamp: Date.now() });
   return Buffer.from(payload).toString('base64');
 }
 
-function validateSessionToken(token: string): boolean {
-  try {
-    const decoded = JSON.parse(Buffer.from(token, 'base64').toString());
-    if (Date.now() - decoded.timestamp > SESSION_DURATION_MS) {
-      return false;
-    }
-    return true;
-  } catch {
-    return false;
-  }
-}
+export { isAdminEmail, validateAdminSessionToken } from '@/lib/auth/admin-session';
 
 export async function adminLogin(username: string, password: string): Promise<boolean> {
   const adminUsername = process.env.ADMIN_USERNAME;
@@ -39,7 +29,7 @@ export async function adminLogin(username: string, password: string): Promise<bo
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
-    maxAge: SESSION_DURATION_MS / 1000, // in seconds
+    maxAge: SESSION_DURATION_MS / 1000,
   });
 
   return true;
@@ -59,10 +49,5 @@ export async function adminLogout(): Promise<void> {
 export async function isAdminAuthenticated(): Promise<boolean> {
   const cookieStore = await cookies();
   const session = cookieStore.get(COOKIE_NAME);
-
-  if (!session?.value) {
-    return false;
-  }
-
-  return validateSessionToken(session.value);
+  return validateAdminSessionToken(session?.value);
 }
