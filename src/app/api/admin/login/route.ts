@@ -5,6 +5,7 @@ import {
   getAdminConfigEmail,
   SESSION_DURATION_MS,
 } from '@/lib/auth/admin-session';
+import { setSessionRoleCookie } from '@/lib/auth/session';
 
 const COOKIE_NAME = 'admin_session';
 
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
     }
 
     const token = Buffer.from(
-      JSON.stringify({ timestamp: Date.now(), email: adminEmail })
+      JSON.stringify({ timestamp: Date.now(), email: adminEmail, role: 'admin' })
     ).toString('base64');
     const cookieStore = await cookies();
     cookieStore.set(COOKIE_NAME, token, {
@@ -46,7 +47,13 @@ export async function POST(request: Request) {
       maxAge: SESSION_DURATION_MS / 1000,
     });
 
-    return NextResponse.json({ success: true, email: adminEmail });
+    await setSessionRoleCookie('admin', adminEmail);
+
+    return NextResponse.json({
+      success: true,
+      role: 'admin' as const,
+      email: adminEmail,
+    });
   } catch {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }

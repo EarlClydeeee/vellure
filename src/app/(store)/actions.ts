@@ -17,6 +17,7 @@ import {
 } from '@/lib/validation/schemas';
 import { revalidatePath } from 'next/cache';
 import { adminLogin, isAdminEmail } from '@/lib/auth/admin';
+import { setSessionRoleCookie } from '@/lib/auth/session';
 import type { CheckoutFormData, AddressFormData, ReviewFormData, ReturnRequestFormData } from '@/lib/validation/schemas';
 import type { ShippingZoneId } from '@/lib/types';
 
@@ -254,14 +255,21 @@ export async function createReturnRequestAction(formData: ReturnRequestFormData)
   });
 }
 
+export async function completeSignupSessionAction(email: string) {
+  await setSessionRoleCookie('customer', email);
+  return { success: true as const, role: 'customer' as const };
+}
+
 export async function completeStoreLoginAction(
   email: string,
   password: string,
   returnTo: string
 ) {
   if (!isAdminEmail(email)) {
+    await setSessionRoleCookie('customer', email);
     return {
       success: true as const,
+      role: 'customer' as const,
       isAdmin: false as const,
       redirectTo: returnTo || '/',
     };
@@ -278,6 +286,7 @@ export async function completeStoreLoginAction(
 
   return {
     success: true as const,
+    role: 'admin' as const,
     isAdmin: true as const,
     redirectTo: '/admin/dashboard',
   };

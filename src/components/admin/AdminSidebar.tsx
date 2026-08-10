@@ -48,13 +48,15 @@ function AdminIdentity({ adminEmail }: { adminEmail?: string | null }) {
 
 interface AdminSidebarProps {
   adminEmail?: string | null;
+  sessionRole?: string;
 }
 
-export function AdminSidebar({ adminEmail }: AdminSidebarProps) {
+export function AdminSidebar({ adminEmail, sessionRole }: AdminSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const isLoginPage = pathname.startsWith('/admin/login');
+  const isAdminSession = sessionRole === 'admin' && !!adminEmail;
 
   async function handleLogout() {
     await fetch('/api/admin/logout', { method: 'POST' });
@@ -85,9 +87,9 @@ export function AdminSidebar({ adminEmail }: AdminSidebarProps) {
       {/* Mobile nav dropdown */}
       {mobileOpen && !isLoginPage && (
         <div className="space-y-1 border-b bg-background px-4 py-2 md:hidden">
-          {adminEmail && (
+          {isAdminSession && (
             <div className="mb-2 px-1">
-              <AdminIdentity adminEmail={adminEmail} />
+              <AdminIdentity adminEmail={adminEmail!} />
             </div>
           )}
           {navItems.map((item) => {
@@ -126,9 +128,9 @@ export function AdminSidebar({ adminEmail }: AdminSidebarProps) {
           <div className="flex h-16 items-center border-b px-6">
             <span className="text-lg font-bold">Vellure Admin</span>
           </div>
-          {adminEmail && (
+          {isAdminSession && (
             <div className="border-b px-3 py-3">
-              <AdminIdentity adminEmail={adminEmail} />
+              <AdminIdentity adminEmail={adminEmail!} />
             </div>
           )}
           <nav className="flex-1 space-y-1 px-3 py-4">

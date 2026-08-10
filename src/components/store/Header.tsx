@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { NavLink } from '@/components/store/NavLink';
 import { AnnouncementBar } from '@/components/store/marketing/AnnouncementBar';
 import { useCart } from '@/components/store/CartProvider';
+import { useSession } from '@/components/SessionProvider';
 import { VELLURE_LOGO } from '@/lib/assets/brand';
 import { cn } from '@/lib/utils';
 
@@ -95,14 +96,37 @@ function NavTextLinks({
   );
 }
 
+function accountHref(role: string, hasEmail: boolean): string {
+  if (!hasEmail) return '/login';
+  if (role === 'admin') return '/admin/dashboard';
+  return '/account';
+}
+
+function SessionRoleBadge({ role }: { role: string }) {
+  if (role !== 'admin' && role !== 'customer') return null;
+  return (
+    <Badge
+      variant={role === 'admin' ? 'default' : 'secondary'}
+      className={cn(
+        'text-[10px] uppercase tracking-wide',
+        role === 'admin' && 'bg-vellure-primary'
+      )}
+    >
+      {role === 'admin' ? 'Admin' : 'Customer'}
+    </Badge>
+  );
+}
+
 function NavUtilityIcons({
   variant,
   userEmail,
+  sessionRole,
   cartCount,
   onMenuOpen,
 }: {
   variant: NavVariant;
   userEmail?: string | null;
+  sessionRole: string;
   cartCount: number;
   onMenuOpen?: () => void;
 }) {
@@ -135,9 +159,15 @@ function NavUtilityIcons({
       </NavLink>
 
       <NavLink
-        href={userEmail ? '/account' : '/login'}
+        href={accountHref(sessionRole, !!userEmail)}
         className={iconClass}
-        aria-label={userEmail ? 'My account' : 'Log in'}
+        aria-label={
+          userEmail
+            ? sessionRole === 'admin'
+              ? 'Admin dashboard'
+              : 'My account'
+            : 'Log in'
+        }
       >
         <User className={iconSize} />
       </NavLink>
@@ -154,11 +184,13 @@ function NavUtilityIcons({
 
 function NavPill({
   userEmail,
+  sessionRole,
   cartCount,
   showLinks,
   onMenuOpen,
 }: {
   userEmail?: string | null;
+  sessionRole: string;
   cartCount: number;
   showLinks: boolean;
   onMenuOpen?: () => void;
@@ -174,6 +206,7 @@ function NavPill({
       <NavUtilityIcons
         variant="pill"
         userEmail={userEmail}
+        sessionRole={sessionRole}
         cartCount={cartCount}
         onMenuOpen={onMenuOpen}
       />
@@ -183,11 +216,13 @@ function NavPill({
 
 function StickyNavBar({
   userEmail,
+  sessionRole,
   cartCount,
   showLinks,
   onMenuOpen,
 }: {
   userEmail?: string | null;
+  sessionRole: string;
   cartCount: number;
   showLinks: boolean;
   onMenuOpen?: () => void;
@@ -206,6 +241,7 @@ function StickyNavBar({
       <NavUtilityIcons
         variant="bar"
         userEmail={userEmail}
+        sessionRole={sessionRole}
         cartCount={cartCount}
         onMenuOpen={onMenuOpen}
       />
@@ -217,11 +253,13 @@ function MobileDrawer({
   open,
   onClose,
   userEmail,
+  sessionRole,
   cartCount,
 }: {
   open: boolean;
   onClose: () => void;
   userEmail?: string | null;
+  sessionRole: string;
   cartCount: number;
 }) {
   return (
@@ -266,11 +304,11 @@ function MobileDrawer({
             </NavLink>
             {userEmail && (
               <NavLink
-                href="/account"
+                href={accountHref(sessionRole, true)}
                 className="text-sm font-medium text-gray-600 transition-colors hover:text-vellure-primary"
                 onClick={onClose}
               >
-                My Account
+                {sessionRole === 'admin' ? 'Admin Dashboard' : 'My Account'}
               </NavLink>
             )}
           </nav>
@@ -278,6 +316,9 @@ function MobileDrawer({
           <div className="mt-auto flex flex-col gap-2">
             {userEmail ? (
               <>
+                <div className="flex items-center gap-2">
+                  <SessionRoleBadge role={sessionRole} />
+                </div>
                 <span className="truncate text-sm text-muted-foreground">
                   {userEmail}
                 </span>
@@ -319,6 +360,9 @@ export function Header({ userEmail }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { cartCount } = useCart();
+  const session = useSession();
+  const sessionRole = session.role;
+  const displayEmail = session.email ?? userEmail ?? null;
   const pathname = usePathname();
   const isHome = pathname === '/';
   const logoOnly = isLogoOnlyNav(pathname);
@@ -367,14 +411,16 @@ export function Header({ userEmail }: HeaderProps) {
 
           {showOverlayNav || !isHome ? (
             <NavPill
-              userEmail={userEmail}
+              userEmail={displayEmail}
+              sessionRole={sessionRole}
               cartCount={cartCount}
               showLinks={showNavLinks}
               onMenuOpen={openMobileMenu}
             />
           ) : (
             <StickyNavBar
-              userEmail={userEmail}
+              userEmail={displayEmail}
+              sessionRole={sessionRole}
               cartCount={cartCount}
               showLinks={showNavLinks}
               onMenuOpen={openMobileMenu}
@@ -386,7 +432,8 @@ export function Header({ userEmail }: HeaderProps) {
       <MobileDrawer
         open={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
-        userEmail={userEmail}
+        userEmail={displayEmail}
+        sessionRole={sessionRole}
         cartCount={cartCount}
       />
     </>

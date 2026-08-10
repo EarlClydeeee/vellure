@@ -34,6 +34,7 @@ export function AdminLoginForm() {
       }
 
       router.push('/admin/dashboard');
+      router.refresh();
     } catch {
       setError('An unexpected error occurred');
     } finally {

@@ -6,11 +6,12 @@ import {
   parseAdminSessionToken,
   validateAdminSessionToken,
 } from '@/lib/auth/admin-session';
+import { setSessionRoleCookie, clearSessionRoleCookie } from '@/lib/auth/session';
 
 const COOKIE_NAME = 'admin_session';
 
 function createSessionToken(email: string): string {
-  const payload = JSON.stringify({ timestamp: Date.now(), email });
+  const payload = JSON.stringify({ timestamp: Date.now(), email, role: 'admin' });
   return Buffer.from(payload).toString('base64');
 }
 
@@ -40,6 +41,8 @@ export async function adminLogin(
     maxAge: SESSION_DURATION_MS / 1000,
   });
 
+  await setSessionRoleCookie('admin', email);
+
   return true;
 }
 
@@ -52,6 +55,8 @@ export async function adminLogout(): Promise<void> {
     path: '/',
     maxAge: 0,
   });
+
+  await clearSessionRoleCookie();
 }
 
 export async function isAdminAuthenticated(): Promise<boolean> {

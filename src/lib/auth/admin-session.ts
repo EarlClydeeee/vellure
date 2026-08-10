@@ -34,6 +34,7 @@ export function credentialsMatchAdmin(
 export interface AdminSessionPayload {
   timestamp: number;
   email?: string;
+  role: 'admin';
 }
 
 export function parseAdminSessionToken(

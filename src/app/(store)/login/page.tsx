@@ -1,7 +1,6 @@
 import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
-import { isAdminEmail, isAdminAuthenticated } from '@/lib/auth/admin';
+import { getAppSession } from '@/lib/auth/session';
 import { LoginForm } from '@/components/store/LoginForm';
 
 interface LoginPageProps {
@@ -10,18 +9,13 @@ interface LoginPageProps {
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const { returnTo } = await searchParams;
-  const supabase = await createServerSupabaseClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await getAppSession();
 
-  if (user) {
-    if (isAdminEmail(user.email)) {
-      if (await isAdminAuthenticated()) {
-        redirect('/admin/dashboard');
-      }
-      redirect('/admin/login');
-    }
+  if (session.role === 'admin') {
+    redirect('/admin/dashboard');
+  }
+
+  if (session.role === 'customer') {
     redirect(returnTo && returnTo.startsWith('/') ? returnTo : '/');
   }
 

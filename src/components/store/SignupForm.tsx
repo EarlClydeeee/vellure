@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { signupSchema, SignupFormData } from '@/lib/validation/schemas';
 import { signUp } from '@/lib/auth/customer';
-import { mergeGuestCartAction } from '@/app/(store)/actions';
+import { mergeGuestCartAction, completeSignupSessionAction } from '@/app/(store)/actions';
 import { getGuestCart, clearGuestCart } from '@/lib/cart/guest-cart';
 import { cn } from '@/lib/utils';
 
@@ -60,6 +60,8 @@ export function SignupForm() {
       setIsLoading(false);
       return;
     }
+
+    await completeSignupSessionAction(parsed.data.email);
 
     const guestItems = getGuestCart();
     if (guestItems.length > 0) {
