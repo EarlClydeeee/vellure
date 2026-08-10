@@ -42,7 +42,14 @@ function VellureLogoLink({
   className?: string;
 }) {
   return (
-    <NavLink href="/" className={cn('shrink-0', className)} aria-label="Vellure home">
+    <NavLink
+      href="/"
+      className={cn(
+        'inline-flex shrink-0 cursor-pointer rounded-md transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vellure-primary focus-visible:ring-offset-2',
+        className
+      )}
+      aria-label="Back to Vellure home"
+    >
       <Image
         src="/vellure-logo.png"
         alt="Vellure"
@@ -236,28 +243,13 @@ export function Header({ userEmail }: HeaderProps) {
         <AnnouncementBar />
 
         <div className="container mx-auto flex items-center justify-between px-4 py-4 md:py-5">
-          {logoOnly ? (
-            <div className="relative flex w-full items-center justify-center">
-              <VellureLogoLink />
-              <div className="absolute right-0">
-                <NavPill
-                  userEmail={userEmail}
-                  cartCount={cartCount}
-                  showLinks={false}
-                />
-              </div>
-            </div>
-          ) : (
-            <>
-              <VellureLogoLink inverted={overlay} />
-              <NavPill
-                userEmail={userEmail}
-                cartCount={cartCount}
-                showLinks={showNavLinks}
-                onMenuOpen={() => setMobileMenuOpen(true)}
-              />
-            </>
-          )}
+          <VellureLogoLink inverted={overlay && !logoOnly} />
+          <NavPill
+            userEmail={userEmail}
+            cartCount={cartCount}
+            showLinks={showNavLinks}
+            onMenuOpen={showNavLinks ? () => setMobileMenuOpen(true) : undefined}
+          />
         </div>
       </header>
 
