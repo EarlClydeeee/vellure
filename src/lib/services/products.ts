@@ -184,9 +184,17 @@ export async function getProducts(
 export async function getProductsPaginated(
   filters?: ProductFilters
 ): Promise<ServiceResult<PaginatedProducts>> {
-  const supabase = await createServerSupabaseClient();
   const page = Math.max(1, filters?.page ?? 1);
   const pageSize = filters?.pageSize ?? 9;
+
+  if (!isSupabaseConfigured()) {
+    return {
+      success: true,
+      data: { products: [], totalCount: 0, page, pageSize, totalPages: 1 },
+    };
+  }
+
+  const supabase = await createServerSupabaseClient();
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
 
