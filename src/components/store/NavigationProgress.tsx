@@ -30,7 +30,7 @@ function NavigationProgressInner() {
     <AnimatePresence>
       {loading && (
         <motion.div
-          className="fixed top-0 left-0 z-[60] h-0.5 bg-[#111111]"
+          className="fixed top-0 left-0 z-[60] h-0.5 bg-vellure-primary"
           initial={{ width: '0%' }}
           animate={{ width: `${progress}%` }}
           exit={{ opacity: 0 }}

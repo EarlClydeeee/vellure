@@ -40,7 +40,7 @@ export function ProductGallery({ images }: ProductGalleryProps) {
               onClick={() => setActive(i)}
               className={cn(
                 'relative h-16 w-16 shrink-0 overflow-hidden rounded-md border-2',
-                i === active ? 'border-[#111111]' : 'border-transparent'
+                i === active ? 'border-vellure-primary' : 'border-transparent'
               )}
             >
               <Image src={img.url} alt={img.alt} fill className="object-cover" sizes="64px" />

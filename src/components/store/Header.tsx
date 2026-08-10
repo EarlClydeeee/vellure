@@ -42,7 +42,7 @@ function HeaderUtilities({
     <div className="flex items-center gap-1 sm:gap-2">
       <NavLink
         href="/products"
-        className="rounded-full p-2.5 text-gray-600 transition-colors hover:bg-gray-100 hover:text-[#111111]"
+        className="rounded-full p-2.5 text-gray-600 transition-colors hover:bg-gray-100 hover:text-vellure-primary"
         aria-label="Search products"
       >
         <Search className="h-5 w-5" />
@@ -50,12 +50,12 @@ function HeaderUtilities({
 
       <NavLink
         href="/cart"
-        className="relative rounded-full p-2.5 text-gray-600 transition-colors hover:bg-gray-100 hover:text-[#111111]"
+        className="relative rounded-full p-2.5 text-gray-600 transition-colors hover:bg-gray-100 hover:text-vellure-primary"
         aria-label="Shopping cart"
       >
         <ShoppingBag className="h-5 w-5" />
         {cartCount > 0 && (
-          <Badge className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#111111] p-0 text-[10px] text-white">
+          <Badge className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-vellure-primary p-0 text-[10px] text-white">
             {cartCount > 9 ? '9+' : cartCount}
           </Badge>
         )}
@@ -115,7 +115,7 @@ function MobileDrawer({
               <NavLink
                 key={item.href}
                 href={item.href}
-                className="text-sm font-medium text-gray-600 transition-colors hover:text-[#111111]"
+                className="text-sm font-medium text-gray-600 transition-colors hover:text-vellure-primary"
                 onClick={onClose}
               >
                 {item.label}
@@ -123,7 +123,7 @@ function MobileDrawer({
             ))}
             <NavLink
               href="/cart"
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-[#111111]"
+              className="text-sm font-medium text-gray-600 transition-colors hover:text-vellure-primary"
               onClick={onClose}
             >
               Cart {cartCount > 0 && `(${cartCount})`}
@@ -131,7 +131,7 @@ function MobileDrawer({
             {userEmail && (
               <NavLink
                 href="/account"
-                className="text-sm font-medium text-gray-600 transition-colors hover:text-[#111111]"
+                className="text-sm font-medium text-gray-600 transition-colors hover:text-vellure-primary"
                 onClick={onClose}
               >
                 My Account
@@ -208,7 +208,7 @@ export function Header({ userEmail }: HeaderProps) {
 
             <NavLink
               href="/"
-              className="font-display text-2xl font-medium uppercase tracking-[0.25em] text-[#111111] md:text-3xl"
+              className="font-display text-2xl font-medium uppercase tracking-[0.25em] text-vellure-ink md:text-3xl"
             >
               Vellure
             </NavLink>
@@ -219,7 +219,7 @@ export function Header({ userEmail }: HeaderProps) {
               <NavLink
                 key={item.href}
                 href={item.href}
-                className="text-xs font-medium uppercase tracking-[0.12em] text-gray-600 transition-colors hover:text-[#111111]"
+                className="text-xs font-medium uppercase tracking-[0.12em] text-gray-600 transition-colors hover:text-vellure-primary"
               >
                 {item.label}
               </NavLink>
@@ -241,7 +241,7 @@ export function Header({ userEmail }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/95 backdrop-blur-md supports-[backdrop-filter]:bg-white/90">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <NavLink href="/" className="shrink-0 text-xl font-bold tracking-tight text-[#111111]">
+        <NavLink href="/" className="shrink-0 font-display text-xl font-medium uppercase tracking-[0.2em] text-vellure-ink md:text-2xl">
           Vellure
         </NavLink>
 
@@ -250,7 +250,7 @@ export function Header({ userEmail }: HeaderProps) {
             <NavLink
               key={item.href}
               href={item.href}
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-[#111111]"
+              className="text-sm font-medium text-gray-600 transition-colors hover:text-vellure-primary"
             >
               {item.label}
             </NavLink>

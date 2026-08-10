@@ -190,7 +190,7 @@ export function ProductCard({ product, variant = 'default', isLoggedIn = false }
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full rounded-full border-[#111111] text-xs"
+                className="w-full rounded-full border-vellure-primary text-xs"
               >
                 View Details
               </Button>
@@ -201,7 +201,7 @@ export function ProductCard({ product, variant = 'default', isLoggedIn = false }
                 size="sm"
                 disabled={disabled || loading !== null}
                 onClick={handleAddToCart}
-                className="flex-1 rounded-full border-[#111111] text-xs"
+                className="flex-1 rounded-full border-vellure-primary text-xs"
               >
                 {loading === 'cart' ? 'Adding...' : 'Add to Cart'}
               </Button>
@@ -210,7 +210,7 @@ export function ProductCard({ product, variant = 'default', isLoggedIn = false }
                 disabled={disabled || loading !== null}
                 onClick={handleBuyNow}
                 className={cn(
-                  'flex-1 rounded-full bg-[#111111] text-xs hover:bg-[#111111]/90'
+                  'flex-1 rounded-full bg-vellure-primary text-xs hover:bg-vellure-primary/90'
                 )}
               >
                 {loading === 'buy' ? 'Processing...' : 'Buy Now'}

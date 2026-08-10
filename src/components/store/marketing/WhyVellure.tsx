@@ -12,7 +12,7 @@ export function WhyVellure() {
     <section className="bg-vellure-surface py-12 md:py-16">
       <div className="container mx-auto px-4">
         <div className="mx-auto mb-10 max-w-2xl text-center">
-          <h2 className="text-2xl font-bold text-vellure-text md:text-3xl">
+          <h2 className="font-display text-2xl font-medium text-vellure-text md:text-3xl">
             Why Shop with Vellure
           </h2>
           <p className="mt-2 text-slate-600">
@@ -26,7 +26,7 @@ export function WhyVellure() {
             return (
               <div
                 key={item.id}
-                className="rounded-2xl border border-sky-100 bg-white p-6 text-center shadow-sm"
+                className="rounded-2xl border border-vellure-primary/10 bg-white p-6 text-center shadow-sm"
               >
                 <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-vellure-primary/10 text-vellure-primary">
                   <Icon className="h-6 w-6" aria-hidden />

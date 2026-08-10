@@ -25,32 +25,31 @@ Overrides `design-system/vellure/MASTER.md` for `/`.
 - Vertical sidebar: `A NEW APPROACH TO PREMIUM TECH`
 - Center: stacked card image swap on hover/tap
 - Right rail: iPhone 17, iPhone 17 Pro, iPhone Air, iPhone 17e
-- Active label `#111111`, inactive `#9ca3af`
-- Ghost outline CTA: Shop Vellure
+- Active label `text-vellure-ink`, inactive `#9ca3af`
+- Ghost outline CTA: Shop Vellure (`.btn-ghost-brand`)
 
 ### IphoneFeaturePress
 - Vertical sidebar: `HOT OFF THE PRESS`
 - 3 cards: Pro Camera, All-Day Battery, Ultra-Thin Design
-- Outline CTA buttons `#1C1917` border, uppercase
+- Outline CTA buttons — green border via `.btn-ghost-brand`
 
 ### VellureMissionBand
-- Background: `#1a3d2e` (forest green)
+- Background: `bg-vellure-primary` (`#1a3d2e` forest green)
 - Split layout: headline + pillars left, lifestyle photo right
 - Ghost white Learn more CTA
 
-## Colors (below-the-fold marketing)
+## Colors (store-wide)
 
-- Primary trust: `#0EA5E9` (sky blue bands, links)
-- CTA accent: `#F97316` (Deals, sticky CTA)
-- Surface alternate: `#F0F9FF`
-- Marketing text: `#0C4A6E`
+- Primary green: `#1a3d2e` — `--vellure-green` / `bg-vellure-primary`
+- CTA dark green: `#143326` — `--vellure-green-dark` / `bg-vellure-cta`
+- Surface tint: `#EEF4F1` — `--vellure-green-light` / `bg-vellure-surface`
+- Ink text: `#1C1917` — `--vellure-ink` / `text-vellure-text`
 
 ## Typography
 
-- Display logo: Cormorant Garamond (`font-display`)
-- Headings: Rubik
-- Body: Nunito Sans
-- Sidebar labels: `text-xs tracking-[0.25em] uppercase`
+- Display + headings: Cormorant Garamond (`font-display`)
+- Body + UI: Nunito Sans (`font-sans`)
+- Sidebar labels: `.text-brand-label` — sans, uppercase, wide tracking
 
 ## Market
 

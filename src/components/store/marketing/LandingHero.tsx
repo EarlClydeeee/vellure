@@ -20,14 +20,14 @@ export function LandingHero() {
           {landingHeroCopy.lines.map((line) => (
             <p
               key={line}
-              className="text-sm font-medium uppercase tracking-[0.2em] text-white md:text-base"
+              className="font-display text-sm font-medium uppercase tracking-[0.2em] text-white md:text-lg"
             >
               {line}
             </p>
           ))}
           <Link
             href={landingHeroCopy.cta.href}
-            className="mt-8 inline-block border border-white px-8 py-3 text-xs font-medium uppercase tracking-[0.15em] text-white transition-colors duration-200 hover:bg-white hover:text-[#111111]"
+            className="mt-8 inline-block border border-white px-8 py-3 text-xs font-medium uppercase tracking-[0.15em] text-white transition-colors duration-200 hover:bg-white hover:text-vellure-primary"
           >
             {landingHeroCopy.cta.label}
           </Link>

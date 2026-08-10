@@ -41,7 +41,7 @@ export default function StoreLoading() {
         </div>
       </div>
 
-      <Skeleton className="h-[480px] w-full rounded-none bg-[#1a3d2e]/40" />
+      <Skeleton className="h-[480px] w-full rounded-none bg-vellure-primary/40" />
 
       <div className="border-b px-4 py-8">
         <div className="container mx-auto flex justify-center gap-6">

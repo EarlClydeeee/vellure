@@ -8,7 +8,7 @@ export function PromoBannerGrid() {
 
   return (
     <section className="container mx-auto px-4 py-10 md:py-14">
-      <h2 className="mb-6 text-2xl font-bold text-vellure-text md:text-3xl">
+      <h2 className="font-display mb-6 text-2xl font-medium text-vellure-text md:text-3xl">
         Featured Promos
       </h2>
       <div className="grid gap-4 md:grid-cols-2 md:grid-rows-2 md:gap-5">
@@ -26,9 +26,9 @@ export function PromoBannerGrid() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
           <div className="absolute bottom-0 left-0 p-6 text-white md:p-8">
-            <p className="text-sm font-medium text-sky-200">{large.subtitle}</p>
-            <h3 className="mt-1 text-2xl font-bold md:text-3xl">{large.title}</h3>
-            <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-orange-400 transition-colors duration-200 group-hover:text-orange-300">
+            <p className="text-sm font-medium text-white/70">{large.subtitle}</p>
+            <h3 className="font-display mt-1 text-2xl font-medium md:text-3xl">{large.title}</h3>
+            <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-white/90 transition-colors duration-200 group-hover:text-white">
               Shop now <ArrowRight className="h-4 w-4" aria-hidden />
             </span>
           </div>
@@ -50,13 +50,13 @@ export function PromoBannerGrid() {
               />
               <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
               <div className="relative flex h-full flex-col justify-center p-5 text-white md:p-6">
-                <p className="text-xs font-medium text-sky-200 md:text-sm">
+                <p className="text-xs font-medium text-white/70 md:text-sm">
                   {banner.subtitle}
                 </p>
-                <h3 className="mt-0.5 text-lg font-bold md:text-xl">
+                <h3 className="font-display mt-0.5 text-lg font-medium md:text-xl">
                   {banner.title}
                 </h3>
-                <span className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-orange-400 transition-colors duration-200 group-hover:text-orange-300">
+                <span className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-white/90 transition-colors duration-200 group-hover:text-white">
                   Explore <ArrowRight className="h-3.5 w-3.5" aria-hidden />
                 </span>
               </div>

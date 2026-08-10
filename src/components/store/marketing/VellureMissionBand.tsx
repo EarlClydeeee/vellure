@@ -24,10 +24,10 @@ const iconMap: Record<ServiceBadgeIcon, typeof ShieldCheck> = {
 
 export function VellureMissionBand() {
   return (
-    <section className="bg-[#1a3d2e]">
+    <section className="bg-vellure-primary">
       <div className="grid md:grid-cols-[55%_45%]">
         <div className="flex flex-col justify-center px-6 py-16 md:px-12 md:py-20 lg:px-16">
-          <h2 className="max-w-lg text-3xl font-medium leading-tight text-white md:text-4xl lg:text-5xl">
+          <h2 className="font-display max-w-lg text-3xl font-medium leading-tight text-white md:text-4xl lg:text-5xl">
             {vellureMission.headline}
           </h2>
           <p className="mt-4 max-w-md text-sm leading-relaxed text-white/85 md:text-base">
@@ -35,7 +35,7 @@ export function VellureMissionBand() {
           </p>
           <Link
             href={vellureMission.cta.href}
-            className="mt-8 inline-block self-start border border-white px-6 py-2.5 text-xs font-medium uppercase tracking-[0.15em] text-white transition-colors duration-200 hover:bg-white hover:text-[#1a3d2e]"
+            className="mt-8 inline-block self-start border border-white px-6 py-2.5 text-xs font-medium uppercase tracking-[0.15em] text-white transition-colors duration-200 hover:bg-white hover:text-vellure-primary"
           >
             {vellureMission.cta.label}
           </Link>

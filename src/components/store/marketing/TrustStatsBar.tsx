@@ -103,7 +103,7 @@ export function TrustStatsBar() {
   return (
     <section
       ref={ref}
-      className="border-y border-sky-100 bg-vellure-surface py-10 md:py-12"
+      className="border-y border-vellure-primary/10 bg-vellure-surface py-10 md:py-12"
     >
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">

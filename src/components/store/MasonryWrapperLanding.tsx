@@ -113,7 +113,7 @@ export function MasonryWrapperLanding({
 }
       `}</style>
       <div className="container mx-auto">
-        <h2 className="mb-8 text-2xl font-bold tracking-tight text-vellure-text sm:text-3xl">
+        <h2 className="font-display mb-8 text-2xl font-medium tracking-tight text-vellure-text sm:text-3xl">
           {title}
         </h2>
         <div

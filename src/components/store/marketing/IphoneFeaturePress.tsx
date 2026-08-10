@@ -8,7 +8,7 @@ export function IphoneFeaturePress() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col gap-10 md:flex-row md:gap-12 lg:gap-16">
           <p
-            className="shrink-0 text-xs font-medium uppercase tracking-[0.25em] text-[#111111] md:[writing-mode:vertical-rl] md:[text-orientation:mixed]"
+            className="text-brand-label shrink-0 text-vellure-ink md:[writing-mode:vertical-rl] md:[text-orientation:mixed]"
           >
             {iphoneFeaturePress.sidebarLabel}
           </p>
@@ -25,7 +25,7 @@ export function IphoneFeaturePress() {
                     sizes="(max-width: 768px) 100vw, 33vw"
                   />
                 </div>
-                <h3 className="text-lg font-semibold text-[#111111] md:text-xl">
+                <h3 className="font-display text-lg font-medium text-vellure-ink md:text-xl">
                   {card.title}
                 </h3>
                 <p className="mt-2 flex-1 text-sm leading-relaxed text-gray-600">
@@ -33,7 +33,7 @@ export function IphoneFeaturePress() {
                 </p>
                 <Link
                   href={card.cta.href}
-                  className="mt-6 inline-block self-start border border-[#1C1917] px-5 py-2.5 text-xs font-medium uppercase tracking-[0.12em] text-[#111111] transition-colors duration-200 hover:bg-[#111111] hover:text-white"
+                  className="btn-ghost-brand mt-6 self-start px-5 py-2.5 tracking-[0.12em]"
                 >
                   {card.cta.label}
                 </Link>

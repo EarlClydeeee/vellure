@@ -17,12 +17,12 @@ export function IphoneModelShowcase() {
       <div className="container mx-auto px-4">
         <div className="grid items-center gap-10 md:grid-cols-[auto_1fr_auto] md:gap-12 lg:gap-16">
           <p
-            className="hidden text-xs font-medium uppercase tracking-[0.25em] text-[#111111] md:block md:[writing-mode:vertical-rl] md:[text-orientation:mixed]"
+            className="text-brand-label hidden text-vellure-ink md:block md:[writing-mode:vertical-rl] md:[text-orientation:mixed]"
             aria-hidden
           >
             {iphoneModelShowcase.sidebarLabel}
           </p>
-          <p className="text-center text-xs font-medium uppercase tracking-[0.25em] text-[#111111] md:hidden">
+          <p className="text-brand-label text-center text-vellure-ink md:hidden">
             {iphoneModelShowcase.sidebarLabel}
           </p>
 
@@ -73,8 +73,8 @@ export function IphoneModelShowcase() {
                       role="option"
                       aria-selected={isActive}
                       className={cn(
-                        'cursor-pointer text-left text-2xl font-medium transition-colors duration-200 md:text-3xl lg:text-4xl',
-                        isActive ? 'text-[#111111]' : 'text-gray-400 hover:text-gray-600'
+                        'font-display cursor-pointer text-left text-2xl font-medium transition-colors duration-200 md:text-3xl lg:text-4xl',
+                        isActive ? 'text-vellure-ink' : 'text-gray-400 hover:text-gray-600'
                       )}
                       onMouseEnter={() => setActiveId(model.id)}
                       onFocus={() => setActiveId(model.id)}
@@ -89,7 +89,7 @@ export function IphoneModelShowcase() {
 
             <Link
               href={activeModel.href}
-              className="mt-10 inline-block self-start border border-[#111111] px-8 py-3 text-xs font-medium uppercase tracking-[0.15em] text-[#111111] transition-colors duration-200 hover:bg-[#111111] hover:text-white md:mt-0"
+              className="btn-ghost-brand mt-10 self-start md:mt-0"
             >
               {iphoneModelShowcase.cta.label}
             </Link>

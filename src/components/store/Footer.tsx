@@ -12,10 +12,10 @@ const SOCIAL_LINKS = [
 export function Footer() {
   return (
     <footer className="mt-auto">
-      <div className="bg-[#1a1a1a] px-4 py-12 text-white">
+      <div className="bg-vellure-primary px-4 py-12 text-white">
         <div className="container mx-auto flex flex-col items-center justify-between gap-6 sm:flex-row">
           <div>
-            <h3 className="text-xl font-bold">Ready to Get Our New Stuff?</h3>
+            <h3 className="font-display text-xl font-medium md:text-2xl">Ready to Get Our New Stuff?</h3>
             <p className="mt-1 text-sm text-white/70">
               Subscribe for updates and exclusive offers.
             </p>
@@ -27,7 +27,7 @@ export function Footer() {
       <div className="border-t bg-background px-4 py-12">
         <div className="container mx-auto grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-3">
-            <h3 className="text-lg font-bold tracking-tight">Vellure</h3>
+            <h3 className="font-display text-lg font-medium tracking-tight">Vellure</h3>
             <p className="text-sm text-muted-foreground">
               Premium products, curated for you.
             </p>

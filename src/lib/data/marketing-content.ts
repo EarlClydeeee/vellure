@@ -207,28 +207,28 @@ export const promoVouchers = [
     code: 'WELCOME10',
     title: '10% Off First Order',
     description: `New customers only. Min. spend ${locale.symbol}2,500.`,
-    accent: 'bg-sky-500',
+    accent: 'bg-vellure-primary',
   },
   {
     id: 'tech',
     code: 'TECH88',
     title: '8.8 Tech Sale',
     description: 'Extra 8% off selected electronics this week.',
-    accent: 'bg-orange-500',
+    accent: 'bg-vellure-cta',
   },
   {
     id: 'ship',
     code: 'FREESHIP',
     title: 'Free Shipping',
     description: `On orders over ${locale.symbol}${locale.freeShippingThreshold.toLocaleString()} nationwide.`,
-    accent: 'bg-emerald-500',
+    accent: 'bg-emerald-700',
   },
   {
     id: 'bundle',
     code: 'BUNDLE15',
     title: 'Bundle & Save 15%',
     description: 'Mix accessories with any device purchase.',
-    accent: 'bg-violet-500',
+    accent: 'bg-teal-800',
   },
 ] as const;
 

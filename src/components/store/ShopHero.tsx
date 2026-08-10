@@ -37,7 +37,7 @@ export function ShopHero({
         <div className="absolute inset-0 bg-black/10" />
 
         <div className="relative z-10 px-4 text-center">
-          <h1 className="text-5xl font-bold tracking-tight text-white sm:text-6xl md:text-7xl lg:text-8xl">
+          <h1 className="font-display text-5xl font-medium tracking-tight text-white sm:text-6xl md:text-7xl lg:text-8xl">
             {title}
           </h1>
           {subtitle && (
@@ -50,7 +50,7 @@ export function ShopHero({
               <Button
                 asChild
                 size="lg"
-                className="cursor-pointer rounded-full bg-vellure-cta px-8 text-white hover:bg-vellure-cta/90"
+                className="cursor-pointer rounded-full bg-vellure-primary px-8 text-white hover:bg-vellure-primary/90"
               >
                 <Link href={heroCopy.primaryCta.href}>{heroCopy.primaryCta.label}</Link>
               </Button>
