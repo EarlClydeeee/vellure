@@ -15,7 +15,11 @@ function mapCartItem(row: Record<string, unknown>): CartItem {
           name: product.name as string,
           description: (product.description as string) ?? null,
           price: Number(product.price),
+          compareAtPrice:
+            product.compare_at_price != null ? Number(product.compare_at_price) : null,
+          specs: (product.specs as Record<string, string>) ?? {},
           stockQuantity: product.stock_quantity as number,
+          salesCount: (product.sales_count as number) ?? 0,
           imageUrl: (product.image_url as string) ?? null,
           categoryId: (product.category_id as string) ?? null,
           status: product.status as Product['status'],
@@ -53,6 +57,32 @@ export async function addToCart(
   quantity: number
 ): Promise<ServiceResult<CartItem>> {
   const supabase = await createServerSupabaseClient();
+
+  const { data: productRow, error: productError } = await supabase
+    .from('products')
+    .select('id, name, status, stock_quantity')
+    .eq('id', productId)
+    .single();
+
+  if (productError || !productRow) {
+    return { success: false, error: 'Product not found', code: 'NOT_FOUND' };
+  }
+
+  if (productRow.status !== 'Active') {
+    return {
+      success: false,
+      error: `"${productRow.name as string}" is not available`,
+      code: 'INACTIVE_PRODUCT',
+    };
+  }
+
+  if (productRow.stock_quantity <= 0) {
+    return {
+      success: false,
+      error: `"${productRow.name as string}" is out of stock`,
+      code: 'OUT_OF_STOCK',
+    };
+  }
 
   // Check if item already exists in cart
   const { data: existing, error: selectError } = await supabase

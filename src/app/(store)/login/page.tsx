@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { LoginForm } from '@/components/store/LoginForm';
@@ -21,7 +22,9 @@ export default async function LoginPage() {
             Log in to your Vellure account
           </p>
         </div>
-        <LoginForm />
+        <Suspense fallback={<p className="text-center text-muted-foreground">Loading...</p>}>
+          <LoginForm />
+        </Suspense>
       </div>
     </div>
   );

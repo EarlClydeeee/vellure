@@ -1,9 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { addToCartAction } from '@/app/(store)/actions';
+import { addToGuestCart } from '@/lib/cart/guest-cart';
+import { useCart } from '@/components/store/CartProvider';
 
 interface AddToCartButtonProps {
   productId: string;
@@ -12,14 +15,21 @@ interface AddToCartButtonProps {
 }
 
 export function AddToCartButton({ productId, quantity, disabled }: AddToCartButtonProps) {
+  const router = useRouter();
+  const { refreshCartCount } = useCart();
   const [loading, setLoading] = useState(false);
 
   async function handleClick() {
     setLoading(true);
     try {
-      await addToCartAction(productId, quantity);
-    } catch {
-      // User may not be logged in; silently fail
+      const result = await addToCartAction(productId, quantity);
+      if (result && 'requiresAuth' in result && result.requiresAuth) {
+        addToGuestCart(productId, quantity);
+        refreshCartCount();
+      } else {
+        router.refresh();
+      }
+      refreshCartCount();
     } finally {
       setLoading(false);
     }
@@ -36,4 +46,22 @@ export function AddToCartButton({ productId, quantity, disabled }: AddToCartButt
       {loading ? 'Adding...' : 'Add to Cart'}
     </Button>
   );
+}
+
+export function useAddToCart() {
+  const router = useRouter();
+  const { refreshCartCount } = useCart();
+
+  async function add(productId: string, quantity: number) {
+    const result = await addToCartAction(productId, quantity);
+    if (result && 'requiresAuth' in result && result.requiresAuth) {
+      addToGuestCart(productId, quantity);
+    } else {
+      router.refresh();
+    }
+    refreshCartCount();
+    return result;
+  }
+
+  return { add };
 }

@@ -7,6 +7,7 @@ import {
   Package,
   Tag,
   ShoppingBag,
+  RotateCcw,
   Users,
   LogOut,
   Menu,
@@ -21,6 +22,7 @@ const navItems = [
   { href: '/admin/products', label: 'Products', icon: Package },
   { href: '/admin/categories', label: 'Categories', icon: Tag },
   { href: '/admin/orders', label: 'Orders', icon: ShoppingBag },
+  { href: '/admin/returns', label: 'Returns', icon: RotateCcw },
   { href: '/admin/customers', label: 'Customers', icon: Users },
 ];
 

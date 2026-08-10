@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ShoppingCart } from 'lucide-react';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { getCartItems, getCartTotal } from '@/lib/services/cart';
+import { CartPageClient } from '@/components/store/CartPageClient';
 import { CartItemRow } from '@/components/store/CartItemRow';
 import { CartSummary } from '@/components/store/CartSummary';
 import { EmptyState } from '@/components/shared/EmptyState';
@@ -16,20 +17,7 @@ export default async function CartPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <EmptyState
-          title="Please log in"
-          description="You need to be logged in to view your cart."
-          icon={<ShoppingCart className="h-12 w-12" />}
-          action={
-            <Link href="/login">
-              <Button>Log In</Button>
-            </Link>
-          }
-        />
-      </div>
-    );
+    return <CartPageClient isGuest />;
   }
 
   const [cartResult, totalResult] = await Promise.all([

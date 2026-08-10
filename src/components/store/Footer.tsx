@@ -1,12 +1,31 @@
-import Link from 'next/link';
-import { Globe, Camera, MessageCircle, Mail, Phone } from 'lucide-react';
+import { Mail } from 'lucide-react';
+import { NavLink } from '@/components/store/NavLink';
+import { NewsletterCapture } from '@/components/store/marketing/NewsletterCapture';
+
+const SOCIAL_LINKS = [
+  { label: 'X', href: 'https://x.com/vellure' },
+  { label: 'Facebook', href: 'https://facebook.com/vellure' },
+  { label: 'LinkedIn', href: 'https://linkedin.com/company/vellure' },
+  { label: 'Instagram', href: 'https://instagram.com/vellure' },
+] as const;
 
 export function Footer() {
   return (
-    <footer className="border-t bg-muted/30">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Brand */}
+    <footer className="mt-auto">
+      <div className="bg-[#1a1a1a] px-4 py-12 text-white">
+        <div className="container mx-auto flex flex-col items-center justify-between gap-6 sm:flex-row">
+          <div>
+            <h3 className="text-xl font-bold">Ready to Get Our New Stuff?</h3>
+            <p className="mt-1 text-sm text-white/70">
+              Subscribe for updates and exclusive offers.
+            </p>
+          </div>
+          <NewsletterCapture variant="footer" className="w-full max-w-md sm:w-auto" />
+        </div>
+      </div>
+
+      <div className="border-t bg-background px-4 py-12">
+        <div className="container mx-auto grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-3">
             <h3 className="text-lg font-bold tracking-tight">Vellure</h3>
             <p className="text-sm text-muted-foreground">
@@ -14,89 +33,75 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Quick Links */}
           <div className="space-y-3">
-            <h4 className="text-sm font-semibold">Quick Links</h4>
+            <h4 className="text-sm font-semibold">About</h4>
             <nav className="flex flex-col gap-2">
-              <Link
-                href="/products"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              <NavLink
+                href="/blog"
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
-                Products
-              </Link>
-              <Link
-                href="/cart"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                Blog
+              </NavLink>
+              <NavLink
+                href="/"
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
-                Cart
-              </Link>
-              <Link
-                href="/orders"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                Meet The Team
+              </NavLink>
+              <a
+                href="mailto:hello@vellure.com"
+                className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
-                My Orders
-              </Link>
+                <Mail className="h-4 w-4" />
+                Contact Us
+              </a>
             </nav>
           </div>
 
-          {/* Contact */}
           <div className="space-y-3">
-            <h4 className="text-sm font-semibold">Contact</h4>
-            <div className="flex flex-col gap-2">
-              <a
-                href="mailto:hello@vellure.com"
-                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            <h4 className="text-sm font-semibold">Support</h4>
+            <nav className="flex flex-col gap-2">
+              <NavLink
+                href="/#faq"
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
-                <Mail className="h-4 w-4" />
-                hello@vellure.com
-              </a>
-              <a
-                href="tel:+12345678900"
-                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                FAQ
+              </NavLink>
+              <NavLink
+                href="/#faq-shipping"
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
-                <Phone className="h-4 w-4" />
-                +1 234 567 8900
-              </a>
-            </div>
+                Shipping
+              </NavLink>
+              <NavLink
+                href="/#faq-returns"
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Return
+              </NavLink>
+            </nav>
           </div>
 
-          {/* Social */}
           <div className="space-y-3">
             <h4 className="text-sm font-semibold">Follow Us</h4>
-            <div className="flex gap-4">
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Facebook"
-              >
-                <Globe className="h-5 w-5" />
-              </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Twitter"
-              >
-                <MessageCircle className="h-5 w-5" />
-              </a>
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Instagram"
-              >
-                <Camera className="h-5 w-5" />
-              </a>
+            <div className="flex gap-3">
+              {SOCIAL_LINKS.map(({ label, href }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border text-xs font-medium text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"
+                  aria-label={label}
+                >
+                  {label[0]}
+                </a>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Copyright */}
-        <div className="mt-12 border-t pt-6 text-center">
+        <div className="container mx-auto mt-12 border-t pt-6 text-center">
           <p className="text-sm text-muted-foreground">
             &copy; {new Date().getFullYear()} Vellure. All rights reserved.
           </p>

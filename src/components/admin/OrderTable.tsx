@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { formatPrice } from '@/lib/format-price';
 import { Order } from '@/lib/types';
 
 interface OrderTableProps {
@@ -65,7 +66,7 @@ export function OrderTable({ orders }: OrderTableProps) {
                 <TableCell className="font-medium">#{order.orderNumber}</TableCell>
                 <TableCell>{order.fullName}</TableCell>
                 <TableCell>{formatDate(order.createdAt)}</TableCell>
-                <TableCell>${order.total.toFixed(2)}</TableCell>
+                <TableCell>{formatPrice(order.total)}</TableCell>
                 <TableCell>{order.paymentMethod}</TableCell>
                 <TableCell>
                   <Badge variant={getStatusVariant(order.status)}>

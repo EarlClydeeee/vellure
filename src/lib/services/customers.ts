@@ -1,10 +1,14 @@
+import { revalidatePath } from 'next/cache';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { Customer } from '@/lib/types';
 import { ServiceResult } from '@/lib/types/service';
 
+export type CustomerAccountStatus = 'Active' | 'Inactive';
+
 export interface CustomerWithAggregates extends Customer {
   totalOrders: number;
   totalPurchaseAmount: number;
+  accountStatus: CustomerAccountStatus;
 }
 
 function mapCustomer(row: Record<string, unknown>): Customer {
@@ -22,7 +26,6 @@ export async function getCustomers(): Promise<
 > {
   const supabase = await createServerSupabaseClient();
 
-  // Get all customers
   const { data: customers, error: customersError } = await supabase
     .from('customers')
     .select('*')
@@ -36,7 +39,6 @@ export async function getCustomers(): Promise<
     };
   }
 
-  // Get order aggregates per customer
   const { data: orders, error: ordersError } = await supabase
     .from('orders')
     .select('customer_id, total');
@@ -49,7 +51,6 @@ export async function getCustomers(): Promise<
     };
   }
 
-  // Build aggregate map
   const aggregates = new Map<
     string,
     { totalOrders: number; totalPurchaseAmount: number }
@@ -71,7 +72,11 @@ export async function getCustomers(): Promise<
       totalOrders: 0,
       totalPurchaseAmount: 0,
     };
-    return { ...customer, ...agg };
+    return {
+      ...customer,
+      ...agg,
+      accountStatus: agg.totalOrders > 0 ? 'Active' : 'Inactive',
+    };
   });
 
   return { success: true, data: result };

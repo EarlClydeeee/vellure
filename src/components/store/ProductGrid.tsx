@@ -5,9 +5,11 @@ import { EmptyState } from '@/components/shared/EmptyState';
 
 interface ProductGridProps {
   products: Product[];
+  columns?: 3 | 4;
+  isLoggedIn?: boolean;
 }
 
-export function ProductGrid({ products }: ProductGridProps) {
+export function ProductGrid({ products, columns = 4, isLoggedIn = false }: ProductGridProps) {
   if (products.length === 0) {
     return (
       <EmptyState
@@ -18,10 +20,15 @@ export function ProductGrid({ products }: ProductGridProps) {
     );
   }
 
+  const gridClass =
+    columns === 3
+      ? 'grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'
+      : 'grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4';
+
   return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <div className={gridClass}>
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard key={product.id} product={product} isLoggedIn={isLoggedIn} />
       ))}
     </div>
   );

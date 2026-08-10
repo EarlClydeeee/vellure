@@ -15,6 +15,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { StatusSelect } from '@/components/admin/StatusSelect';
+import { ConfirmPaymentButton } from '@/components/admin/ConfirmPaymentButton';
+import { formatPrice } from '@/lib/format-price';
 
 export const dynamic = 'force-dynamic';
 
@@ -48,6 +50,9 @@ export default async function AdminOrderDetailPage({ params }: Props) {
   }
 
   const order = result.data;
+  const needsPaymentConfirm =
+    order.paymentStatus === 'pending' &&
+    order.paymentMethod !== 'COD';
 
   return (
     <div>
@@ -59,6 +64,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
         </Button>
         <h1 className="text-3xl font-bold">Order #{order.orderNumber}</h1>
         <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>
+        <Badge variant="outline">{order.paymentStatus}</Badge>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 mb-6">
@@ -83,6 +89,12 @@ export default async function AdminOrderDetailPage({ params }: Props) {
               <span className="text-muted-foreground">Delivery Address:</span>{' '}
               <span className="font-medium">{order.deliveryAddress}</span>
             </div>
+            {order.shippingZone && (
+              <div>
+                <span className="text-muted-foreground">Zone:</span>{' '}
+                <span className="font-medium">{order.shippingZone}</span>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -95,10 +107,22 @@ export default async function AdminOrderDetailPage({ params }: Props) {
               <span className="text-muted-foreground">Payment Method:</span>{' '}
               <span className="font-medium">{order.paymentMethod}</span>
             </div>
+            {order.paymentReference && (
+              <div>
+                <span className="text-muted-foreground">Reference:</span>{' '}
+                <span className="font-mono font-medium">{order.paymentReference}</span>
+              </div>
+            )}
+            {order.trackingNumber && (
+              <div>
+                <span className="text-muted-foreground">Tracking:</span>{' '}
+                <span className="font-medium">{order.trackingNumber}</span>
+              </div>
+            )}
             <div>
               <span className="text-muted-foreground">Date:</span>{' '}
               <span className="font-medium">
-                {new Date(order.createdAt).toLocaleDateString('en-US', {
+                {new Date(order.createdAt).toLocaleDateString('en-PH', {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric',
@@ -111,6 +135,11 @@ export default async function AdminOrderDetailPage({ params }: Props) {
               <div>
                 <span className="text-muted-foreground">Notes:</span>{' '}
                 <span className="font-medium">{order.notes}</span>
+              </div>
+            )}
+            {needsPaymentConfirm && (
+              <div className="pt-2">
+                <ConfirmPaymentButton orderId={order.id} />
               </div>
             )}
             <div className="pt-2">
@@ -142,21 +171,33 @@ export default async function AdminOrderDetailPage({ params }: Props) {
                 {order.items?.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell className="font-medium">{item.productName}</TableCell>
-                    <TableCell>${item.productPrice.toFixed(2)}</TableCell>
+                    <TableCell>{formatPrice(item.productPrice)}</TableCell>
                     <TableCell>{item.quantity}</TableCell>
-                    <TableCell>${item.subtotal.toFixed(2)}</TableCell>
+                    <TableCell>{formatPrice(item.subtotal)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
           <div className="mt-4 flex justify-end">
-            <div className="space-y-1 text-right">
-              <div className="text-sm text-muted-foreground">
-                Subtotal: <span className="font-medium text-foreground">${order.subtotal.toFixed(2)}</span>
+            <div className="space-y-1 text-right text-sm">
+              <div>
+                Subtotal:{' '}
+                <span className="font-medium">{formatPrice(order.subtotal)}</span>
               </div>
+              {order.shippingFee > 0 && (
+                <div>
+                  Shipping:{' '}
+                  <span className="font-medium">{formatPrice(order.shippingFee)}</span>
+                </div>
+              )}
+              {order.discount > 0 && (
+                <div className="text-green-600">
+                  Discount: -{formatPrice(order.discount)}
+                </div>
+              )}
               <div className="text-lg font-bold">
-                Total: ${order.total.toFixed(2)}
+                Total: {formatPrice(order.total)}
               </div>
             </div>
           </div>

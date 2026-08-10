@@ -10,7 +10,7 @@ export default async function CheckoutPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect('/login');
+    redirect('/login?returnTo=/checkout');
   }
 
   const [cartResult, totalResult] = await Promise.all([
@@ -27,7 +27,10 @@ export default async function CheckoutPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">Checkout</h1>
+      <h1 className="text-2xl font-bold mb-2">Checkout</h1>
+      <p className="mb-6 text-sm text-muted-foreground">
+        Sign in required to complete your order. Your cart has been saved.
+      </p>
       <CheckoutPageClient
         userEmail={user.email ?? ''}
         cartItems={cartItems.map((item) => ({
@@ -36,7 +39,6 @@ export default async function CheckoutPage() {
           price: item.product?.price ?? 0,
         }))}
         subtotal={totals.subtotal}
-        total={totals.total}
       />
     </div>
   );

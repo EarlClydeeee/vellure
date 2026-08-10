@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
 import { deleteProductAction } from '@/app/(admin)/actions';
 import { Product } from '@/lib/types';
+import { formatPrice } from '@/lib/format-price';
 
 interface ProductTableProps {
   products: Product[];
@@ -87,9 +88,7 @@ export function ProductTable({ products }: ProductTableProps) {
                   </TableCell>
                   <TableCell className="font-medium">{product.name}</TableCell>
                   <TableCell>{product.category?.name ?? '—'}</TableCell>
-                  <TableCell>
-                    ${product.price.toFixed(2)}
-                  </TableCell>
+                  <TableCell>{formatPrice(product.price)}</TableCell>
                   <TableCell>{product.stockQuantity}</TableCell>
                   <TableCell>
                     <Badge variant={getStatusVariant(product.status)}>

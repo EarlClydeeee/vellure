@@ -27,6 +27,70 @@ export async function getCategories(): Promise<ServiceResult<Category[]>> {
   return { success: true, data: (data ?? []).map(mapCategory) };
 }
 
+export interface CategoryWithCount extends Category {
+  productCount: number;
+}
+
+export async function getCategoriesWithCounts(): Promise<
+  ServiceResult<CategoryWithCount[]>
+> {
+  const supabase = await createServerSupabaseClient();
+
+  const [categoriesResult, productsResult] = await Promise.all([
+    supabase.from('categories').select('*').order('name', { ascending: true }),
+    supabase
+      .from('products')
+      .select('category_id')
+      .eq('status', 'Active'),
+  ]);
+
+  if (categoriesResult.error) {
+    return {
+      success: false,
+      error: categoriesResult.error.message,
+      code: 'QUERY_ERROR',
+    };
+  }
+
+  if (productsResult.error) {
+    return {
+      success: false,
+      error: productsResult.error.message,
+      code: 'QUERY_ERROR',
+    };
+  }
+
+  const countMap = new Map<string, number>();
+  let totalActive = 0;
+
+  for (const row of productsResult.data ?? []) {
+    totalActive++;
+    const categoryId = row.category_id as string | null;
+    if (categoryId) {
+      countMap.set(categoryId, (countMap.get(categoryId) ?? 0) + 1);
+    }
+  }
+
+  const categories = (categoriesResult.data ?? []).map((row) => ({
+    ...mapCategory(row),
+    productCount: countMap.get(row.id as string) ?? 0,
+  }));
+
+  return {
+    success: true,
+    data: [
+      {
+        id: 'all',
+        name: 'All Product',
+        productCount: totalActive,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      ...categories,
+    ],
+  };
+}
+
 export async function createCategory(
   name: string
 ): Promise<ServiceResult<Category>> {
