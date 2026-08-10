@@ -21,7 +21,7 @@ export function IphoneFeaturePress() {
                     src={card.image}
                     alt={card.title}
                     fill
-                    className="object-contain p-6"
+                    className="object-cover"
                     sizes="(max-width: 768px) 100vw, 33vw"
                   />
                 </div>

@@ -81,7 +81,8 @@ export const iphoneFeaturePress = {
       title: 'Pro Camera System',
       description:
         '48MP Fusion camera with cinematic video — capture every moment in stunning detail.',
-      image: '/iphone/iphone17pro/iphone_17pro__t1j902iw6kya_large.jpg',
+      image:
+      '/images/iphonecamera.png',
       cta: { label: 'Shop iPhone 17 Pro', href: '/products' },
     },
     {
@@ -90,7 +91,7 @@ export const iphoneFeaturePress = {
       description:
         'Power through your day in Manila — optimized battery for work, travel, and play.',
       image:
-        '/iphone/iphone17pro/iphone17/iphone-17-finish-select-202509-black.webp',
+        'https://www.apple.com/v/iphone-17/h/images/overview/welcome/hero_startframe__e9e7pcnguyqi_large.jpg',
       cta: { label: 'Shop iPhone 17', href: '/products' },
     },
     {
@@ -99,7 +100,7 @@ export const iphoneFeaturePress = {
       description:
         'The thinnest iPhone ever — premium titanium build with pro capability inside.',
       image:
-        '/iphone/iphone17pro/iphoneair/iphone-air-finish-select-202509-spaceblack.webp',
+        'https://www.apple.com/v/iphone-air/h/images/overview/welcome/hero__c8vidxwr9imq_large.jpg',
       cta: { label: 'Shop iPhone Air', href: '/products' },
     },
   ],
