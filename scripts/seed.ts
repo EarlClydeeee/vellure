@@ -201,6 +201,19 @@ async function seed() {
       category_id: categoryMap['For Phone'],
       status: 'Active',
     },
+    {
+      name: 'Wireless Earbuds Pro',
+      description:
+        'True wireless earbuds with ANC, transparency mode, and 24-hour battery with case.',
+      price: 3499,
+      compare_at_price: 3999,
+      specs: { 'Battery Life': '24 hours', ANC: 'Yes', Connectivity: 'Bluetooth 5.3' },
+      stock_quantity: 60,
+      sales_count: 35,
+      image_url: IPHONE_IMAGES.iphone17Pro,
+      category_id: categoryMap['For Music'],
+      status: 'Active',
+    },
   ];
 
   console.log('Seeding products...');

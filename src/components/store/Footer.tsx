@@ -2,6 +2,13 @@ import { Mail } from 'lucide-react';
 import { NavLink } from '@/components/store/NavLink';
 import { NewsletterCapture } from '@/components/store/marketing/NewsletterCapture';
 
+const SOCIAL_LINKS = [
+  { label: 'X', href: 'https://x.com/vellure' },
+  { label: 'Facebook', href: 'https://facebook.com/vellure' },
+  { label: 'LinkedIn', href: 'https://linkedin.com/company/vellure' },
+  { label: 'Instagram', href: 'https://instagram.com/vellure' },
+] as const;
+
 export function Footer() {
   return (
     <footer className="mt-auto">
@@ -78,10 +85,12 @@ export function Footer() {
           <div className="space-y-3">
             <h4 className="text-sm font-semibold">Follow Us</h4>
             <div className="flex gap-3">
-              {['X', 'Facebook', 'LinkedIn', 'Instagram'].map((label) => (
+              {SOCIAL_LINKS.map(({ label, href }) => (
                 <a
                   key={label}
-                  href="#"
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border text-xs font-medium text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"
                   aria-label={label}
                 >

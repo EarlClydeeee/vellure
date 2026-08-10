@@ -58,6 +58,32 @@ export async function addToCart(
 ): Promise<ServiceResult<CartItem>> {
   const supabase = await createServerSupabaseClient();
 
+  const { data: productRow, error: productError } = await supabase
+    .from('products')
+    .select('id, name, status, stock_quantity')
+    .eq('id', productId)
+    .single();
+
+  if (productError || !productRow) {
+    return { success: false, error: 'Product not found', code: 'NOT_FOUND' };
+  }
+
+  if (productRow.status !== 'Active') {
+    return {
+      success: false,
+      error: `"${productRow.name as string}" is not available`,
+      code: 'INACTIVE_PRODUCT',
+    };
+  }
+
+  if (productRow.stock_quantity <= 0) {
+    return {
+      success: false,
+      error: `"${productRow.name as string}" is out of stock`,
+      code: 'OUT_OF_STOCK',
+    };
+  }
+
   // Check if item already exists in cart
   const { data: existing, error: selectError } = await supabase
     .from('cart_items')

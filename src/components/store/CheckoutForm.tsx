@@ -234,10 +234,8 @@ export function CheckoutForm({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="COD">Cash on Delivery</SelectItem>
-            <SelectItem value="GCash">GCash</SelectItem>
-            <SelectItem value="Maya">Maya</SelectItem>
+            <SelectItem value="E-Wallet">E-Wallet</SelectItem>
             <SelectItem value="Bank Transfer">Bank Transfer</SelectItem>
-            <SelectItem value="Card">Credit / Debit Card</SelectItem>
           </SelectContent>
         </Select>
       </div>

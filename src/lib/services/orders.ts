@@ -88,6 +88,25 @@ export async function createOrder(
     return { success: false, error: 'Cart is empty', code: 'EMPTY_CART' };
   }
 
+  for (const item of cartItems) {
+    const product = item.products as Record<string, unknown>;
+    const status = product.status as string;
+    if (status === 'Inactive') {
+      return {
+        success: false,
+        error: `"${product.name as string}" is no longer available`,
+        code: 'INACTIVE_PRODUCT',
+      };
+    }
+    if (status === 'Out of Stock' || (product.stock_quantity as number) <= 0) {
+      return {
+        success: false,
+        error: `"${product.name as string}" is out of stock`,
+        code: 'OUT_OF_STOCK',
+      };
+    }
+  }
+
   const subtotal = cartItems.reduce((sum, item) => {
     const product = item.products as Record<string, unknown>;
     return sum + Number(product.price) * (item.quantity as number);
@@ -357,6 +376,7 @@ export async function updateOrderStatus(
 
   revalidatePath('/orders');
   revalidatePath('/account/orders');
+  revalidatePath(`/account/orders/${id}`);
   revalidatePath('/admin/orders');
   revalidatePath('/admin/dashboard');
 

@@ -197,7 +197,8 @@ export async function getProductsPaginated(
 }
 
 export async function getProductById(
-  id: string
+  id: string,
+  options?: { activeOnly?: boolean }
 ): Promise<ServiceResult<Product | null>> {
   const supabase = await createServerSupabaseClient();
 
@@ -214,7 +215,12 @@ export async function getProductById(
     return { success: false, error: error.message, code: 'QUERY_ERROR' };
   }
 
-  return { success: true, data: mapProduct(data) };
+  const product = mapProduct(data);
+  if (options?.activeOnly && product.status !== 'Active') {
+    return { success: true, data: null };
+  }
+
+  return { success: true, data: product };
 }
 
 export async function getProductsByIds(

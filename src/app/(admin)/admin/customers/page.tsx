@@ -54,7 +54,11 @@ export default async function AdminCustomersPage() {
                   <TableCell>{customer.totalOrders}</TableCell>
                   <TableCell>{formatPrice(customer.totalPurchaseAmount)}</TableCell>
                   <TableCell>
-                    <Badge variant="default">Active</Badge>
+                    <Badge
+                      variant={customer.accountStatus === 'Active' ? 'default' : 'secondary'}
+                    >
+                      {customer.accountStatus}
+                    </Badge>
                   </TableCell>
                 </TableRow>
               ))

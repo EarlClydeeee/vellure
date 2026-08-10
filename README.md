@@ -1,74 +1,135 @@
 # Vellure - E-Commerce Website
 
-## Overview
+CubeTech Web Development Intern Assessment submission — full-stack e-commerce with customer storefront and admin dashboard.
 
-A full-stack e-commerce website built with Next.js 14+ (App Router), TypeScript, Tailwind CSS, shadcn/ui, and Supabase. Features a customer storefront and an admin dashboard.
+## Submission Links
+
+| Resource | URL |
+|----------|-----|
+| **GitHub Repository** | https://github.com/EarlClydeeee/vellure.git |
+| **Live Customer Site** | _Deploy to Vercel — see [Deployment](#deployment) below_ |
+| **Live Admin Dashboard** | _Same deployment — `/admin/login`_ |
+
+## Admin Login Credentials
+
+- **Username:** `admin`
+- **Password:** `admin123`
+
+(Configurable via `ADMIN_USERNAME` and `ADMIN_PASSWORD` in `.env.local`)
 
 ## Tech Stack
 
-- **Framework:** Next.js 14+ (App Router)
+- **Framework:** Next.js 16 (App Router)
 - **Language:** TypeScript
-- **Styling:** Tailwind CSS + shadcn/ui
+- **Styling:** Tailwind CSS v4 + shadcn/ui
 - **Database:** Supabase (PostgreSQL)
 - **Customer Auth:** Supabase Auth (email/password)
-- **Admin Auth:** Simulated (environment variables)
+- **Admin Auth:** Simulated session (environment variables)
 - **Validation:** Zod
+- **Node.js:** 20+ required for build
 
 ## Features
 
 ### Customer Website
 
-- Home page with promotional banner, categories, featured products
-- Product listing with search, category filter, price sorting
-- Product details with quantity selector, related products
-- Shopping cart (database-persisted, survives refresh)
-- Checkout with form validation (COD, E-Wallet, Bank Transfer)
-- Order history and order details
-- Responsive design (320px – 1920px)
+- Home page: logo, navigation, promo banner, categories, featured products, footer with contact + social links
+- Product listing (10+ products): search, category filter, price sorting, stock availability, View Details, Add to Cart
+- Product details: gallery, specs, quantity selector, related products, Buy Now
+- Shopping cart: guest (localStorage) + authenticated (Supabase); persists after refresh
+- Checkout: login required; COD, E-Wallet, Bank Transfer; order confirmation with order number and summary
+- Account hub: profile, addresses, orders with tracking timeline, wishlist
 
 ### Admin Dashboard
 
 - Login with simulated credentials
-- Dashboard overview with 6 metric cards
-- Product management (CRUD, search, filter by category/status)
-- Category management (with deletion protection)
-- Order management (view details, update status)
-- Customer management (list with aggregates)
-- Responsive design (768px – 1920px)
+- Dashboard: 6 summary cards (products, orders, pending, completed, customers, sales)
+- Product CRUD with search/filter, delete confirmation
+- Category CRUD with deletion protection when products assigned
+- Order management with status updates and order details
+- Customer list with order count, total purchases, account status
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20+
 - Supabase project (free tier works)
 
 ### Installation
 
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Copy environment file: `cp .env.local.example .env.local`
-4. Fill in your Supabase credentials and admin credentials in `.env.local`
-5. Run the database migration in your Supabase SQL Editor (from `supabase/migrations/001_initial_schema.sql`)
-6. Seed the database: `npx tsx scripts/seed.ts`
-7. Run development server: `npm run dev`
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/EarlClydeeee/vellure.git
+   cd vellure
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Copy environment file:
+   ```bash
+   cp .env.local.example .env.local
+   ```
+
+4. Fill in Supabase credentials and admin credentials in `.env.local`
+
+5. Run database migrations in Supabase SQL Editor (in order):
+   - `supabase/migrations/001_initial_schema.sql`
+   - `supabase/migrations/003_tier1_commerce.sql`
+
+6. Seed sample data:
+   ```bash
+   npm run seed
+   ```
+
+7. Start development server:
+   ```bash
+   npm run dev
+   ```
+
+8. Open:
+   - Customer site: http://localhost:3000
+   - Admin login: http://localhost:3000/admin/login
 
 ### Environment Variables
 
 ```
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key (for seeding only)
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=admin123
 ```
 
-### Admin Login Credentials
+## Deployment
 
-- **Username:** admin
-- **Password:** admin123
+Deploy to [Vercel](https://vercel.com):
 
-(configurable via environment variables)
+1. Import the GitHub repository
+2. Add all environment variables from `.env.local`
+3. Deploy — customer site and admin dashboard share the same URL
+4. Update the **Live Customer Site** link above with your Vercel URL
+
+```bash
+npx vercel --prod
+```
+
+## System Flow
+
+1. **Browse:** Guest or logged-in customer browses home, categories, and product listing (10+ products)
+2. **Cart:** Add items to cart (localStorage for guests, Supabase for logged-in users); cart persists on refresh
+3. **Checkout:** Login required at checkout; guest cart merges on login/signup
+4. **Order:** Customer submits checkout form (name, email, contact, address, payment method, notes)
+5. **Confirmation:** Order number and line-item summary displayed; E-Wallet/Bank Transfer show mock payment instructions
+6. **Admin:** Admin logs in, views dashboard metrics, manages products/categories/orders/customers
+7. **Sync:** Admin product/status changes reflect on customer site immediately (inactive products hidden, prices updated)
+8. **Tracking:** Customer views order status timeline at `/account/orders/[id]`
+
+## Screenshots
+
+See [`docs/screenshots/README.md`](docs/screenshots/README.md) for required desktop and mobile captures for submission.
 
 ## Project Structure
 
@@ -76,51 +137,34 @@ ADMIN_PASSWORD=admin123
 src/
 ├── app/
 │   ├── (store)/          # Customer storefront
-│   │   ├── page.tsx      # Home page
-│   │   ├── products/     # Product listing & details
+│   │   ├── page.tsx      # Home
+│   │   ├── products/     # Listing & details
 │   │   ├── cart/         # Shopping cart
-│   │   ├── checkout/     # Checkout flow
-│   │   ├── orders/       # Order history
+│   │   ├── checkout/     # Checkout & mock payment
+│   │   ├── account/      # Profile, addresses, orders, wishlist
 │   │   ├── login/        # Customer login
 │   │   └── signup/       # Customer sign-up
-│   ├── (admin)/          # Admin dashboard
-│   │   └── admin/
-│   │       ├── dashboard/   # Overview metrics
-│   │       ├── products/    # Product CRUD
-│   │       ├── categories/  # Category CRUD
-│   │       ├── orders/      # Order management
-│   │       ├── customers/   # Customer list
-│   │       └── login/       # Admin login
+│   ├── (admin)/admin/    # Admin dashboard
 │   └── api/              # API routes
 ├── components/
-│   ├── ui/               # shadcn/ui components
-│   ├── store/            # Customer-facing components
-│   ├── admin/            # Admin components
-│   └── shared/           # Shared components
+│   ├── ui/               # shadcn/ui
+│   ├── store/            # Customer components
+│   └── admin/            # Admin components
 ├── lib/
-│   ├── auth/             # Auth utilities
-│   ├── services/         # Service layer (DB queries)
-│   ├── supabase/         # Supabase client setup
-│   ├── types/            # TypeScript types
-│   └── validation/       # Zod schemas
+│   ├── services/         # Database services
+│   ├── validation/       # Zod schemas
+│   └── cart/             # Guest cart & compare
 └── middleware.ts         # Route protection
 ```
 
-## System Flow
+## Assessment Compliance
 
-1. Customers sign up/log in via Supabase Auth
-2. Customers browse products, add to cart, and checkout
-3. Orders are created with "Pending" status
-4. Admin logs in with simulated credentials
-5. Admin manages products, categories, and updates order statuses
-6. Changes made in admin reflect on the customer storefront immediately
+This project meets the CubeTech Simple E-Commerce Website requirements:
 
-## Technologies Used
+- Customer: home, PLP (10+ products), PDP, cart, checkout, order confirmation
+- Admin: login, dashboard, product/category/order/customer management
+- Cross-cutting: admin changes sync to customer site, responsive design, form validation
 
-- Next.js 14+ with App Router
-- TypeScript
-- Tailwind CSS v4
-- shadcn/ui (Button, Card, Badge, Dialog, Table, Select, etc.)
-- Supabase (PostgreSQL + Auth)
-- Zod (form validation)
-- Lucide React (icons)
+## License
+
+MIT

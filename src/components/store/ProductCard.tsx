@@ -29,6 +29,24 @@ function StarRating({ rating, count }: { rating?: number; count?: number }) {
   );
 }
 
+function StockLabel({ product }: { product: Product }) {
+  const isOutOfStock =
+    product.stockQuantity === 0 || product.status === 'Out of Stock';
+  const isInactive = product.status === 'Inactive';
+
+  if (isInactive) {
+    return <p className="text-xs text-muted-foreground">Unavailable</p>;
+  }
+  if (isOutOfStock) {
+    return <p className="text-xs text-destructive">Out of stock</p>;
+  }
+  return (
+    <p className="text-xs text-muted-foreground">
+      {product.stockQuantity} in stock
+    </p>
+  );
+}
+
 export function ProductCard({ product, variant = 'default', isLoggedIn = false }: ProductCardProps) {
   const router = useRouter();
   const { refreshCartCount } = useCart();
@@ -128,6 +146,10 @@ export function ProductCard({ product, variant = 'default', isLoggedIn = false }
           <h3 className="line-clamp-2 text-sm font-semibold">{product.name}</h3>
         </Link>
 
+        {product.category && (
+          <p className="text-xs text-muted-foreground">{product.category.name}</p>
+        )}
+
         <StarRating rating={product.averageRating} count={product.reviewCount} />
 
         <div className="mt-auto flex items-baseline gap-2">
@@ -138,6 +160,8 @@ export function ProductCard({ product, variant = 'default', isLoggedIn = false }
             </p>
           )}
         </div>
+
+        <StockLabel product={product} />
 
         <div className="flex gap-1 pt-1">
           <Button
@@ -161,26 +185,37 @@ export function ProductCard({ product, variant = 'default', isLoggedIn = false }
         </div>
 
         {!isDeal && (
-          <div className="flex gap-2 pt-1">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={disabled || loading !== null}
-              onClick={handleAddToCart}
-              className="flex-1 rounded-full border-[#111111] text-xs"
-            >
-              {loading === 'cart' ? 'Adding...' : 'Add to Cart'}
-            </Button>
-            <Button
-              size="sm"
-              disabled={disabled || loading !== null}
-              onClick={handleBuyNow}
-              className={cn(
-                'flex-1 rounded-full bg-[#111111] text-xs hover:bg-[#111111]/90'
-              )}
-            >
-              {loading === 'buy' ? 'Processing...' : 'Buy Now'}
-            </Button>
+          <div className="flex flex-col gap-2 pt-1">
+            <Link href={`/products/${product.id}`} className="w-full">
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full rounded-full border-[#111111] text-xs"
+              >
+                View Details
+              </Button>
+            </Link>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={disabled || loading !== null}
+                onClick={handleAddToCart}
+                className="flex-1 rounded-full border-[#111111] text-xs"
+              >
+                {loading === 'cart' ? 'Adding...' : 'Add to Cart'}
+              </Button>
+              <Button
+                size="sm"
+                disabled={disabled || loading !== null}
+                onClick={handleBuyNow}
+                className={cn(
+                  'flex-1 rounded-full bg-[#111111] text-xs hover:bg-[#111111]/90'
+                )}
+              >
+                {loading === 'buy' ? 'Processing...' : 'Buy Now'}
+              </Button>
+            </div>
           </div>
         )}
       </div>

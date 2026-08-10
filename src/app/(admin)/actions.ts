@@ -42,6 +42,7 @@ export async function createProductAction(formData: ProductFormData) {
     revalidatePath('/admin/dashboard');
     revalidatePath('/products');
     revalidatePath('/');
+    revalidatePath('/cart');
   }
 
   return result;
@@ -69,6 +70,7 @@ export async function updateProductAction(id: string, formData: ProductFormData)
     revalidatePath('/products');
     revalidatePath(`/products/${id}`);
     revalidatePath('/');
+    revalidatePath('/cart');
   }
 
   return result;
@@ -84,6 +86,7 @@ export async function deleteProductAction(id: string) {
     revalidatePath('/admin/dashboard');
     revalidatePath('/products');
     revalidatePath('/');
+    revalidatePath('/cart');
   }
 
   return result;
@@ -144,6 +147,7 @@ export async function updateOrderStatusAction(id: string, status: OrderStatus) {
     revalidatePath(`/admin/orders/${id}`);
     revalidatePath('/admin/dashboard');
     revalidatePath('/account/orders');
+    revalidatePath(`/account/orders/${id}`);
   }
 
   return result;

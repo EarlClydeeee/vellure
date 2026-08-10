@@ -39,6 +39,7 @@ export async function createReturnRequest(input: {
   }
 
   revalidatePath('/account/orders');
+  revalidatePath(`/account/orders/${input.orderId}`);
   revalidatePath('/admin/returns');
 
   return { success: true, data: mapReturn(data) };
@@ -103,6 +104,7 @@ export async function updateReturnStatus(
 
   revalidatePath('/admin/returns');
   revalidatePath('/account/orders');
+  revalidatePath(`/account/orders/${data.order_id as string}`);
 
   return { success: true, data: mapReturn(data) };
 }

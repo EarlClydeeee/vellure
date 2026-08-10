@@ -22,7 +22,7 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
     data: { user },
   } = await supabase.auth.getUser();
 
-  const result = await getProductById(id);
+  const result = await getProductById(id, { activeOnly: true });
 
   if (!result.success || !result.data) {
     notFound();
