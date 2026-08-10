@@ -1,32 +1,39 @@
--- Test & admin accounts for Vellure
+-- Admin & test accounts for Vellure
 -- Run after: 001_initial_schema.sql, 003_tier1_commerce.sql
 --
 -- ┌─────────────────────────────────────────────────────────────────────────┐
--- │ ADMIN (simulated auth — NOT in auth.users)                              │
--- │   URL:      /admin/login                                                │
--- │   Username: admin                                                       │
--- │   Password: admin1234                                                   │
--- │   Configure in .env.local:                                              │
--- │     ADMIN_USERNAME=admin                                                │
--- │     ADMIN_PASSWORD=admin1234                                            │
+-- │ ADMIN                                                                   │
+-- │   Dashboard: /admin/login                                               │
+-- │   Email:     admin@gmail.com                                            │
+-- │   Password:  admin1234                                                  │
+-- │   .env.local: ADMIN_USERNAME=admin@gmail.com                            │
+-- │               ADMIN_PASSWORD=admin1234                                  │
 -- └─────────────────────────────────────────────────────────────────────────┘
 --
 -- ┌─────────────────────────────────────────────────────────────────────────┐
--- │ TEST CUSTOMER (Supabase Auth — login at /login)                         │
+-- │ TEST CUSTOMER (storefront /login)                                       │
 -- │   Email:    test@gmail.com                                              │
 -- │   Password: test1234                                                    │
 -- └─────────────────────────────────────────────────────────────────────────┘
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
-DO $$
+CREATE OR REPLACE FUNCTION public.seed_auth_email_user(
+  p_email TEXT,
+  p_password TEXT,
+  p_user_id UUID,
+  p_full_name TEXT,
+  p_contact_number TEXT DEFAULT NULL
+)
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, auth, extensions
+AS $$
 DECLARE
-  test_email TEXT := 'test@gmail.com';
-  test_password TEXT := 'test1234';
-  test_id UUID := 'c1111111-1111-4111-8111-111111111111';
   existing_id UUID;
 BEGIN
-  SELECT id INTO existing_id FROM auth.users WHERE email = test_email;
+  SELECT id INTO existing_id FROM auth.users WHERE email = p_email;
 
   IF existing_id IS NULL THEN
     INSERT INTO auth.users (
@@ -49,16 +56,16 @@ BEGIN
       recovery_token
     ) VALUES (
       '00000000-0000-0000-0000-000000000000',
-      test_id,
+      p_user_id,
       'authenticated',
       'authenticated',
-      test_email,
-      crypt(test_password, gen_salt('bf')),
+      p_email,
+      crypt(p_password, gen_salt('bf')),
       NOW(),
       NOW(),
       NOW(),
       '{"provider":"email","providers":["email"]}'::jsonb,
-      '{"full_name":"Test Customer"}'::jsonb,
+      jsonb_build_object('full_name', p_full_name),
       NOW(),
       NOW(),
       '',
@@ -77,35 +84,55 @@ BEGIN
       created_at,
       updated_at
     ) VALUES (
-      test_id,
-      test_id,
-      jsonb_build_object('sub', test_id::text, 'email', test_email),
+      p_user_id,
+      p_user_id,
+      jsonb_build_object('sub', p_user_id::text, 'email', p_email),
       'email',
-      test_id::text,
+      p_user_id::text,
       NOW(),
       NOW(),
       NOW()
     );
 
-    existing_id := test_id;
-    RAISE NOTICE 'Created test customer: % / %', test_email, test_password;
+    existing_id := p_user_id;
+    RAISE NOTICE 'Created user: % / %', p_email, p_password;
   ELSE
     UPDATE auth.users
     SET
-      encrypted_password = crypt(test_password, gen_salt('bf')),
+      encrypted_password = crypt(p_password, gen_salt('bf')),
       email_confirmed_at = COALESCE(email_confirmed_at, NOW()),
       raw_user_meta_data = COALESCE(raw_user_meta_data, '{}'::jsonb)
-        || '{"full_name":"Test Customer"}'::jsonb,
+        || jsonb_build_object('full_name', p_full_name),
       updated_at = NOW()
     WHERE id = existing_id;
 
-    RAISE NOTICE 'Test customer % already exists — password reset to %', test_email, test_password;
+    RAISE NOTICE 'User % already exists — password reset to %', p_email, p_password;
   END IF;
 
   INSERT INTO public.customers (id, email, full_name, contact_number)
-  VALUES (existing_id, test_email, 'Test Customer', '09171234567')
+  VALUES (existing_id, p_email, p_full_name, p_contact_number)
   ON CONFLICT (id) DO UPDATE SET
     email = EXCLUDED.email,
     full_name = EXCLUDED.full_name,
-    contact_number = EXCLUDED.contact_number;
-END $$;
+    contact_number = COALESCE(EXCLUDED.contact_number, customers.contact_number);
+
+  RETURN existing_id;
+END;
+$$;
+
+SELECT public.seed_auth_email_user(
+  'admin@gmail.com',
+  'admin1234',
+  'a1111111-1111-4111-8111-111111111111'::uuid,
+  'Platform Admin'
+);
+
+SELECT public.seed_auth_email_user(
+  'test@gmail.com',
+  'test1234',
+  'c1111111-1111-4111-8111-111111111111'::uuid,
+  'Test Customer',
+  '09171234567'
+);
+
+DROP FUNCTION public.seed_auth_email_user(TEXT, TEXT, UUID, TEXT, TEXT);
