@@ -10,7 +10,7 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
   if (products.length === 0) return null;
 
   return (
-    <section className="px-4 py-12">
+    <section className="px-2 py-8 sm:px-4 sm:py-12">
       <div className="container mx-auto">
         <div className="mb-8 flex items-center justify-between">
           <h2 className="font-display text-2xl font-medium tracking-tight sm:text-3xl">

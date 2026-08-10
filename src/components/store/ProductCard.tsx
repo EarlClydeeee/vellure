@@ -106,7 +106,7 @@ export function ProductCard({ product, variant = 'default', isLoggedIn = false }
   }
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-lg border border-[#e5e7eb] bg-white transition-shadow hover:shadow-md">
+    <article className="group flex h-full flex-col overflow-hidden rounded-lg border border-[#e5e7eb] bg-white transition-shadow hover:shadow-md">
       <Link
         href={`/products/${product.id}`}
         className="relative aspect-square cursor-pointer bg-muted"
@@ -117,7 +117,7 @@ export function ProductCard({ product, variant = 'default', isLoggedIn = false }
             alt={product.name}
             fill
             className="object-cover transition-transform group-hover:scale-105"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-muted-foreground">
@@ -125,45 +125,47 @@ export function ProductCard({ product, variant = 'default', isLoggedIn = false }
           </div>
         )}
         {isDeal && !disabled && (
-          <span className="absolute left-3 top-3 rounded-full bg-red-500 px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-white">
+          <span className="absolute left-1.5 top-1.5 rounded-sm bg-red-500 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white sm:left-3 sm:top-3 sm:rounded-full sm:px-2.5 sm:py-1 sm:text-xs">
             Sale
           </span>
         )}
         {product.category && !isDeal && (
-          <span className="absolute right-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-foreground shadow-sm">
+          <span className="absolute right-1.5 top-1.5 max-w-[calc(100%-0.75rem)] truncate rounded-sm bg-white/90 px-1.5 py-0.5 text-[10px] font-medium text-foreground shadow-sm sm:right-3 sm:top-3 sm:rounded-full sm:px-2.5 sm:py-1 sm:text-xs">
             {product.category.name}
           </span>
         )}
         {disabled && (
-          <span className="absolute left-3 top-3 rounded-full bg-red-500 px-2.5 py-1 text-xs font-medium text-white">
+          <span className="absolute left-1.5 top-1.5 rounded-sm bg-red-500 px-1.5 py-0.5 text-[10px] font-medium text-white sm:left-3 sm:top-3 sm:rounded-full sm:px-2.5 sm:py-1 sm:text-xs">
             {isOutOfStock ? 'Out of Stock' : 'Unavailable'}
           </span>
         )}
       </Link>
 
-      <div className="flex flex-1 flex-col gap-2 p-4">
+      <div className="flex flex-1 flex-col gap-1 p-2 sm:gap-2 sm:p-4">
         <Link href={`/products/${product.id}`} className="cursor-pointer hover:underline">
-          <h3 className="line-clamp-2 text-sm font-semibold">{product.name}</h3>
+          <h3 className="line-clamp-2 text-xs font-semibold leading-snug sm:text-sm">{product.name}</h3>
         </Link>
 
         {product.category && (
-          <p className="text-xs text-muted-foreground">{product.category.name}</p>
+          <p className="hidden text-xs text-muted-foreground sm:block">{product.category.name}</p>
         )}
 
         <StarRating rating={product.averageRating} count={product.reviewCount} />
 
-        <div className="mt-auto flex items-baseline gap-2">
-          <p className="text-lg font-bold">{formatPrice(product.price)}</p>
+        <div className="mt-auto flex flex-wrap items-baseline gap-1 sm:gap-2">
+          <p className="text-sm font-bold text-vellure-primary sm:text-lg">{formatPrice(product.price)}</p>
           {onSale && product.compareAtPrice && (
-            <p className="text-sm text-muted-foreground line-through">
+            <p className="text-[10px] text-muted-foreground line-through sm:text-sm">
               {formatPrice(product.compareAtPrice)}
             </p>
           )}
         </div>
 
-        <StockLabel product={product} />
+        <div className="hidden sm:block">
+          <StockLabel product={product} />
+        </div>
 
-        <div className="flex gap-1 pt-1">
+        <div className="hidden gap-1 pt-1 sm:flex">
           <Button
             variant="ghost"
             size="icon"
@@ -185,7 +187,7 @@ export function ProductCard({ product, variant = 'default', isLoggedIn = false }
         </div>
 
         {!isDeal && (
-          <div className="flex flex-col gap-2 pt-1">
+          <div className="hidden flex-col gap-2 pt-1 sm:flex">
             <Link href={`/products/${product.id}`} className="w-full">
               <Button
                 variant="outline"
