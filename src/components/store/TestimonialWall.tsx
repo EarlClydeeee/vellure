@@ -17,7 +17,7 @@ interface TestimonialWallProps {
 
 function TestimonialCard({ testimonial }: { testimonial: VellureTestimonial }) {
   return (
-    <div className="min-w-[320px] w-[320px] shrink-0 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+    <div className="min-w-[280px] w-[85vw] max-w-[320px] shrink-0 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md sm:w-[320px] sm:p-6">
       <div className="mb-4 flex items-center gap-3">
         <Image
           src={testimonial.avatar}

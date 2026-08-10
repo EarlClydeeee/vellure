@@ -55,8 +55,8 @@ export function CartItemRow({ item, isGuest, guestProduct }: CartItemRowProps) {
   }
 
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 border-b py-4">
-      <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border bg-muted">
+    <div className="flex flex-col gap-4 border-b py-4 sm:flex-row sm:items-center">
+      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md border bg-muted">
         {product.imageUrl ? (
           <Image
             src={product.imageUrl}
@@ -72,32 +72,34 @@ export function CartItemRow({ item, isGuest, guestProduct }: CartItemRowProps) {
         )}
       </div>
 
-      <div className="flex flex-1 flex-col sm:flex-row sm:items-center gap-4">
-        <div className="flex-1">
+      <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+        <div className="min-w-0 flex-1">
           <h3 className="text-sm font-medium">{product.name}</h3>
           <p className="text-sm text-muted-foreground">{formatPrice(product.price)}</p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 sm:justify-end">
           <QuantitySelector
             max={product.stockQuantity}
             value={quantity}
             onChange={handleQuantityChange}
           />
 
-          <span className="w-24 text-right text-sm font-medium">
-            {formatPrice(lineSubtotal)}
-          </span>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <span className="min-w-[5rem] text-right text-sm font-medium">
+              {formatPrice(lineSubtotal)}
+            </span>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleRemove}
-            disabled={isPending}
-            aria-label="Remove item"
-          >
-            <Trash2 className="h-4 w-4 text-destructive" />
-          </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleRemove}
+              disabled={isPending}
+              aria-label="Remove item"
+            >
+              <Trash2 className="h-4 w-4 text-destructive" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

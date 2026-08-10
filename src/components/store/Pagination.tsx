@@ -34,24 +34,28 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
   }
 
   return (
-    <nav className="flex items-center justify-center gap-2" aria-label="Pagination">
+    <nav
+      className="flex flex-wrap items-center justify-center gap-1 sm:gap-2"
+      aria-label="Pagination"
+    >
       <NavLink
         href={buildPageHref(Math.max(1, currentPage - 1), searchParams)}
         className={cn(
-          'flex h-9 items-center gap-1 rounded-full px-3 text-sm transition-colors',
+          'flex h-9 items-center gap-1 rounded-full px-2 text-sm transition-colors sm:px-3',
           currentPage === 1
             ? 'pointer-events-none opacity-40'
             : 'hover:bg-muted'
         )}
+        aria-label="Previous page"
       >
         <ChevronLeft className="h-4 w-4" />
-        Previous
+        <span className="hidden sm:inline">Previous</span>
       </NavLink>
 
       <div className="flex items-center gap-1">
         {pages.map((page, i) =>
           page === 'ellipsis' ? (
-            <span key={`e-${i}`} className="px-2 text-muted-foreground">
+            <span key={`e-${i}`} className="hidden px-2 text-muted-foreground sm:inline">
               ...
             </span>
           ) : (
@@ -62,7 +66,13 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
                 'flex h-9 w-9 items-center justify-center rounded-full text-sm transition-colors',
                 page === currentPage
                   ? 'bg-vellure-primary text-white'
-                  : 'hover:bg-muted'
+                  : 'hover:bg-muted',
+                // On very small screens, show current page, first, last, and neighbors only
+                page !== currentPage &&
+                  page !== 1 &&
+                  page !== totalPages &&
+                  Math.abs(page - currentPage) > 1 &&
+                  'hidden sm:flex'
               )}
             >
               {page}
@@ -74,13 +84,14 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
       <NavLink
         href={buildPageHref(Math.min(totalPages, currentPage + 1), searchParams)}
         className={cn(
-          'flex h-9 items-center gap-1 rounded-full px-3 text-sm transition-colors',
+          'flex h-9 items-center gap-1 rounded-full px-2 text-sm transition-colors sm:px-3',
           currentPage === totalPages
             ? 'pointer-events-none opacity-40'
             : 'hover:bg-muted'
         )}
+        aria-label="Next page"
       >
-        Next
+        <span className="hidden sm:inline">Next</span>
         <ChevronRight className="h-4 w-4" />
       </NavLink>
     </nav>

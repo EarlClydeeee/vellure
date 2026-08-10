@@ -20,7 +20,7 @@ export default async function AdminReturnsPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Return Requests</h1>
+      <h1 className="mb-6 text-2xl font-bold sm:text-3xl">Return Requests</h1>
 
       {withOrders.length === 0 ? (
         <p className="text-muted-foreground">No return requests yet.</p>

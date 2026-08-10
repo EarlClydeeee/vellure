@@ -46,15 +46,17 @@ function MasonryTile({ tile }: { tile: MasonryTileData }) {
 function ScrollColumn({
   tiles,
   direction,
+  className,
 }: {
   tiles: MasonryTileData[];
   direction: 'normal' | 'reverse';
+  className?: string;
 }) {
   const loop = [...tiles, ...tiles, ...tiles, ...tiles];
 
   return (
     <div
-      className="scroll-column relative h-full min-w-0 overflow-hidden"
+      className={cn('scroll-column relative h-full min-w-0 overflow-hidden', className)}
       style={{
         maskImage:
           'linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)',
@@ -116,12 +118,14 @@ export function MasonryWrapperLanding({
         <h2 className="font-display mb-8 text-2xl font-medium tracking-tight text-vellure-text sm:text-3xl">
           {title}
         </h2>
-        <div
-          className="grid h-[600px] gap-5 overflow-hidden"
-          style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}
-        >
+        <div className="grid h-[360px] grid-cols-1 gap-5 overflow-hidden sm:h-[480px] sm:grid-cols-2 lg:h-[600px] lg:grid-cols-3">
           {COLUMNS.map((col, i) => (
-            <ScrollColumn key={i} tiles={col.tiles} direction={col.direction} />
+            <ScrollColumn
+              key={i}
+              tiles={col.tiles}
+              direction={col.direction}
+              className={cn(i === 1 && 'hidden sm:block', i === 2 && 'hidden lg:block')}
+            />
           ))}
         </div>
     </div>

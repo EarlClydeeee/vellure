@@ -42,7 +42,7 @@ export default async function StoreLayout({
     <StoreProviders initialCartCount={cartItemCount} isAuthenticated={isAuthenticated}>
       <div className="flex min-h-screen flex-col">
         <Header userEmail={userEmail} />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 pb-20 md:pb-0">{children}</main>
         <Footer />
       </div>
     </StoreProviders>

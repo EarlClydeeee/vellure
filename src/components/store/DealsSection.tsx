@@ -29,7 +29,7 @@ export function DealsSection({
       <div className="container relative mx-auto px-4">
         <div className="mb-8 flex flex-col items-center justify-between gap-6 lg:flex-row lg:items-start">
           <div>
-            <h2 className="font-display text-3xl font-medium uppercase tracking-tight text-white md:text-4xl lg:text-5xl">
+            <h2 className="font-display text-2xl font-medium uppercase tracking-tight text-white sm:text-3xl md:text-4xl lg:text-5xl">
               Vellure Deals Fest
             </h2>
             <p className="mt-2 text-sm text-white/80">
