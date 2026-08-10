@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -17,6 +17,8 @@ interface HeaderProps {
   userEmail?: string | null;
 }
 
+const SCROLL_THRESHOLD = 80;
+
 const navItems = [
   { href: '/products', label: 'Shop' },
   { href: '/blog', label: 'Blog' },
@@ -26,6 +28,8 @@ const navItems = [
 
 const LOGO_ONLY_PREFIXES = ['/products', '/blog', '/contact'];
 
+type NavVariant = 'pill' | 'bar';
+
 function isLogoOnlyNav(pathname: string): boolean {
   return LOGO_ONLY_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
@@ -34,6 +38,9 @@ function isLogoOnlyNav(pathname: string): boolean {
 
 const pillLinkClass =
   'hidden whitespace-nowrap px-2 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80 sm:inline-block sm:text-xs';
+
+const barLinkClass =
+  'hidden whitespace-nowrap px-3 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-vellure-text transition-colors hover:text-vellure-primary sm:inline-block sm:text-xs';
 
 function VellureLogoLink({
   inverted = false,
@@ -66,6 +73,87 @@ function VellureLogoLink({
   );
 }
 
+function NavTextLinks({
+  variant,
+  showLinks,
+}: {
+  variant: NavVariant;
+  showLinks: boolean;
+}) {
+  if (!showLinks) return null;
+
+  const linkClass = variant === 'pill' ? pillLinkClass : barLinkClass;
+
+  return (
+    <>
+      {navItems.map((item) => (
+        <NavLink key={item.href} href={item.href} className={linkClass}>
+          {item.label}
+        </NavLink>
+      ))}
+    </>
+  );
+}
+
+function NavUtilityIcons({
+  variant,
+  userEmail,
+  cartCount,
+  showMenuButton,
+  onMenuOpen,
+}: {
+  variant: NavVariant;
+  userEmail?: string | null;
+  cartCount: number;
+  showMenuButton?: boolean;
+  onMenuOpen?: () => void;
+}) {
+  const iconClass =
+    variant === 'pill'
+      ? 'rounded-full p-2 text-white transition-opacity hover:opacity-80'
+      : 'rounded-full p-2 text-vellure-text transition-colors hover:text-vellure-primary';
+
+  const iconSize = 'h-4 w-4 sm:h-[18px] sm:w-[18px]';
+  const badgeClass =
+    variant === 'pill'
+      ? 'absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-white p-0 text-[10px] text-vellure-primary'
+      : 'absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-vellure-primary p-0 text-[10px] text-white';
+
+  return (
+    <div className="flex items-center gap-0.5 sm:gap-1">
+      {showMenuButton && onMenuOpen && (
+        <button
+          type="button"
+          className={cn(iconClass, 'sm:hidden')}
+          onClick={onMenuOpen}
+          aria-label="Open menu"
+        >
+          <Menu className="h-4 w-4" />
+        </button>
+      )}
+
+      <NavLink href="/products" className={iconClass} aria-label="Search products">
+        <Search className={iconSize} />
+      </NavLink>
+
+      <NavLink
+        href={userEmail ? '/account' : '/login'}
+        className={iconClass}
+        aria-label={userEmail ? 'My account' : 'Log in'}
+      >
+        <User className={iconSize} />
+      </NavLink>
+
+      <NavLink href="/cart" className={cn(iconClass, 'relative')} aria-label="Shopping cart">
+        <ShoppingBag className={iconSize} />
+        {cartCount > 0 && (
+          <Badge className={badgeClass}>{cartCount > 9 ? '9+' : cartCount}</Badge>
+        )}
+      </NavLink>
+    </div>
+  );
+}
+
 function NavPill({
   userEmail,
   cartCount,
@@ -79,59 +167,53 @@ function NavPill({
 }) {
   return (
     <div className="flex items-center rounded-full bg-vellure-primary py-1.5 pl-3 pr-1.5 sm:py-2 sm:pl-4 sm:pr-2">
-      {showLinks &&
-        navItems.map((item) => (
-          <NavLink key={item.href} href={item.href} className={pillLinkClass}>
-            {item.label}
-          </NavLink>
-        ))}
+      <NavTextLinks variant="pill" showLinks={showLinks} />
 
       {showLinks && (
         <span className="mx-1 hidden h-4 w-px bg-white/25 sm:block" aria-hidden />
       )}
 
-      <div className="flex items-center gap-0.5 sm:gap-1">
-        {showLinks && onMenuOpen && (
-          <button
-            type="button"
-            className="rounded-full p-2 text-white transition-opacity hover:opacity-80 sm:hidden"
-            onClick={onMenuOpen}
-            aria-label="Open menu"
-          >
-            <Menu className="h-4 w-4" />
-          </button>
-        )}
-
-        <NavLink
-          href="/products"
-          className="rounded-full p-2 text-white transition-opacity hover:opacity-80"
-          aria-label="Search products"
-        >
-          <Search className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
-        </NavLink>
-
-        <NavLink
-          href={userEmail ? '/account' : '/login'}
-          className="rounded-full p-2 text-white transition-opacity hover:opacity-80"
-          aria-label={userEmail ? 'My account' : 'Log in'}
-        >
-          <User className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
-        </NavLink>
-
-        <NavLink
-          href="/cart"
-          className="relative rounded-full p-2 text-white transition-opacity hover:opacity-80"
-          aria-label="Shopping cart"
-        >
-          <ShoppingBag className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
-          {cartCount > 0 && (
-            <Badge className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-white p-0 text-[10px] text-vellure-primary">
-              {cartCount > 9 ? '9+' : cartCount}
-            </Badge>
-          )}
-        </NavLink>
-      </div>
+      <NavUtilityIcons
+        variant="pill"
+        userEmail={userEmail}
+        cartCount={cartCount}
+        showMenuButton={showLinks}
+        onMenuOpen={onMenuOpen}
+      />
     </div>
+  );
+}
+
+function StickyNavBar({
+  userEmail,
+  cartCount,
+  showLinks,
+  onMenuOpen,
+}: {
+  userEmail?: string | null;
+  cartCount: number;
+  showLinks: boolean;
+  onMenuOpen?: () => void;
+}) {
+  return (
+    <>
+      {showLinks && (
+        <nav
+          className="hidden flex-1 items-center justify-center gap-1 sm:flex"
+          aria-label="Main navigation"
+        >
+          <NavTextLinks variant="bar" showLinks={showLinks} />
+        </nav>
+      )}
+
+      <NavUtilityIcons
+        variant="bar"
+        userEmail={userEmail}
+        cartCount={cartCount}
+        showMenuButton={showLinks}
+        onMenuOpen={onMenuOpen}
+      />
+    </>
   );
 }
 
@@ -226,31 +308,69 @@ function MobileDrawer({
 
 export function Header({ userEmail }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const { cartCount } = useCart();
   const pathname = usePathname();
   const isHome = pathname === '/';
   const logoOnly = isLogoOnlyNav(pathname);
   const showNavLinks = !logoOnly;
-  const overlay = isHome;
+
+  const showOverlayNav = isHome && !isScrolled;
+  const showStickyNav = isHome && isScrolled;
+
+  useEffect(() => {
+    if (!isHome) {
+      setIsScrolled(false);
+      return;
+    }
+
+    function onScroll() {
+      setIsScrolled(window.scrollY >= SCROLL_THRESHOLD);
+    }
+
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [isHome]);
+
+  const openMobileMenu = showNavLinks ? () => setMobileMenuOpen(true) : undefined;
 
   return (
     <>
       <header
         className={cn(
-          'z-50 w-full',
-          overlay ? 'absolute left-0 right-0 top-0' : 'sticky top-0 border-b border-gray-100 bg-white'
+          'z-50 w-full transition-[background-color,box-shadow,border-color] duration-300',
+          isHome && 'fixed left-0 right-0 top-0',
+          showOverlayNav && 'bg-transparent',
+          showStickyNav && 'border-b border-gray-100 bg-white shadow-sm',
+          !isHome && 'sticky top-0 border-b border-gray-100 bg-white'
         )}
       >
-        <AnnouncementBar />
+        {!showStickyNav && <AnnouncementBar />}
 
-        <div className="container mx-auto flex items-center justify-between px-4 py-4 md:py-5">
-          <VellureLogoLink inverted={overlay && !logoOnly} />
-          <NavPill
-            userEmail={userEmail}
-            cartCount={cartCount}
-            showLinks={showNavLinks}
-            onMenuOpen={showNavLinks ? () => setMobileMenuOpen(true) : undefined}
-          />
+        <div
+          className={cn(
+            'container mx-auto flex items-center px-4 py-4 md:py-5',
+            showStickyNav ? 'justify-between gap-4' : 'justify-between'
+          )}
+        >
+          <VellureLogoLink inverted={showOverlayNav && showNavLinks} />
+
+          {showOverlayNav || !isHome ? (
+            <NavPill
+              userEmail={userEmail}
+              cartCount={cartCount}
+              showLinks={showNavLinks}
+              onMenuOpen={openMobileMenu}
+            />
+          ) : (
+            <StickyNavBar
+              userEmail={userEmail}
+              cartCount={cartCount}
+              showLinks={showNavLinks}
+              onMenuOpen={openMobileMenu}
+            />
+          )}
         </div>
       </header>
 
