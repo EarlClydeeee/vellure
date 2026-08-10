@@ -2,6 +2,7 @@
  * Seed script using the anon/publishable key (works with current RLS policies).
  * Run: npm run seed
  * Requires: 001_initial_schema.sql + 003_tier1_commerce.sql applied first.
+ * Test customer: run 005_seed_test_users.sql or set TEST_USER_* in .env.local.
  */
 import { readFileSync } from 'fs';
 import { resolve } from 'path';

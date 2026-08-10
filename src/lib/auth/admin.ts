@@ -1,46 +1,47 @@
 import { cookies } from 'next/headers';
+import {
+  SESSION_DURATION_MS,
+  credentialsMatchAdmin,
+  getAdminConfigEmail,
+  parseAdminSessionToken,
+  validateAdminSessionToken,
+} from '@/lib/auth/admin-session';
+import { setSessionRoleCookie, clearSessionRoleCookie } from '@/lib/auth/session';
 
 const COOKIE_NAME = 'admin_session';
-const SESSION_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
 
-function createSessionToken(): string {
-  const payload = JSON.stringify({ timestamp: Date.now() });
+function createSessionToken(email: string): string {
+  const payload = JSON.stringify({ timestamp: Date.now(), email, role: 'admin' });
   return Buffer.from(payload).toString('base64');
 }
 
-function validateSessionToken(token: string): boolean {
-  try {
-    const decoded = JSON.parse(Buffer.from(token, 'base64').toString());
-    if (Date.now() - decoded.timestamp > SESSION_DURATION_MS) {
-      return false;
-    }
-    return true;
-  } catch {
-    return false;
-  }
-}
+export {
+  isAdminEmail,
+  validateAdminSessionToken,
+  getAdminConfigEmail,
+  credentialsMatchAdmin,
+} from '@/lib/auth/admin-session';
 
-export async function adminLogin(username: string, password: string): Promise<boolean> {
-  const adminUsername = process.env.ADMIN_USERNAME;
-  const adminPassword = process.env.ADMIN_PASSWORD;
-
-  if (!adminUsername || !adminPassword) {
+export async function adminLogin(
+  identifier: string,
+  password: string
+): Promise<boolean> {
+  if (!credentialsMatchAdmin(identifier, password)) {
     return false;
   }
 
-  if (username !== adminUsername || password !== adminPassword) {
-    return false;
-  }
-
-  const token = createSessionToken();
+  const email = getAdminConfigEmail()!;
+  const token = createSessionToken(email);
   const cookieStore = await cookies();
   cookieStore.set(COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
-    maxAge: SESSION_DURATION_MS / 1000, // in seconds
+    maxAge: SESSION_DURATION_MS / 1000,
   });
+
+  await setSessionRoleCookie('admin', email);
 
   return true;
 }
@@ -54,15 +55,19 @@ export async function adminLogout(): Promise<void> {
     path: '/',
     maxAge: 0,
   });
+
+  await clearSessionRoleCookie();
 }
 
 export async function isAdminAuthenticated(): Promise<boolean> {
   const cookieStore = await cookies();
   const session = cookieStore.get(COOKIE_NAME);
+  return validateAdminSessionToken(session?.value);
+}
 
-  if (!session?.value) {
-    return false;
-  }
-
-  return validateSessionToken(session.value);
+export async function getAdminSessionEmail(): Promise<string | null> {
+  const cookieStore = await cookies();
+  const session = cookieStore.get(COOKIE_NAME);
+  const payload = parseAdminSessionToken(session?.value);
+  return payload?.email ?? getAdminConfigEmail();
 }
