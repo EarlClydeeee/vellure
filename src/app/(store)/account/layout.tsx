@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { LogoutButton } from '@/components/store/LogoutButton';
+import { useSession } from '@/components/SessionProvider';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -17,6 +19,8 @@ export default function AccountLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const session = useSession();
+  const isLoggedIn = session.role === 'customer' || session.role === 'admin';
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -39,6 +43,14 @@ export default function AccountLayout({
               </Link>
             ))}
           </nav>
+          {isLoggedIn && (
+            <div className="mt-6 space-y-2 border-t pt-4">
+              {session.email && (
+                <p className="truncate text-xs text-muted-foreground">{session.email}</p>
+              )}
+              <LogoutButton showIcon />
+            </div>
+          )}
         </aside>
         <div className="min-w-0 flex-1">{children}</div>
       </div>

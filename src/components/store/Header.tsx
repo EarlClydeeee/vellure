@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { NavLink } from '@/components/store/NavLink';
 import { AnnouncementBar } from '@/components/store/marketing/AnnouncementBar';
+import { LogoutButton } from '@/components/store/LogoutButton';
 import { useCart } from '@/components/store/CartProvider';
 import { useSession } from '@/components/SessionProvider';
 import { VELLURE_LOGO } from '@/lib/assets/brand';
@@ -322,11 +323,7 @@ function MobileDrawer({
                 <span className="truncate text-sm text-muted-foreground">
                   {userEmail}
                 </span>
-                <form action="/api/auth/logout" method="POST">
-                  <Button variant="outline" size="sm" className="w-full" type="submit">
-                    Logout
-                  </Button>
-                </form>
+                <LogoutButton />
               </>
             ) : (
               <>
