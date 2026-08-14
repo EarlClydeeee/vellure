@@ -99,7 +99,7 @@ function NavTextLinks({
 function accountHref(role: string, hasEmail: boolean): string {
   if (!hasEmail) return '/login';
   if (role === 'admin') return '/admin/dashboard';
-  return '/account';
+  return '/account/orders';
 }
 
 function SessionRoleBadge({ role }: { role: string }) {

@@ -123,7 +123,7 @@ export function CheckoutForm({
       } else if (result.data.redirectToPayment) {
         router.push(`/checkout/payment/${result.data.id}`);
       } else {
-        onOrderComplete(result.data);
+        router.push(`/account/orders/${result.data.id}`);
       }
     });
   }
